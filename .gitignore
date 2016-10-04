@@ -1,0 +1,6 @@
+
+*.root
+*.pdf
+*.pyc
+*.ps
+*/.ipynb_checkpoints/*

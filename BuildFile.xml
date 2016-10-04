@@ -1,0 +1,14 @@
+<use name=""/>
+<use name="root"/>
+<use name="rootcore"/>
+<use name="rootgraphics"/>
+<use name="roottmva"/>
+<use name="rootminuit2"/> 
+<use name="rootmath"/>
+<use name="analysis/ALPHA"/>
+<flags CXXFLAGS="-lGenVector"/>
+<Flags ROOTMAP="no"/>
+<export>
+    <lib name="1"/>
+</export>
+
