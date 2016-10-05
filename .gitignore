@@ -4,3 +4,4 @@
 *.pyc
 *.ps
 */.ipynb_checkpoints/*
+*__init__.py
