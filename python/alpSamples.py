@@ -374,6 +374,11 @@ samples = {
         'kfactor' : 1.,
     },
     'TTWJetsToQQ' :{
+        'sam_name': 'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8_v0-v1',
+        'nevents' : 833298.,
+        'xsec'    : 1., #FIXME
+        'matcheff': 1.,
+        'kfactor' : 1.,
     },
     'TTTT' :{
         'sam_name': 'TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8_v0_ext1-v1',
@@ -431,10 +436,12 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-
-    'WJetsToQQ_HT-600ToInf' :{
-    },
     'ZJetsToQQ_HT-600ToInf' :{
+        'sam_name': 'ZJetsToQQ_HT600toInf_13TeV-madgraph_v14-v1',
+        'nevents' : 992590.,
+        'xsec'    : 1., #FIXME
+        'matcheff': 1.,
+        'kfactor' : 1.,
     },
     'DYJetsToQQ_HT180' :{
         'sam_name': 'DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8_v0-v1',
@@ -481,8 +488,11 @@ samples = {
         'kfactor' : 1.,
     },
     'ST_t-channel_4f_lept' :{
-    }
-
+        'sam_name': 'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_v14_ext1-v1',
+        'nevents' : 19835374.,
+        'xsec'    : 1., #FIXME
+        'kfactor' : 1.,
+    },
     'WJetsToLNu_HT-100To200_ext' :{    
         'sam_name': 'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0_ext1-v1',
         'nevents' : 35244500,#27546978,
