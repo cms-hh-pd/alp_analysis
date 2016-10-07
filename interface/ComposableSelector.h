@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TH1F.h>
 #include <TSelector.h>
 #include <TTreeReader.h>
 
@@ -24,6 +25,8 @@ template <class EventClass> class ComposableSelector : public TSelector {
   public:
 
   long n_entries{0};
+  long tot_entries{0};
+  double  n_genev{-1};
 
   // associated with a TTree
   TTreeReader reader_;
@@ -80,6 +83,7 @@ template <class EventClass> void ComposableSelector<EventClass>::Init(TTree *tre
 
 {
   reader_.SetTree(tree);
+  tot_entries = reader_.GetEntries(1);
 }
 
 // each new file is opened
@@ -120,7 +124,6 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
 
 
    tfile_ = new TFile(o_filename.c_str(), "RECREATE");
-   
  
    auto root_dir = dynamic_cast<TDirectory *>(&(*tfile_));
    auto curr_dir = root_dir;
@@ -129,6 +132,13 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
      if (name != "") curr_dir = curr_dir->mkdir(name.c_str());
      op->init(curr_dir);
    }
+
+   if (config_.find("n_gen_events") != config_.end()) {
+     n_genev = config_.at("n_gen_events");
+   }
+   TH1D h_genev {"c_nEvents", "num of genrated events", 1, 0., 1.};
+   h_genev.SetBinContent(1,n_genev);
+   h_genev.Write();
 }
 
 
@@ -137,7 +147,7 @@ template <class EventClass> bool  ComposableSelector<EventClass>::Process(Long64
 {
 
   n_entries++;
-  if ((n_entries%100000) == 0) std::cout << "processing " << n_entries << " entry" << std::endl; 
+  if ((n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl; 
 
   // set TTreeReader entry
   reader_.SetLocalEntry(entry);

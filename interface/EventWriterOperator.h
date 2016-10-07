@@ -6,10 +6,6 @@
 
 #include "BaseOperator.h"
 
-#include "mut_framework/mut_dataformats/interface/EventInfo.h"
-#include "mut_framework/mut_dataformats/interface/Jet.h"
-#include "mut_framework/mut_dataformats/interface/MET.h"
-
 template <class EventClass> class EventWriterOperator : public BaseOperator<EventClass> {
 
   public:

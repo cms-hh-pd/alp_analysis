@@ -8,7 +8,7 @@ template <class EventClass> class BaseOperator {
     BaseOperator() {}
     virtual ~BaseOperator() {}
     
-    virtual void init(TDirectory * tdir) { }
+    virtual void init(TDirectory * tdir) {}
 
     virtual bool process( EventClass & ev ) {
       return true;
