@@ -3,6 +3,7 @@
 #include "Analysis/alp_analysis/interface/ComposableSelector.h"
 #include "Analysis/alp_analysis/interface/BaseOperator.h"
 #include "Analysis/alp_analysis/interface/CounterOperator.h"
+#include "Analysis/alp_analysis/interface/TriggerOperator.h"
 #include "Analysis/alp_analysis/interface/JetFilterOperator.h"
 #include "Analysis/alp_analysis/interface/BTagFilterOperator.h"
 #include "Analysis/alp_analysis/interface/JetPairingOperator.h"
@@ -19,6 +20,7 @@ namespace {
     ComposableSelector<EventBase> composable_selector; 
     BaseOperator<EventBase> base_operator; 
     CounterOperator<EventBase> counter_operator; 
+    TriggerOperator<EventBase> trigger_operator; 
     JetFilterOperator<EventBase> jet_filter_operator; 
     BTagFilterOperator<EventBase> b_tag_filter_operator; 
     JetPairingOperator<EventBase> jet_pairing_operator; 

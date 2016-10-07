@@ -7,25 +7,33 @@ from glob import glob
 # ROOT imports
 from ROOT import TChain, TH1F, TFile
 # custom ROOT classes 
-from ROOT import alp, ComposableSelector, CounterOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
-from ROOT import BaseOperator, EventWriterOperator
+from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
+from ROOT import BaseOperator, EventWriterOperator, vector
 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
+from Analysis.alp_analysis.triggerlists import triggerlists
 
 # exe parameters
-numEvents  = 10000       # -1 to process all (10000)
+numEvents  = 100000       # -1 to process all (10000)
 samList    = {'SM'}  # list of samples to be processed - append multiple lists , 'data', 'mainbkg'
 oDir       = './test'         # output dir ('./test')
 ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
+trgList    = 'def_2016' # trigger paths - remove TriggerOperator to not apply trigger
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
+trg_names = triggerlists[trgList]
+trg_names_v = vector("string")()
+if not trg_names: print "### WARNING: empty hlt_names ###"
+for trg_name in trg_names: trg_names_v.push_back(trg_name)
+
 # to parse variables to the anlyzer
 config = {"jets_branch_name": "Jets",
-          "hlt_names":[], "n_gen_events":0
+          "hlt_names": trg_names, 
+          "n_gen_events":0
          }
 
 snames = []
@@ -59,6 +67,8 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json.dumps(config))
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4))
@@ -81,4 +91,4 @@ for sname in snames:
     #some cleaning
     hcount.Reset()
 
-print "### processed {} samples".format(ns) 
+print "### processed {} samples ###".format(ns) 

@@ -2,10 +2,11 @@
   <class name="alp::Event"/>    
   <class pattern="ComposableSelector*"/>    
   <class pattern="CounterOperator<*>"/>    
+  <class pattern="TriggerOperator<*>"/>    
   <class pattern="JetFilterOperator<*>"/>    
   <class pattern="BTagFilterOperator<*>"/>    
   <class pattern="JetPairingOperator<*>"/>    
   <class pattern="SetJetPairingOperator<*>"/>    
   <class pattern="DiJetPlotterOperator<*>"/>    
-  <class pattern="EventWriterOperator<*>"/>    
+  <class pattern="EventWriterOperator<*>"/> 
 </lcgdict>  
