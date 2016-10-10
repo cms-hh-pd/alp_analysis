@@ -1,4 +1,5 @@
 
+# lists of samples to be processed. Insert the proper label in the config file.
 
 samlists = {
 
