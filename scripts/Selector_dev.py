@@ -15,12 +15,13 @@ from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
 
 # exe parameters
-numEvents  = 100000       # -1 to process all (10000)
-samList    = {'SM'}  # list of samples to be processed - append multiple lists , 'data', 'mainbkg'
-oDir       = './test'         # output dir ('./test')
-ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
-iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
+numEvents  = -1       # -1 to process all (10000)
+samList    = {'signals'}  # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
 trgList    = 'def_2016' # trigger paths - remove TriggerOperator to not apply trigger
+
+iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
+ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
+oDir       = './output/v0_trgAcc_sig'         # output dir ('./test')
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -43,17 +44,21 @@ for s in samList:
 # process samples
 ns = 0
 hcount = TH1F('hcount', 'num of genrated events',1,0,1)
-for sname in snames:    
+for sname in snames:
     isHH = False
-    if "HH" in sname: isHH = True #unused...
+    isHLT = False
 
-    print "### processing {}".format(sname)        
-   ######
     #get file names in all sub-folders:
     files = glob(iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root")
+    print "\n ### processing {}".format(sname)        
+ 
+    #preliminary checks
     if not files: print "WARNING: files do not exist"
+    else:
+        if "HH" in files[0]: isHH = True #unused...
+        if "_v14" in files[0]: isHLT = True #patch - check better way to look for HLT
 
-    #read counters to get generated events
+    #read counters to get generated eventsbj
     ngenev = 0
     for f in files:
         tf = TFile(f)
@@ -67,7 +72,8 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json.dumps(config))
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    if(isHLT): selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    else: print "no HLT, skip trigger selection"
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())

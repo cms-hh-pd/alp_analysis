@@ -25,7 +25,7 @@ samlists = {
 
    'dibosons': {'ZH_HToBB_ZToQQ', 'WZ', 'ZZTo4Q'},
 
-   'bosons'  : {'WJetsToQQ_HT-600ToInf', 'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180',
+   'bosons'  : { 'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180', #'WJetsToQQ_HT-600ToInf',
                 'VBFHToBB', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'}, 
    'trigger' : {'ST_s-channel_4f_lept', 'ST_t-channel_4f_lept',
                 'WJetsToLNu_HT-100To200_ext', 'WJetsToLNu_HT-100To200', 'WJetsToLNu_HT-200To400',
