@@ -4,9 +4,12 @@
   <class pattern="CounterOperator<*>"/>    
   <class pattern="TriggerOperator<*>"/>    
   <class pattern="JetFilterOperator<*>"/>    
+  <class pattern="MetFilterOperator<*>"/>    
+  <class pattern="IsoMuFilterOperator<*>"/>    
   <class pattern="BTagFilterOperator<*>"/>    
   <class pattern="JetPairingOperator<*>"/>    
-  <class pattern="SetJetPairingOperator<*>"/>    
+  <class pattern="SetJetPairingOperator<*>"/>   
+  <class pattern="JetPlotterOperator<*>"/>     
   <class pattern="DiJetPlotterOperator<*>"/>    
   <class pattern="EventWriterOperator<*>"/> 
 </lcgdict>  

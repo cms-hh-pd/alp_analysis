@@ -21,7 +21,7 @@ trgList    = 'def_2016' # trigger paths - remove TriggerOperator to not apply tr
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
-oDir       = './output/v0_trgAcc_sig'         # output dir ('./test')
+oDir       = './output/v0_AccTrg_sig'         # output dir ('./test')
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -72,14 +72,14 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json.dumps(config))
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
-    if(isHLT): selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-    else: print "no HLT, skip trigger selection"
-    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(JetPairingOperator(alp.Event)(4))
+    if(isHLT): selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    else: print "no HLT, skip trigger selection"
+    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(DiJetPlotterOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())

@@ -19,6 +19,8 @@ namespace alp {
       // objects which will be read from TTree before first operator
       std::vector<std::pair<std::string, bool>> hlt_bits_;
       std::vector<alp::Jet> jets_;
+      float MEt_;
+
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
       std::vector<std::size_t> free_is_;
@@ -56,6 +58,7 @@ namespace alp {
         for (std::size_t i=0; i<hlt_bits_reader_.size(); i++) {
           hlt_bits_.at(i).second = **(hlt_bits_reader_.at(i));
         }
+
 
       }
   
