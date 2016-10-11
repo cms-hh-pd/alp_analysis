@@ -127,11 +127,19 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
 
    tfile_ = new TFile(o_filename.c_str(), "RECREATE");
  
+   // output folder handling
    auto root_dir = dynamic_cast<TDirectory *>(&(*tfile_));
+   // use root by default
    auto curr_dir = root_dir;
    for (auto & op : ops_) {
      auto name = op->get_name();
-     if (name != "") curr_dir = curr_dir->mkdir(name.c_str());
+     // if operator name is starts with folder_ use subsequent string 
+     // as a name of the folder where to save further output
+     if (name.find("folder_") == 0) {
+      auto folder_name = name.substr(7);
+      curr_dir = root_dir->mkdir(folder_name.c_str());
+      if (curr_dir == nullptr) curr_dir = root_dir;
+     }
      op->init(curr_dir);
    }
 

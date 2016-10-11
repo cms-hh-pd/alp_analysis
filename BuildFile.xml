@@ -5,7 +5,7 @@
 <use name="roottmva"/>
 <use name="rootminuit2"/> 
 <use name="rootmath"/>
-<use name="analysis/ALPHA"/>
+<use name="Analysis/ALPHA"/>
 <flags CXXFLAGS="-lGenVector"/>
 <Flags ROOTMAP="no"/>
 <export>

@@ -14,8 +14,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
  
     std::string disc_;
     std::vector<std::string> weights_;
-    bool root_;
-    std::string dir_;
     std::vector<std::size_t> j_sortInd_;
 
     TH1D h_jets_ht {"h_jets_ht", "", 300, 0., 900.};
@@ -40,23 +38,13 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
     TH1D h_jet3_csv_unc_sq {"h_jet3_csv_unc_sq", "", 300,  -12., 1.};
 
 
-     JetPlotterOperator(std::string disc, const std::vector<std::string> & weights = {}, bool root = false, std::string dir = ""  ) :
+     JetPlotterOperator(std::string disc, const std::vector<std::string> & weights = {}) :
       disc_(disc),
-      weights_(weights),
-      root_(root),
-      dir_(dir) {}
+      weights_(weights) {}
     virtual ~JetPlotterOperator() {}
 
     virtual void init(TDirectory * tdir) {
-      if (root_) {
-        tdir = tdir->GetFile();
-        auto ndir = tdir->mkdir(dir_.c_str());
-        if (ndir == 0) {
-          tdir = tdir->GetDirectory(dir_.c_str());
-        } else {
-          tdir = ndir;
-        }
-      }
+
       h_jets_ht.SetDirectory(tdir);
       h_jet0_pt.SetDirectory(tdir);
       h_jet0_eta.SetDirectory(tdir);
