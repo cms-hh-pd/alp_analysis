@@ -79,8 +79,6 @@ namespace alp {
           hlt_bits_.at(i).second = **(hlt_bits_reader_.at(i));
         }
 
-<<<<<<< HEAD
-=======
         // muon information
         muons_pt_.clear();
         for (std::size_t i=0; i<muons_pt_reader_->GetSize(); i++) {
@@ -90,7 +88,6 @@ namespace alp {
 
         // met information
         met_pt_ = **met_pt_reader_;
->>>>>>> cf05299310e9e73bdf2be07470f4b89b7377a804
 
       }
   
