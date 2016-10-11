@@ -8,7 +8,7 @@ from glob import glob
 from ROOT import TChain, TH1F, TFile, vector
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
-from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator 
+from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator
 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
@@ -39,7 +39,10 @@ for trg_nameN in trg_namesN: trg_namesN_v.push_back(trg_nameN)
 # to parse variables to the anlyzer
 config = {"jets_branch_name": "Jets",
           "hlt_names": trg_names, 
-          "n_gen_events":0
+          "n_gen_events":0,
+          "xsec_br" : 0,
+          "matcheff": 0,
+          "kfactor" : 0
          }
 
 snames = []
@@ -78,12 +81,17 @@ for sname in snames:
     config["n_gen_events"]=ngenev
     print  "gen numEv {}".format(ngenev)
 
+    #read weights from alpSamples 
+    config["xsec_br"]  = samples[sname]["xsec_br"]
+    config["matcheff"] = samples[sname]["matcheff"]
+    config["kfactor"]  = samples[sname]["kfactor"]
+
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json.dumps(config))
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v)) #baseline trigger
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
@@ -102,7 +110,7 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v)) #to select on hh4b trigger
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
