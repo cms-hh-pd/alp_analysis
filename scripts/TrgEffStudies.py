@@ -5,31 +5,36 @@ import os
 from glob import glob
 
 # ROOT imports
-from ROOT import TChain, TH1F, TFile
+from ROOT import TChain, TH1F, TFile, vector
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
-from ROOT import BaseOperator, EventWriterOperator, vector
+from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator 
 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
 
 # exe parameters
-numEvents  = -1       # -1 to process all (10000)
-samList    = {'signals'}  # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
-trgList    = 'def_2016' # trigger paths - remove TriggerOperator to not apply trigger
+numEvents  = 10000       # -1 to process all (10000)
+samList    = {'trigger'}  # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
+trgList    = 'singleMu_2016'
+trgListN   = 'def_2016'
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
-oDir       = './output/v0_AccTrg_sig'         # output dir ('./test')
+oDir       = './output/v0_TrgStudy'         # output dir ('./test')
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
 trg_names = triggerlists[trgList]
-trg_names_v = vector("string")()
+trg_namesN = triggerlists[trgListN]
+trg_names.extend(trg_namesN) #to pass all triggers in config
 if not trg_names: print "### WARNING: empty hlt_names ###"
+trg_names_v = vector("string")()
 for trg_name in trg_names: trg_names_v.push_back(trg_name)
+trg_namesN_v = vector("string")()
+for trg_nameN in trg_namesN: trg_namesN_v.push_back(trg_nameN)
 
 # to parse variables to the anlyzer
 config = {"jets_branch_name": "Jets",
@@ -45,18 +50,23 @@ for s in samList:
 ns = 0
 hcount = TH1F('hcount', 'num of genrated events',1,0,1)
 for sname in snames:
-    isHH = False
     isHLT = False
+    isData = True
 
     #get file names in all sub-folders:
     files = glob(iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root")
     print "\n ### processing {}".format(sname)        
  
     #preliminary checks
-    if not files: print "WARNING: files do not exist"
+    if not files: 
+        print "WARNING: files do not exist"
+        continue
     else:
-        if "HH" in files[0]: isHH = True #unused...
-        if "_v14" in files[0]: isHLT = True #patch - check better way to look for HLT
+        if "Run" in files[0]: isData = True 
+        elif "_v14" in files[0]: isHLT = True #patch - check better way to look for HLT
+        else:
+            print "WARNING: no HLT, skip samples"
+            continue
 
     #read counters to get generated eventsbj
     ngenev = 0
@@ -72,15 +82,24 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json.dumps(config))
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4))
+    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(JetPairingOperator(alp.Event)(4))
-    if(isHLT): selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-    else: print "no HLT, skip trigger selection"
+    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(DiJetPlotterOperator(alp.Event)())
+    selector.addOperator(MetFilterOperator(alp.Event)(40.))
+    selector.addOperator(CounterOperator(alp.Event)())
+#     selector.addOperator(JetPairingOperator(alp.Event)(4))
+#    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
+    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(EventWriterOperator(alp.Event)())
+
+    selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
 

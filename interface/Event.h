@@ -20,11 +20,13 @@ namespace alp {
       // objects which will be read from TTree before first operator
       std::vector<std::pair<std::string, bool>> hlt_bits_;
       std::vector<alp::Jet> jets_;
+
       // required muon and trigger information for trigger studies
       // NOTE: might load objects in the future instead 
       std::vector<float> muons_pt_;
       std::vector<float> muons_pfiso03_;
       float met_pt_;
+
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
       std::vector<std::size_t> free_is_;
@@ -79,6 +81,7 @@ namespace alp {
 
         // muon information
         muons_pt_.clear();
+        muons_pfiso03_.clear();
         for (std::size_t i=0; i<muons_pt_reader_->GetSize(); i++) {
           muons_pt_.emplace_back(muons_pt_reader_->At(i));
           muons_pfiso03_.emplace_back(muons_pfiso03_reader_->At(i));

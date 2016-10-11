@@ -10,8 +10,6 @@ samlists = {
 
    'data'    : {'BTagCSVRun2016D'},
 
-   'datall'  : {'SingleMuonRun2016D', 'BTagCSVRun2016D'},
-
    'mainbkg' : {'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
                 'QCD_HT2000toInf', 'QCD_HT2000toInf_ext', 'QCD_HT200to300', 'QCD_HT200to300_ext', 'QCD_HT300to500',
                 'QCD_HT300to500_ext', 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
@@ -27,7 +25,10 @@ samlists = {
 
    'bosons'  : { 'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180', #'WJetsToQQ_HT-600ToInf',
                 'VBFHToBB', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'}, 
-   'trigger' : {'ST_s-channel_4f_lept', 'ST_t-channel_4f_lept',
+
+   'trigger' : {'TT',
+                'ST_s-channel_4f_lept', 'ST_t-channel_4f_lept',
+                'SingleMuonRun2016D',
                 'WJetsToLNu_HT-100To200_ext', 'WJetsToLNu_HT-100To200', 'WJetsToLNu_HT-200To400',
                 'WJetsToLNu_HT-200To400_ext', 'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
                 'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-800To1200', 'WJetsToLNu_HT-800To1200_ext',
