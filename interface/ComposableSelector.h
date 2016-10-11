@@ -29,7 +29,7 @@ template <class EventClass> class ComposableSelector : public TSelector {
   double n_genev_{-1};
   double w_xsecbr_{1.};
   double w_eff_{1.};
-  double w_lumi_{1.};
+  double lumiFb_{1.};
 
   // associated with a TTree
   TTreeReader reader_;
@@ -160,8 +160,11 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
    //hist with event weight to 1 fb-1
 
    TH1F* h_w_oneInvFb = (TH1F*)h_w_XsBrEff.Clone("h_w_oneInvFb");
-   if(!config_.at("isData")) w_lumi_ = 1000.; //FIXME
-   h_w_oneInvFb->Scale(w_lumi_/(h_genev.GetBinContent(1))); // weight*1000/genEv 
+   if (config_.find("lumiFb") != config_.end()) lumiFb_ = config_.at("lumiFb");
+   if (config_.find("isData") != config_.end()) {
+     if(config_.at("isData")) h_w_oneInvFb->SetBinContent(1,1./lumiFb_); // isData -> 1/int.Lumi
+   }
+   else h_w_oneInvFb->Scale(1000./(h_genev.GetBinContent(1))); // weight*1000/genEv -- pb to fb
 
    h_genev.Write();
    h_w_XsBrEff.Write();

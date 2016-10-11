@@ -14,11 +14,14 @@ from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
 
+TH1F.AddDirectory(0)
+
 # exe parameters
 numEvents  = 1000000       # -1 to process all (10000)
-samList    = {'trigger'}  # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
+samList    = {'trigger'}   # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
 trgList    = 'singleMu_2016'
 trgListN   = 'def_2016'
+intLumi_fb = 12.6          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
@@ -44,6 +47,7 @@ config = {"jets_branch_name": "Jets",
           "matcheff": 0,
           "kfactor" : 0,
           "isData" : False,
+          "lumiFb" : intLumi_fb,
          }
 
 snames = []
@@ -108,15 +112,15 @@ for sname in snames:
     selector.addOperator(MetFilterOperator(alp.Event)(40.))
     selector.addOperator(CounterOperator(alp.Event)())
 
+    selector.addOperator(FolderOperator(alp.Event)("4CSVM_noTrg"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(FolderOperator(alp.Event)("4CSVM_noTrg"))
     selector.addOperator(EventWriterOperator(alp.Event)())
 
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v)) #to select on hh4b trigger
+    selector.addOperator(FolderOperator(alp.Event)("4CSVM_Trg"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(FolderOperator(alp.Event)("4CSVM_Trg"))
     selector.addOperator(EventWriterOperator(alp.Event)())
 
     #create tChain and process each files
