@@ -81,6 +81,7 @@ namespace alp {
 
         // muon information
         muons_pt_.clear();
+        muons_pfiso03_.clear();
         for (std::size_t i=0; i<muons_pt_reader_->GetSize(); i++) {
           muons_pt_.emplace_back(muons_pt_reader_->At(i));
           muons_pfiso03_.emplace_back(muons_pfiso03_reader_->At(i));
