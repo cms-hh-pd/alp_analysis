@@ -17,29 +17,27 @@ Look at issue on GitHub and use this chat for discuss about the code:
 git account and git environment set
 
 - Git instructions
-0. In your working area, first set up the CMSSW release:
-   ```bash
-   cmsrel CMSSW_8_0_12
-   cd CMSSW_8_0_12/src/
-   cmsenv
-   git cms-init
-   ```
-1. Install packages needed by ALPHA:
-see README from ALPHA repo [https://github.com/cms-hh-pd/ALPHA#alpha]
+    0. In your working area, first set up the CMSSW release:
+        ```bash
+        cmsrel CMSSW_8_0_12
+        cd CMSSW_8_0_12/src/
+        cmsenv
+        git cms-init
+        ```
+    1. Install packages needed by ALPHA:
+        see README from ALPHA repo [https://github.com/cms-hh-pd/ALPHA#alpha]
 
-2. Clone ALPHA and setup it:
-see README from ALPHA repo [https://github.com/cms-hh-pd/ALPHA#alpha]
-   NOTE: clone it from cms-hh-pd repo:
-   ```bash
-   git clone git@github.com:cms-hh-pd/ALPHA.git
-   ```
-
-3. Clone the alp_analysis git repository:
-   ```bash
-   cd $CMSSW_BASE/src/Analysis
-   git clone git@github.com:cms-hh-pd/alp_analysis.git
-   ```
-
+    2. Clone ALPHA and setup it:
+        see README from ALPHA repo [https://github.com/cms-hh-pd/ALPHA#alpha]
+        NOTE: clone it from cms-hh-pd repo:
+            ```bash
+            git clone git@github.com:cms-hh-pd/ALPHA.git
+            ```
+    3. Clone the alp_analysis git repository:
+        ```bash
+        cd $CMSSW_BASE/src/Analysis
+        git clone git@github.com:cms-hh-pd/alp_analysis.git
+        ```
 ## TO RUN:
 Compile the code:
 ```bash
