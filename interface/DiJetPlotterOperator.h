@@ -13,8 +13,6 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
   public:
  
     std::vector<std::string> weights_;
-    bool root_;
-    std::string dir_;
 
     TH1D h_H0_mass {"h_H0_mass", "", 300, 0., 900.};
     TH1D h_H0_mass_unc_sq {"h_H0_mass_unc_sq", "", 300, 0., 900.};
@@ -33,22 +31,12 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
     TH1D h_H0H1_mass {"h_H0H1_mass", "", 300, 0., 900.};
     TH1D h_H0H1_mass_unc_sq {"h_H0H1_mass_unc_sq", "", 300, 0., 900.};
 
-     DiJetPlotterOperator(const std::vector<std::string> & weights = {}, bool root = false, std::string dir = ""  ) :
-      weights_(weights),
-      root_(root),
-      dir_(dir) {}
+     DiJetPlotterOperator(const std::vector<std::string> & weights = {}) :
+      weights_(weights) {}
     virtual ~DiJetPlotterOperator() {}
 
     virtual void init(TDirectory * tdir) {
-      if (root_) {
-        tdir = tdir->GetFile();
-        auto ndir = tdir->mkdir(dir_.c_str());
-        if (ndir == 0) {
-          tdir = tdir->GetDirectory(dir_.c_str());
-        } else {
-          tdir = ndir;
-        }
-      }
+
       h_H0_mass.SetDirectory(tdir);
       h_H0_pt.SetDirectory(tdir);
       h_H0_eta.SetDirectory(tdir);
