@@ -18,10 +18,13 @@ git account and git environment set
 
 - Git instructions
     0. In your working area, first set up the CMSSW release:
-        ```bash
+        ```
         cmsrel CMSSW_8_0_12
+
         cd CMSSW_8_0_12/src/
+
         cmsenv
+
         git cms-init
         ```
     1. Install packages needed by ALPHA:
@@ -35,9 +38,12 @@ git account and git environment set
             ```
     3. Clone the alp_analysis git repository:
         ```bash
+
         cd $CMSSW_BASE/src/Analysis
+
         git clone git@github.com:cms-hh-pd/alp_analysis.git
         ```
+
 ## TO RUN:
 Compile the code:
 ```bash
