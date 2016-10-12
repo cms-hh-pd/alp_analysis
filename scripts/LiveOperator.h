@@ -5,6 +5,7 @@
 
 #include "TH1.h"
 #include "TH2.h"
+#include "TCanvas.h"
 
 #include "../interface/BaseOperator.h"
 
@@ -41,8 +42,13 @@ template <class EventClass> class LiveOperator : public BaseOperator<EventClass>
       return true;
     }
 
-    // done at the end (e.g. save output) 
+    // done at the end (e.g. save output or create/draw canvas) 
     virtual bool output( TFile * tfile) {
+
+      TCanvas c1("c1");
+      c1.cd();
+      h_jets_pt.Draw();
+      c1.Write();
 
       return true;
     }

@@ -7,6 +7,7 @@ import importlib
 from glob import glob
 
 # ROOT imports
+import ROOT
 from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector
