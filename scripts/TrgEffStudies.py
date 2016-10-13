@@ -17,11 +17,11 @@ from Analysis.alp_analysis.triggerlists import triggerlists
 TH1F.AddDirectory(0)
 
 # exe parameters
-numEvents  = 1000000       # -1 to process all (10000)
+numEvents  = -1       # -1 to process all (10000)
 samList    = {'trigger'}   # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
 trgList    = 'singleMu_2016'
 trgListN   = 'def_2016'
-intLumi_fb = 12.6          # data integrated luminosity
+intLumi_fb = 12.9          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
@@ -56,7 +56,6 @@ for s in samList:
 
 # process samples
 ns = 0
-hcount = TH1F('hcount', 'num of genrated events',1,0,1)
 for sname in snames:
     isHLT = False
 
@@ -77,6 +76,7 @@ for sname in snames:
 
     #read counters to get generated eventsbj
     ngenev = 0
+    hcount = TH1F('hcount', 'num of genrated events',1,0,1)
     for f in files:
         tf = TFile(f)
         hcount.Add(tf.Get('counter/c_nEvents'))
@@ -100,8 +100,8 @@ for sname in snames:
 
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(EventWriterOperator(alp.Event)())
+    #selector.addOperator(FolderOperator(alp.Event)("acc"))
+    #selector.addOperator(EventWriterOperator(alp.Event)())
 
     selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2))
     selector.addOperator(CounterOperator(alp.Event)())
@@ -112,13 +112,13 @@ for sname in snames:
     selector.addOperator(MetFilterOperator(alp.Event)(40.))
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(FolderOperator(alp.Event)("4CSVM_noTrg"))
+    selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
 
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v)) #to select on hh4b trigger
-    selector.addOperator(FolderOperator(alp.Event)("4CSVM_Trg"))
+    selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
