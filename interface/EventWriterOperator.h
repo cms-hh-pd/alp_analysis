@@ -79,7 +79,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       hlt0 = ev.hlt_bits_.at(0).second; //DEBUG 
       hlt1 = ev.hlt_bits_.at(1).second; //DEBUG 
       hlt2 = ev.hlt_bits_.at(2).second; //DEBUG 
-      hlt3 = hlt0 + hlt1; //DEBUG        
+      hlt3 = hlt1 + hlt2; //DEBUG        
 
       tree_.Fill();
 

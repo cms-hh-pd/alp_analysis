@@ -265,7 +265,7 @@ samples = {
         'kfactor' : 1.,
     },   
     
-    # Background QCD bEnriched FIXME  xsec
+    # Background QCD bEnriched
     'QCD_bEnriched_HT1000to1500' :{
         'sam_name': 'QCD_bEnriched_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0-v1',
         'nevents' : 221429,
@@ -515,14 +515,14 @@ samples = {
     'ST_s-channel_4f_lept' :{
         'sam_name': 'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_v0-v1',
         'nevents' : 1000000.,
-        'xsec_br' : 10.32, #10.11
+        'xsec_br' : 10.32*(1.-0.665),
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'ST_t-channel_4f_lept' :{
         'sam_name': 'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_v14_ext1-v1',
         'nevents' : 19835374.,
-        'xsec_br' : 216.99, #70.69
+        'xsec_br' : 216.99*(1.-0.665),
         'matcheff': 1.,
         'kfactor' : 1.,
     },

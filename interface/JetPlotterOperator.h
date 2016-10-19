@@ -16,8 +16,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
     std::vector<std::string> weights_;
     std::vector<std::size_t> j_sortInd_;
 
-    //TH1D h_nevts {"h_nevts", "number of events", 1, 0., 1.};
-
     TH1D h_jets_ht {"h_jets_ht", "", 500, 0., 1500.};
 
     TH1D h_jet0_pt {"h_jet0_pt", "", 300, 0., 900.};
@@ -39,7 +37,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
     TH1D h_jet3_csv {"h_jet3_csv", "", 300,  -1., 1.};
     TH1D h_jet3_csv_unc_sq {"h_jet3_csv_unc_sq", "", 300,  -1., 1.};
 
-
      JetPlotterOperator(std::string disc, const std::vector<std::string> & weights = {}) :
       disc_(disc),
       weights_(weights) {}
@@ -47,7 +44,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
 
     virtual void init(TDirectory * tdir) {
 
-      //h_nevts.SetDirectory(tdir);
       h_jets_ht.SetDirectory(tdir);
       h_jet0_pt.SetDirectory(tdir);
       h_jet0_eta.SetDirectory(tdir);
@@ -68,7 +64,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       h_jet3_eta_unc_sq.SetDirectory(tdir);
       h_jet3_csv_unc_sq.SetDirectory(tdir);
 
-      //h_nevts.Sumw2();
       h_jets_ht.Sumw2();
       h_jet0_pt.Sumw2();
       h_jet0_eta.Sumw2();
@@ -101,7 +96,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
 
       auto ht = get_jets_ht(ev.jets_);
 
-      //h_nevts.Fill(ev.nevts, w);
       h_jets_ht.Fill(ht, w);
       h_jet0_pt.Fill(ev.jets_.at(j_sortInd_[0]).pt(), w);
       h_jet0_eta.Fill(ev.jets_.at(j_sortInd_[0]).eta(), w);
