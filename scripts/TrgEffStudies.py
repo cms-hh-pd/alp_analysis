@@ -16,16 +16,22 @@ from Analysis.alp_analysis.triggerlists import triggerlists
 
 TH1F.AddDirectory(0)
 
+# parsing parameters
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
+args = parser.parse_args()
+
 # exe parameters
-numEvents  = -1      # -1 to process all (10000)
-samList    = ['trigger']   # list of samples to be processed - append multiple lists 
+numEvents  =  args.numEvts      # -1 to process all
+samList = ['trigger']   # list of samples to be processed - append multiple lists 
 trgList    = 'singleMu_short' #singleMu_2016
 trgListN   = 'def_2016'
 intLumi_fb = 12.9          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161014'         # equal to ntuple's folder
-oDir       = './output/v0_TrgStudy_2nd'         # output dir ('./test')
+oDir       = './output/v0_TrgStudy_2nda'         # output dir ('./test')
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
