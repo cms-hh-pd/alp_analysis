@@ -6,10 +6,15 @@
 
 // WARNING: it sorts event related variable - used by different operators
 inline void order_jets_by_disc(std::vector<alp::Jet> & jets, std::string & disc) {
+  auto compare_disc = [&](alp::Jet a, alp::Jet b){   
+      return a.disc(disc) > b.disc(disc); };
+
+  auto compare_pt = [&](alp::Jet a, alp::Jet b){   
+      return a.pt() > b.pt(); };
+
   // sort in discriminator order 
-  auto comparator = [&](alp::Jet a, alp::Jet b){ 
-    return a.disc(disc) > b.disc(disc); };
-  std::sort(jets.begin(), jets.end(), comparator );
+  if(disc == "pt")  std::sort(jets.begin(), jets.end(), compare_pt );
+  else std::sort(jets.begin(), jets.end(), compare_disc );
 }
 
 inline void get_sortIndex_jets(std::vector<std::size_t> & j_sort, std::vector<alp::Jet> & jets, std::string & disc) {

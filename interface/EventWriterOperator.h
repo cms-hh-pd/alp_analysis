@@ -23,6 +23,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     std::vector<float> * muons_pt_ptr = nullptr;
     std::vector<float> * muons_pfiso03_ptr = nullptr;
     float met_pt = 0.;
+    float w_btag = 0.;
     bool hlt0 = false;
     bool hlt1 = false;
     bool hlt2 = false;
@@ -53,6 +54,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tree_.Branch("muons.pt","std::vector<float>", &muons_pt_ptr, 64000, 2);
       tree_.Branch("muons.pfiso03","std::vector<float>", &muons_pfiso03_ptr, 64000, 2);
       tree_.Branch("met_pt",&met_pt,"met_pt/F");
+      tree_.Branch("w_btag",&w_btag,"w_btag/F");
       tree_.Branch("hlt_0",&hlt0,"hlt_0/O");
       tree_.Branch("hlt_1",&hlt1,"hlt_1/O");
       tree_.Branch("hlt_2",&hlt2,"hlt_2/O");
@@ -74,7 +76,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       //additional variables - to be changed to objects
       muons_pt_ptr = dynamic_cast<std::vector<float> *>(&ev.muons_pt_); 
       muons_pfiso03_ptr = dynamic_cast<std::vector<float> *>(&ev.muons_pfiso03_); 
-      met_pt = ev.met_pt_; //note: to be checked
+      met_pt = ev.met_pt_;
+      w_btag = ev.w_btag_;
 
       hlt0 = ev.hlt_bits_.at(0).second; //DEBUG 
       hlt1 = ev.hlt_bits_.at(1).second; //DEBUG 

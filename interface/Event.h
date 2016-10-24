@@ -26,6 +26,7 @@ namespace alp {
       std::vector<float> muons_pt_;
       std::vector<float> muons_pfiso03_;
       float met_pt_;
+      float w_btag_ = 1.; //btag event weight (computed in alp)
 
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
