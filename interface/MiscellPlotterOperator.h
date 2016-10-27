@@ -42,10 +42,10 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
       float w = 1.0;
       float w_unc_sq = 1.0;      
 
-      h_met_pt.Fill(ev.met_pt_, w);
-      for(std::size_t i=0; i< ev.muons_pt_.size(); ++i){
-        h_mu_pt.Fill(ev.muons_pt_.at(i), w);
-        h_mu_iso03.Fill(ev.muons_pfiso03_.at(i), w);
+      h_met_pt.Fill(ev.met_.pt(), w);
+      for(std::size_t i=0; i< ev.muons_.size(); ++i){
+        h_mu_pt.Fill(ev.muons_.at(i).pt(), w);
+        h_mu_iso03.Fill(ev.muons_.at(i).iso03(), w);
       }
 
       return true;

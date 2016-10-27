@@ -1,5 +1,6 @@
 <lcgdict>
   <class name="alp::Event"/>    
+  <class name="alp::Hemisphere"/>    
   <class pattern="ComposableSelector*"/>    
   <class pattern="FolderOperator<*>"/>    
   <class pattern="CounterOperator<*>"/>    
@@ -14,4 +15,8 @@
   <class pattern="JetPlotterOperator<*>"/>     
   <class pattern="DiJetPlotterOperator<*>"/>    
   <class pattern="EventWriterOperator<*>"/> 
+  <class pattern="ThrustFinderOperator<*>"/> 
+  <class pattern="HemisphereProducerOperator<*>"/> 
+  <class pattern="HemisphereMixerOperator<*>"/> 
+  <class pattern="MixedEventWriterOperator<*>"/> 
 </lcgdict>  
