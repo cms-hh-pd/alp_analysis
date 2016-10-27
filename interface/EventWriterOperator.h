@@ -12,7 +12,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
  
     bool root_;
     std::string dir_;
-    long n_ev_ = 0; 
+    float n_ev_; 
 
     //count histos
     TH1D h_nevts {"h_nevts", "number of events", 1, 0., 1.};
@@ -22,18 +22,32 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     std::vector<alp::PtEtaPhiEVector> * dijets_ptr = nullptr;
     std::vector<float> * muons_pt_ptr = nullptr;
     std::vector<float> * muons_pfiso03_ptr = nullptr;
-    float met_pt = 0.;
-    float w_btag = 0.;
-    bool hlt0 = false;
-    bool hlt1 = false;
-    bool hlt2 = false;
-    bool hlt3 = false;
+    float met_pt;
+    float w_btag;
+    bool hlt0;
+    bool hlt1;
+    bool hlt2;
+    bool hlt3;
+    bool hltOr01;
+    bool hltOr23;
+    bool hltOr0123;
 
     TTree tree_{"tree","Tree using simplified mut::dataformats"};
 
      EventWriterOperator(bool root = false, std::string dir = "") :
       root_(root),
-      dir_(dir) {}
+      dir_(dir) {
+        n_ev_ = 0.;
+        met_pt = 0.;
+        w_btag = 0.;
+        hlt0 = false;
+        hlt1 = false;
+        hlt2 = false;
+        hlt3 = false;
+        hltOr01 = false;
+        hltOr23 = false;
+        hltOr0123 = false;
+      }
     virtual ~EventWriterOperator() {}
 
     virtual void init(TDirectory * tdir) {
@@ -59,6 +73,9 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tree_.Branch("hlt_1",&hlt1,"hlt_1/O");
       tree_.Branch("hlt_2",&hlt2,"hlt_2/O");
       tree_.Branch("hlt_3",&hlt3,"hlt_3/O"); //DEBUG -- not fix number!
+      tree_.Branch("hlt_or01",&hltOr01,"hlt_or01/O"); 
+      tree_.Branch("hlt_or23",&hltOr23,"hlt_or23/O"); 
+      tree_.Branch("hlt_or0123",&hltOr0123,"hlt_or0123/O"); 
 
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
@@ -68,7 +85,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
     virtual bool process( EventClass & ev ) {
 
-      n_ev_ += 1*ev.w_btag_;
+      n_ev_ += ev.w_btag_;
 
       // to fill tree redirect pointers
       jets_ptr = dynamic_cast<std::vector<alp::Jet> *>(&ev.jets_); 
@@ -82,7 +99,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       hlt0 = ev.hlt_bits_.at(0).second; //DEBUG 
       hlt1 = ev.hlt_bits_.at(1).second; //DEBUG 
       hlt2 = ev.hlt_bits_.at(2).second; //DEBUG 
-      hlt3 = hlt1 + hlt2; //DEBUG        
+      hlt3 = ev.hlt_bits_.at(3).second; //DEBUG 
+      hltOr01 = hlt0 || hlt1; //DEBUG        
+      hltOr23 = hlt2 || hlt3; //DEBUG        
+      hltOr0123 = hlt0 || hlt1 || hlt2 || hlt3; //DEBUG    
 
       tree_.Fill();
 
