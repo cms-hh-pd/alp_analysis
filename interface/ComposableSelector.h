@@ -29,6 +29,7 @@ template <class EventClass> class ComposableSelector : public TSelector {
   double n_genev_{-1};
   double w_xsecbr_{1.};
   double w_eff_{1.};
+  double w_kfact_{1.};
   double lumiFb_{1.};
 
   // associated with a TTree
@@ -155,15 +156,14 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
    //hist with event weight = xsec*BR*genEff
    if (config_.find("xsec_br") != config_.end()) w_xsecbr_ = config_.at("xsec_br");
    if (config_.find("matcheff") != config_.end()) w_eff_ = config_.at("matcheff");
-   h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_);
+   if (config_.find("kfactor") != config_.end()) w_kfact_ = config_.at("kfactor");
+   h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_*w_kfact_);
 
    //hist with event weight to 1 fb-1
 
    TH1F* h_w_oneInvFb = (TH1F*)h_w_XsBrEff.Clone("h_w_oneInvFb");
    if (config_.find("lumiFb") != config_.end()) lumiFb_ = config_.at("lumiFb");
-   if (config_.find("isData") != config_.end()) {
-     if(config_.at("isData")) h_w_oneInvFb->SetBinContent(1,1./lumiFb_); // isData -> 1/int.Lumi
-   }
+   if(config_.at("isData")) h_w_oneInvFb->SetBinContent(1,1./lumiFb_); // isData -> 1/int.Lumi
    else h_w_oneInvFb->Scale(1000./(h_genev.GetBinContent(1))); // weight*1000/genEv -- pb to fb
 
    h_genev.Write();

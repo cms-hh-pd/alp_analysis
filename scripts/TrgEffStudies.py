@@ -8,7 +8,7 @@ from glob import glob
 from ROOT import TChain, TH1F, TFile, vector
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
-from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator
+from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
@@ -17,15 +17,15 @@ from Analysis.alp_analysis.triggerlists import triggerlists
 TH1F.AddDirectory(0)
 
 # exe parameters
-numEvents  = 1000000       # -1 to process all (10000)
-samList    = {'trigger'}   # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
-trgList    = 'singleMu_2016'
+numEvents  = -1      # -1 to process all (10000)
+samList    = ['trigger']   # list of samples to be processed - append multiple lists 
+trgList    = 'singleMu_short' #singleMu_2016
 trgListN   = 'def_2016'
-intLumi_fb = 12.6          # data integrated luminosity
+intLumi_fb = 12.9          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
-ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
-oDir       = './output/v0_TrgStudy'         # output dir ('./test')
+ntuplesVer = 'v0_20161014'         # equal to ntuple's folder
+oDir       = './output/v0_TrgStudy_2nd'         # output dir ('./test')
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -56,7 +56,6 @@ for s in samList:
 
 # process samples
 ns = 0
-hcount = TH1F('hcount', 'num of genrated events',1,0,1)
 for sname in snames:
     isHLT = False
 
@@ -77,13 +76,19 @@ for sname in snames:
 
     #read counters to get generated eventsbj
     ngenev = 0
+    nerr = 0
+    hcount = TH1F('hcount', 'num of genrated events',1,0,1)
     for f in files:
         tf = TFile(f)
-        hcount.Add(tf.Get('counter/c_nEvents'))
+        if tf.Get('counter/c_nEvents'):
+            hcount.Add(tf.Get('counter/c_nEvents'))
+        else:
+            nerr+=1        
         tf.Close()
     ngenev = hcount.GetBinContent(1)
     config["n_gen_events"]=ngenev
     print  "gen numEv {}".format(ngenev)
+    print  "empty files {}".format(nerr)
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]
@@ -100,7 +105,13 @@ for sname in snames:
 
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(FolderOperator(alp.Event)("acc"))
+    #selector.addOperator(FolderOperator(alp.Event)("acc"))
+    #selector.addOperator(EventWriterOperator(alp.Event)())
+
+    selector.addOperator(FolderOperator(alp.Event)("def"))
+    selector.addOperator(MiscellPlotterOperator(alp.Event)())
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
+    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
 
     selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2))
@@ -112,13 +123,15 @@ for sname in snames:
     selector.addOperator(MetFilterOperator(alp.Event)(40.))
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(FolderOperator(alp.Event)("4CSVM_noTrg"))
+    selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
+    selector.addOperator(MiscellPlotterOperator(alp.Event)())
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
 
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v)) #to select on hh4b trigger
-    selector.addOperator(FolderOperator(alp.Event)("4CSVM_Trg"))
+    selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
+    selector.addOperator(MiscellPlotterOperator(alp.Event)())
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())

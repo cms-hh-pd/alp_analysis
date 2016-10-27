@@ -16,27 +16,26 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
     std::vector<std::string> weights_;
     std::vector<std::size_t> j_sortInd_;
 
-    TH1D h_jets_ht {"h_jets_ht", "", 300, 0., 900.};
+    TH1D h_jets_ht {"h_jets_ht", "", 500, 0., 1500.};
 
     TH1D h_jet0_pt {"h_jet0_pt", "", 300, 0., 900.};
     TH1D h_jet0_eta {"h_jet0_eta", "", 100, -4.0, 4.0};
-    TH1D h_jet0_csv {"h_jet0_csv", "", 300,  -12., 1.};
+    TH1D h_jet0_csv {"h_jet0_csv", "", 300,  -1., 1.};
     TH1D h_jet1_pt {"h_jet1_pt", "", 300, 0., 900.};
     TH1D h_jet1_eta {"h_jet1_eta", "", 100, -4.0, 4.0};
-    TH1D h_jet1_csv {"h_jet1_csv", "", 300, -12., 1.};
+    TH1D h_jet1_csv {"h_jet1_csv", "", 300, -1., 1.};
     TH1D h_jet2_pt {"h_jet2_pt", "", 300, 0., 900.};
     TH1D h_jet2_pt_unc_sq {"h_jet2_pt_unc_sq", "", 300, 0., 900.};
     TH1D h_jet2_eta {"h_jet2_eta", "", 100, -4.0, 4.0};
     TH1D h_jet2_eta_unc_sq {"h_jet2_eta_unc_sq", "", 100, -4.0, 4.0};
-    TH1D h_jet2_csv {"h_jet2_csv", "", 300,  -12., 1.};
-    TH1D h_jet2_csv_unc_sq {"h_jet2_csv_unc_sq", "", 300,  -12., 1.};
+    TH1D h_jet2_csv {"h_jet2_csv", "", 300,  -1., 1.};
+    TH1D h_jet2_csv_unc_sq {"h_jet2_csv_unc_sq", "", 300,  -1., 1.};
     TH1D h_jet3_pt {"h_jet3_pt", "", 300, 0., 900.};
     TH1D h_jet3_pt_unc_sq {"h_jet3_pt_unc_sq", "", 300, 0., 900.};
     TH1D h_jet3_eta {"h_jet3_eta", "", 100, -4.0, 4.0};
     TH1D h_jet3_eta_unc_sq {"h_jet3_eta_unc_sq", "", 100, -4.0, 4.0};
-    TH1D h_jet3_csv {"h_jet3_csv", "", 300,  -12., 1.};
-    TH1D h_jet3_csv_unc_sq {"h_jet3_csv_unc_sq", "", 300,  -12., 1.};
-
+    TH1D h_jet3_csv {"h_jet3_csv", "", 300,  -1., 1.};
+    TH1D h_jet3_csv_unc_sq {"h_jet3_csv_unc_sq", "", 300,  -1., 1.};
 
      JetPlotterOperator(std::string disc, const std::vector<std::string> & weights = {}) :
       disc_(disc),
@@ -66,7 +65,6 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       h_jet3_csv_unc_sq.SetDirectory(tdir);
 
       h_jets_ht.Sumw2();
-
       h_jet0_pt.Sumw2();
       h_jet0_eta.Sumw2();
       h_jet0_csv.Sumw2();
