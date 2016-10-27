@@ -40,8 +40,11 @@ trg_namesN_v = vector("string")()
 for trg_nameN in trg_namesN: trg_namesN_v.push_back(trg_nameN)
 
 # to parse variables to the anlyzer
-config = {"jets_branch_name": "Jets",
-          "hlt_names": trg_names, 
+config = {"eventInfo_branch_name" : "EventInfo",
+          "jets_branch_name": "Jets",
+          "muons_branch_name" : "Muons",
+          "electrons_branch_name" : "Electron",
+          "met_branch_name" : "MET",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -115,13 +118,13 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("4CSVM_noTrg"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(EventWriterOperator(alp.Event)())
+    selector.addOperator(EventWriterOperator(alp.Event)(json.dumps(config)))
 
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v)) #to select on hh4b trigger
     selector.addOperator(FolderOperator(alp.Event)("4CSVM_Trg"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(EventWriterOperator(alp.Event)())
+    selector.addOperator(EventWriterOperator(alp.Event)(json.dumps(config)))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")
