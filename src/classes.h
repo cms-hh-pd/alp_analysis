@@ -12,6 +12,7 @@
 #include "Analysis/alp_analysis/interface/BTagFilterOperator.h"
 #include "Analysis/alp_analysis/interface/JetPairingOperator.h"
 
+#include "Analysis/alp_analysis/interface/MiscellPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/JetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/DiJetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/EventWriterOperator.h"
@@ -39,6 +40,7 @@ namespace {
     BTagFilterOperator<EventBase> b_tag_filter_operator; 
     JetPairingOperator<EventBase> jet_pairing_operator; 
     SetJetPairingOperator<EventBase> set_jet_pairing_operator; 
+    MiscellPlotterOperator<EventBase> miscell_plotter_operator; 
     JetPlotterOperator<EventBase> jet_plotter_operator; 
     DiJetPlotterOperator<EventBase> di_jet_plotter_operator; 
     EventWriterOperator<EventBase> event_writer_operator; 

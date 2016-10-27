@@ -11,6 +11,7 @@
   <class pattern="BTagFilterOperator<*>"/>    
   <class pattern="JetPairingOperator<*>"/>    
   <class pattern="SetJetPairingOperator<*>"/>   
+  <class pattern="MiscellPlotterOperator<*>"/>     
   <class pattern="JetPlotterOperator<*>"/>     
   <class pattern="DiJetPlotterOperator<*>"/>    
   <class pattern="EventWriterOperator<*>"/> 

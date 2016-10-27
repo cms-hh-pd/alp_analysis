@@ -16,6 +16,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
  
     // save in branches what was read
     alp::EventInfo * eventInfo_ptr = nullptr;
+
+    TH1D h_nevts {"h_nevts", "number of events", 1, 0., 1.};
+
+    // variables to save in branches
     std::vector<alp::Jet> * jets_ptr = nullptr;
     std::vector<alp::Lepton> * muons_ptr = nullptr;
     std::vector<alp::Lepton> * electrons_ptr = nullptr;
@@ -58,8 +62,9 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
                      "std::vector<alp::Candidate>",&met_ptr, 64000, 2);
       }                                                                               
 
-      tree_.Branch("DiJets","std::vector<alp::PtEtaPhiEVector>", &dijets_ptr, 64000, 2);
+      h_nevts.SetDirectory(tdir);
 
+      tree_.Branch("DiJets","std::vector<alp::PtEtaPhiEVector>", &dijets_ptr, 64000, 2);
 
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
@@ -69,6 +74,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
     virtual bool process( EventClass & ev ) {
 
+      h_nevts.Fill(0.5);
 
       // to fill tree redirect pointers that where read
       eventInfo_ptr = dynamic_cast<alp::EventInfo *>(&ev.eventInfo_); 
