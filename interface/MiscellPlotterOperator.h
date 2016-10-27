@@ -19,6 +19,8 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
     TH1D h_met_pt {"h_met_pt", "", 120,  0., 120.};
     TH1D h_mu_pt {"h_mu_pt", "", 150,  0., 150.};
     TH1D h_mu_iso03 {"h_mu_iso03", "", 50,  0., 0.3};
+    TH1D h_mu0_pt {"h_mu0_pt", "", 150,  0., 150.};
+    TH1D h_mu0_iso03 {"h_mu0_iso03", "", 50,  0., 0.3};
 
 
      MiscellPlotterOperator(const std::vector<std::string> & weights = {}) :
@@ -30,10 +32,15 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
       h_met_pt.SetDirectory(tdir);
       h_mu_pt.SetDirectory(tdir);
       h_mu_iso03.SetDirectory(tdir);
+      h_mu0_pt.SetDirectory(tdir);
+      h_mu0_iso03.SetDirectory(tdir);
 
       h_met_pt.Sumw2();
       h_mu_pt.Sumw2();
       h_mu_iso03.Sumw2();
+      h_mu0_pt.Sumw2();
+      h_mu0_iso03.Sumw2();
+
    }
 
 
@@ -42,8 +49,14 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
       float w = 1.0;
       float w_unc_sq = 1.0;      
 
+      w = ev.w_btag_; //btag weight
+
       h_met_pt.Fill(ev.met_pt_, w);
       for(std::size_t i=0; i< ev.muons_pt_.size(); ++i){
+        if(i==0){
+          h_mu0_pt.Fill(ev.muons_pt_.at(i), w);
+          h_mu0_iso03.Fill(ev.muons_pfiso03_.at(i), w);
+        }
         h_mu_pt.Fill(ev.muons_pt_.at(i), w);
         h_mu_iso03.Fill(ev.muons_pfiso03_.at(i), w);
       }

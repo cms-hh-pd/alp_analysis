@@ -91,6 +91,8 @@ namespace alp {
         // met information
         met_pt_ = **met_pt_reader_;
 
+        w_btag_ = 1.;
+
       }
   
   };

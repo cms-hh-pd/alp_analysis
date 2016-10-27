@@ -68,7 +68,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
     virtual bool process( EventClass & ev ) {
 
-      n_ev_++;
+      n_ev_ += 1*ev.w_btag_;
 
       // to fill tree redirect pointers
       jets_ptr = dynamic_cast<std::vector<alp::Jet> *>(&ev.jets_); 

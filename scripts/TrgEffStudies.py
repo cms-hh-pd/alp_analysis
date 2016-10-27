@@ -24,14 +24,14 @@ args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts      # -1 to process all
-samList = ['st']   # list of samples to be processed - append multiple lists 
+samList = ['st','tt']   # list of samples to be processed - append multiple lists 'st','tt'
 trgList    = 'singleMu_short' #singleMu_2016
 trgListN   = 'def_2016'
 intLumi_fb = 12.9          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161014'         # equal to ntuple's folder
-oDir       = './output/test4'         # output dir ('./test')
+oDir       = './output/test_mc_wReshape4'         # output dir ('./test') reshape
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -39,7 +39,7 @@ if not os.path.exists(oDir): os.mkdir(oDir)
 trg_names = triggerlists[trgList]
 trg_namesN = triggerlists[trgListN]
 trg_names.extend(trg_namesN) #to pass all triggers in config
-#if not trg_names: print "### WARNING: empty hlt_names ###"
+if not trg_names: print "### WARNING: empty hlt_names ###"
 trg_names_v = vector("string")()
 for trg_name in trg_names: trg_names_v.push_back(trg_name)
 trg_namesN_v = vector("string")()
@@ -67,17 +67,17 @@ for sname in snames:
 
     #get file names in all sub-folders:
     files = glob(iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root")
-   # print "\n ### processing {}".format(sname)        
+    print "\n ### processing {}".format(sname)        
  
     #preliminary checks
     if not files: 
-     #   print "WARNING: files do not exist"
+        print "WARNING: files do not exist"
         continue
     else:
         if "Run" in files[0]: config["isData"] = True 
         elif "_v14" in files[0]: isHLT = True #patch - check better way to look for HLT
         else:
-        #    print "WARNING: no HLT, skip samples"
+            print "WARNING: no HLT, skip samples"
             continue
 
     #read counters to get generated eventsbj
@@ -93,8 +93,8 @@ for sname in snames:
         tf.Close()
     ngenev = hcount.GetBinContent(1)
     config["n_gen_events"]=ngenev
-  #  print  "gen numEv {}".format(ngenev)
- #   print  "empty files {}".format(nerr)
+    print  "gen numEv {}".format(ngenev)
+    print  "empty files {}".format(nerr)
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]
@@ -120,7 +120,7 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(EventWriterOperator(alp.Event)())
 
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2))
+    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2, config["isData"]))
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))
@@ -148,11 +148,11 @@ for sname in snames:
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
- #   print "max numEv {}".format(nev)
+    print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)
     ns+=1
    
     #some cleaning
     hcount.Reset()
 
-#print "### processed {} samples ###".format(ns) 
+print "### processed {} samples ###".format(ns) 
