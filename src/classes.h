@@ -1,5 +1,6 @@
 
 #include "Analysis/alp_analysis/interface/Event.h"
+#include "Analysis/alp_analysis/interface/Hemisphere.h"
 #include "Analysis/alp_analysis/interface/ComposableSelector.h"
 #include "Analysis/alp_analysis/interface/BaseOperator.h"
 #include "Analysis/alp_analysis/interface/FolderOperator.h"
@@ -14,6 +15,11 @@
 #include "Analysis/alp_analysis/interface/JetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/DiJetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/EventWriterOperator.h"
+
+#include "Analysis/alp_analysis/interface/ThrustFinderOperator.h"
+#include "Analysis/alp_analysis/interface/HemisphereProducerOperator.h"
+#include "Analysis/alp_analysis/interface/HemisphereMixerOperator.h"
+#include "Analysis/alp_analysis/interface/MixedEventWriterOperator.h"
 
 
 namespace {
@@ -36,9 +42,14 @@ namespace {
     JetPlotterOperator<EventBase> jet_plotter_operator; 
     DiJetPlotterOperator<EventBase> di_jet_plotter_operator; 
     EventWriterOperator<EventBase> event_writer_operator; 
+    ThrustFinderOperator<EventBase> thrust_finder_operator;
+    HemisphereProducerOperator<EventBase> hemisphere_producer_operator;
+    HemisphereMixerOperator<EventBase> hemisphere_mixer_operator;
+    MixedEventWriterOperator<EventBase> mixed_event_writer_operator;
   };
 
   struct event_formats {
+    alp::Hemisphere alp_hemisphere;
     instances<alp::Event> instances_alp_event;
     };
 

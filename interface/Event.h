@@ -7,6 +7,7 @@
 #include "Analysis/ALPHA/interface/alp_objects.h"
 // includes from this repositoty
 #include "json.hpp"
+#include "Hemisphere.h"
 
 // for convenience
 using json = nlohmann::json;
@@ -30,6 +31,10 @@ namespace alp {
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
       std::vector<std::size_t> free_is_;
+      // to save the hemispheres (rotated and pz positive)
+      std::vector<alp::Hemisphere> hems_; 
+      // best matching hemispheres ( [first/second][proximity])
+      std::vector<std::vector<alp::Hemisphere>> best_match_hems_; 
   
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
@@ -37,6 +42,9 @@ namespace alp {
       TTreeReaderArray<float> * muons_pt_reader_ = nullptr;
       TTreeReaderArray<float> * muons_pfiso03_reader_ = nullptr;
       TTreeReaderValue<float> * met_pt_reader_ = nullptr;
+
+      // to keep the tranverse thrust axis phi
+      double thrust_phi_ = -10.;
   
       Event() {}
       Event(TTreeReader & reader, const json & config = {}) {
@@ -89,6 +97,10 @@ namespace alp {
 
         // met information
         met_pt_ = **met_pt_reader_;
+
+        thrust_phi_ = -10;
+        hems_.clear();
+        best_match_hems_.clear();
 
       }
   
