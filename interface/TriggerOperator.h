@@ -14,11 +14,7 @@ template <class EventClass> class TriggerOperator : public BaseOperator<EventCla
 
     virtual bool process( EventClass & ev ) {
       for (const auto & or_path : or_paths_) {
-        for (std::size_t i=0; i<ev.hlt_bits_reader_.size(); i++) {
-          if (ev.hlt_bits_.at(i).first==or_path) {
-            if (ev.hlt_bits_.at(i).second) return true;
-          }
-        }
+        if (ev.eventInfo_.getFilter(or_path)) return true;
       }
       return false;
     }

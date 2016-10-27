@@ -19,14 +19,18 @@ namespace alp {
     public:
   
       // objects which will be read from TTree before first operator
-      std::vector<std::pair<std::string, bool>> hlt_bits_;
+      alp::EventInfo eventInfo_;
       std::vector<alp::Jet> jets_;
+      std::vector<alp::Lepton> muons_;
+      std::vector<alp::Lepton> electrons_;
+      alp::Candidate met_;
+      // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
+      TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Lepton>> * muons_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Lepton>> * electrons_reader_ = nullptr;
+      TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
 
-      // required muon and trigger information for trigger studies
-      // NOTE: might load objects in the future instead 
-      std::vector<float> muons_pt_;
-      std::vector<float> muons_pfiso03_;
-      float met_pt_;
 
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
@@ -35,72 +39,65 @@ namespace alp {
       std::vector<alp::Hemisphere> hems_; 
       // best matching hemispheres ( [first/second][proximity])
       std::vector<std::vector<alp::Hemisphere>> best_match_hems_; 
-  
-      // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
-      TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
-      std::vector<std::unique_ptr<TTreeReaderValue<bool>>> hlt_bits_reader_; 
-      TTreeReaderArray<float> * muons_pt_reader_ = nullptr;
-      TTreeReaderArray<float> * muons_pfiso03_reader_ = nullptr;
-      TTreeReaderValue<float> * met_pt_reader_ = nullptr;
-
       // to keep the tranverse thrust axis phi
       double thrust_phi_ = -10.;
   
       Event() {}
       Event(TTreeReader & reader, const json & config = {}) {
+
+        // NOTE : if there is not branch_name key in the json those
+        // branches will not be read
+
+        // load event information 
+        if (config.find("eventInfo_branch_name") != config.end()) {
+            eventInfo_reader_ = new TTreeReaderValue<alp::EventInfo>(reader, 
+                config.at("eventInfo_branch_name").get_ref<const std::string &>().c_str());
+        }
         // load jet collection
         if (config.find("jets_branch_name") != config.end()) {
             jets_reader_ = new TTreeReaderValue<std::vector<alp::Jet>>(reader, 
                 config.at("jets_branch_name").get_ref<const std::string &>().c_str());
         }
-        // load trigger bits
-        if (config.find("hlt_names") != config.end()) {
-          for (const auto & hlt_name : config.at("hlt_names")) {
-            const std::string & hlt_name_s = hlt_name.get_ref<const std::string &>(); 
-            hlt_bits_.emplace_back(hlt_name_s, false);
-            hlt_bits_reader_.emplace_back(new TTreeReaderValue<bool>(reader,
-                hlt_name_s.c_str()));
-          }
-        }
-
-        // muon and met information required for trigger
-        muons_pt_reader_ = new TTreeReaderArray<float>(reader, "Muons.pt");
-        muons_pfiso03_reader_ = new TTreeReaderArray<float>(reader, "Muons.pfIso03");
-        met_pt_reader_ = new TTreeReaderValue<float>(reader, "MEt.pt");
+        // load muon collection
+        if (config.find("muons_branch_name") != config.end()) {
+            muons_reader_ = new TTreeReaderValue<std::vector<alp::Lepton>>(reader, 
+                config.at("muons_branch_name").get_ref<const std::string &>().c_str());      
+        }                                                                               
+        // load electron collection
+        if (config.find("electrons_branch_name") != config.end()) {
+            electrons_reader_ = new TTreeReaderValue<std::vector<alp::Lepton>>(reader, 
+                config.at("electrons_branch_name").get_ref<const std::string &>().c_str());      
+        }                                                                               
+        // load MET 
+        if (config.find("met_branch_name") != config.end()) {
+            met_reader_ = new TTreeReaderValue<alp::Candidate>(reader, 
+                config.at("met_branch_name").get_ref<const std::string &>().c_str());      
+        }                                                                               
 
       }
-  
       virtual ~Event() {
+        delete eventInfo_reader_;
         delete jets_reader_;
-        delete muons_pt_reader_;
-        delete muons_pfiso03_reader_;      
-        delete met_pt_reader_;
+        delete muons_reader_;
+        delete electrons_reader_;
+        delete met_reader_;
       }
 
       virtual void update() {
 
-        // small copy overhead
+        // small copy overhead, only update if pointer not null
+        if (eventInfo_reader_) eventInfo_ = **eventInfo_reader_;
         if (jets_reader_) jets_ = **jets_reader_;
+        if (muons_reader_) muons_ = **muons_reader_;
+        if (electrons_reader_) electrons_ = **electrons_reader_;
+        if (met_reader_) met_ = **met_reader_;
 
-        // update hlt_bits vector from reader
-        for (std::size_t i=0; i<hlt_bits_reader_.size(); i++) {
-          hlt_bits_.at(i).second = **(hlt_bits_reader_.at(i));
-        }
 
-        // muon information
-        muons_pt_.clear();
-        muons_pfiso03_.clear();
-        for (std::size_t i=0; i<muons_pt_reader_->GetSize(); i++) {
-          muons_pt_.emplace_back(muons_pt_reader_->At(i));
-          muons_pfiso03_.emplace_back(muons_pfiso03_reader_->At(i));
-        }
-
-        // met information
-        met_pt_ = **met_pt_reader_;
-
-        thrust_phi_ = -10;
+        dijets_.clear();
+        free_is_.clear();
         hems_.clear();
         best_match_hems_.clear();
+        thrust_phi_ = -10;
 
       }
   
