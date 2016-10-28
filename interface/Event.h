@@ -31,7 +31,6 @@ namespace alp {
       TTreeReaderValue<std::vector<alp::Lepton>> * electrons_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
 
-
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
       std::vector<std::size_t> free_is_;

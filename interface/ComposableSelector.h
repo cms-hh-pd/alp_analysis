@@ -17,9 +17,6 @@
 
 #include "BaseOperator.h"
 
-
-
-
 template <class EventClass> class ComposableSelector : public TSelector {
 
   public:
@@ -48,8 +45,6 @@ template <class EventClass> class ComposableSelector : public TSelector {
 
   // human readable event origin
   std::string pName_ = "";
-
-
 
   ComposableSelector(TTree * /*tree*/ =0, const std::string & config_s = {}) :
     config_(json::parse(config_s)),

@@ -49,6 +49,6 @@ samlists = {
 
    ## for testing 
    'short'   : ['HHTo4B_SM'],
-   'test'   : ['SingleMuonRun2016B-v2'], #'QCD_HT200to300'
+   'test'   : ['SingleMuonRun2016C-v2'], #'QCD_HT200to300'
 
 }
