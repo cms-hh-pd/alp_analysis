@@ -25,26 +25,29 @@ args = parser.parse_args()
 # exe parameters
 numEvents  =  args.numEvts      # -1 to process all
 samList = ['tt','test']   # list of samples to be processed - append multiple lists 'st','tt'
-trgList    = 'singleMu_short' #singleMu_2016
+trgListD   = 'singleMu_2016' #singleMu_2016
 trgListN   = 'def_2016'
 intLumi_fb = 12.9          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_test/'
 ntuplesVer = 'newformat'         # equal to ntuple's folder
-oDir       = './output/test_mc_wReshape4'         # output dir ('./test') reshape
+oDir       = './output/test'         # output dir ('./test') reshape
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
-trg_names = triggerlists[trgList]
+trg_namesD = triggerlists[trgListD]
 trg_namesN = triggerlists[trgListN]
-trg_names.extend(trg_namesN) #to pass all triggers in config
+trg_names  = trg_namesD + trg_namesN
+print trg_namesD
+print trg_namesN
+#print trg_names
 if not trg_names: print "### WARNING: empty hlt_names ###"
-trg_names_v = vector("string")()
-for trg_name in trg_names: trg_names_v.push_back(trg_name)
+trg_namesD_v = vector("string")()
+for t in trg_namesD: trg_namesD_v.push_back(t)
 trg_namesN_v = vector("string")()
-for trg_nameN in trg_namesN: trg_namesN_v.push_back(trg_nameN)
+for t in trg_namesN: trg_namesN_v.push_back(t)
 
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
@@ -114,7 +117,7 @@ for sname in snames:
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v)) #baseline trigger
+    selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v)) #baseline trigger
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
@@ -151,7 +154,7 @@ for sname in snames:
     selector.addOperator(EventWriterOperator(alp.Event)(json_str))
 
     #create tChain and process each files
-    tchain = TChain("ntuple/tree")
+    tchain = TChain("ntuple/tree")    
     for File in files:                     
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()

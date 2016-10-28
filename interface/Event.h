@@ -91,7 +91,6 @@ namespace alp {
         if (electrons_reader_) electrons_ = **electrons_reader_;
         if (met_reader_) met_ = **met_reader_;
 
-
         dijets_.clear();
         free_is_.clear();
         hems_.clear();
