@@ -27,6 +27,7 @@ namespace alp {
       std::vector<float> muons_pfiso03_;
       float met_pt_;
       float w_btag_ = 1.; //btag event weight (computed in alp)
+      float w_pu_ = 1.;
 
       // additional stuff that might be created during the processing 
       std::vector<PtEtaPhiEVector> dijets_;
@@ -38,6 +39,7 @@ namespace alp {
       TTreeReaderArray<float> * muons_pt_reader_ = nullptr;
       TTreeReaderArray<float> * muons_pfiso03_reader_ = nullptr;
       TTreeReaderValue<float> * met_pt_reader_ = nullptr;
+      TTreeReaderValue<float> * w_pu_reader_ = nullptr;
   
       Event() {}
       Event(TTreeReader & reader, const json & config = {}) {
@@ -60,6 +62,7 @@ namespace alp {
         muons_pt_reader_ = new TTreeReaderArray<float>(reader, "Muons.pt");
         muons_pfiso03_reader_ = new TTreeReaderArray<float>(reader, "Muons.pfIso03");
         met_pt_reader_ = new TTreeReaderValue<float>(reader, "MEt.pt");
+        w_pu_reader_ = new TTreeReaderValue<float>(reader, "PUWeight");
 
       }
   
@@ -68,6 +71,7 @@ namespace alp {
         delete muons_pt_reader_;
         delete muons_pfiso03_reader_;      
         delete met_pt_reader_;
+        delete w_pu_reader_;
       }
 
       virtual void update() {
@@ -90,6 +94,7 @@ namespace alp {
 
         // met information
         met_pt_ = **met_pt_reader_;
+        w_pu_ = **w_pu_reader_;
 
         w_btag_ = 1.;
 

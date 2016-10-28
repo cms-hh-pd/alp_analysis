@@ -10,13 +10,13 @@ template <class EventClass> class IsoMuFilterOperator : public BaseOperator<Even
 
   public:
 
-    double iso03_min_;
-    double pt_max_;
+    double iso03_max_;
+    double pt_min_;
     std::size_t min_number_;
 
-    IsoMuFilterOperator( double iso03_min, double pt_max , std::size_t min_number ) :
-    iso03_min_(iso03_min),
-    pt_max_(pt_max),
+    IsoMuFilterOperator( double iso03_max, double pt_min , std::size_t min_number ) :
+    iso03_max_(iso03_max),
+    pt_min_(pt_min),
     min_number_(min_number) {}
     virtual ~IsoMuFilterOperator() {}
 
@@ -31,7 +31,7 @@ template <class EventClass> class IsoMuFilterOperator : public BaseOperator<Even
         std::vector<float> pts;
         std::vector<float> isos;
         for(std::size_t i=0; i< ev.muons_pt_.size(); ++i){
-          if ((ev.muons_pfiso03_[i] >= iso03_min_ ) && (ev.muons_pt_[i] <= pt_max_ )) {
+          if ((ev.muons_pfiso03_[i] <= iso03_max_ ) && (ev.muons_pt_[i] >= pt_min_ )) {
             pts.push_back(ev.muons_pt_[i]);
             isos.push_back(ev.muons_pfiso03_[i]);
           }
@@ -48,8 +48,8 @@ template <class EventClass> class IsoMuFilterOperator : public BaseOperator<Even
     virtual std::string get_name() {
       auto name = std::string{};
       name+= "isomu_selection_min_"+std::to_string(min_number_);
-      name+= "mu_pt<"+std::to_string(pt_max_);
-      name+= "iso03>"+std::to_string(iso03_min_);
+      name+= "mu_pt_min_"+std::to_string(pt_min_);
+      name+= "iso03_max_"+std::to_string(iso03_max_);
       return name;
     }
 

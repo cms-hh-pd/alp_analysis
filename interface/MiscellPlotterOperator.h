@@ -49,7 +49,7 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
       float w = 1.0;
       float w_unc_sq = 1.0;      
 
-      w = ev.w_btag_; //btag weight
+      w = ev.w_btag_ * ev.w_pu_;
 
       h_met_pt.Fill(ev.met_pt_, w);
       for(std::size_t i=0; i< ev.muons_pt_.size(); ++i){

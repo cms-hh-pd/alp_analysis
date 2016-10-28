@@ -94,7 +94,7 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       // get index of ordering by discriminator
       get_sortIndex_jets(j_sortInd_, ev.jets_, disc_);
 
-      w = ev.w_btag_; //btag weight
+      w = ev.w_btag_ * ev.w_pu_; //btag weight
 
       auto ht = get_jets_ht(ev.jets_);
 
