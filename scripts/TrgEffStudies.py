@@ -24,14 +24,15 @@ args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts      # -1 to process all
-samList = ['data_singleMu']   # list of samples to be processed - append multiple lists 'st','tt'  data_singleMu
+samList = ['tt','test']   # list of samples to be processed - append multiple lists 'st','tt'
 trgListD   = 'singleMu_2016' #singleMu_2016
 trgListN   = 'def_2016'
 intLumi_fb = 12.9          # data integrated luminosity
 
-iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
-ntuplesVer = 'v0_20161014'         # equal to ntuple's folder
-oDir       = './output/trg_data_w2'         # output dir mc_wReshape4 data_w2
+iDir       = '/lustre/cmswork/hh/alpha_test/'
+ntuplesVer = 'newformat'         # equal to ntuple's folder
+oDir       = './output/test'         # output dir ('./test') reshape
+data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -49,8 +50,11 @@ trg_namesN_v = vector("string")()
 for t in trg_namesN: trg_namesN_v.push_back(t)
 
 # to parse variables to the anlyzer
-config = {"jets_branch_name": "Jets",
-          "hlt_names": trg_names, 
+config = {"eventInfo_branch_name" : "EventInfo",
+          "jets_branch_name": "Jets",
+          "muons_branch_name" : "Muons",
+          "electrons_branch_name" : "Electrons",
+          "met_branch_name" : "MET",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -69,7 +73,9 @@ for sname in snames:
     isHLT = False
 
     #get file names in all sub-folders:
-    files = glob(iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root")
+    reg_exp = iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root"
+    print "reg_exp: {}".format(reg_exp) 
+    files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
  
     #preliminary checks
@@ -104,8 +110,10 @@ for sname in snames:
     config["matcheff"] = samples[sname]["matcheff"]
     config["kfactor"]  = samples[sname]["kfactor"]
 
+    json_str = json.dumps(config)
+
     #define selectors list
-    selector = ComposableSelector(alp.Event)(0, json.dumps(config))
+    selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
@@ -121,9 +129,9 @@ for sname in snames:
     selector.addOperator(MiscellPlotterOperator(alp.Event)())
     selector.addOperator(JetPlotterOperator(alp.Event)("pt"))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(EventWriterOperator(alp.Event)())
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str))
 
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2, config["isData"]))
+    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))
@@ -136,14 +144,14 @@ for sname in snames:
     selector.addOperator(MiscellPlotterOperator(alp.Event)())
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags")) #pfCombinedInclusiveSecondaryVertexV2BJetTags
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(EventWriterOperator(alp.Event)())
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str))
 
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v)) #to select on hh4b trigger
     selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
     selector.addOperator(MiscellPlotterOperator(alp.Event)())
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags"))
     selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(EventWriterOperator(alp.Event)())
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")    

@@ -18,7 +18,7 @@ template <class EventClass> class MetFilterOperator : public BaseOperator<EventC
 
     virtual bool process( EventClass & ev ) {
 
-      return (ev.met_pt_ >= pt_min_ );
+      return (ev.met_.pt() >= pt_min_ );
 
     }
 

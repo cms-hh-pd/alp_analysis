@@ -53,25 +53,23 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
     virtual bool process( EventClass & ev ) {
 
       float w = 1.0;
-      float w_unc_sq = 1.0;      
+      w *= ev.eventInfo_.eventWeight(weights_); 
 
-      w = ev.w_btag_ * ev.w_pu_;
-
-      h_mu_n.Fill(ev.muons_pt_.size(), w);  
-      h_met_pt.Fill(ev.met_pt_, w);
+      h_mu_n.Fill(ev.muons_.size(), w);
+      h_met_pt.Fill(ev.met_.pt(), w);
 
       float mpt = 0.;
-      for(std::size_t i=0; i< ev.muons_pt_.size(); ++i){
-        if(i==0){
-          h_mu0_pt.Fill(ev.muons_pt_.at(i), w);
-          h_mu0_iso03.Fill(ev.muons_pfiso03_.at(i), w);
+      for(std::size_t i=0; i< ev.muons_.size(); ++i){
+        if (i==0) { 
+          h_mu0_pt.Fill(ev.muons_.at(i).pt(), w);
+          h_mu0_iso03.Fill(ev.muons_.at(i).iso03(), w);
         }
-        h_mu_pt.Fill(ev.muons_pt_.at(i), w);
-        h_mu_iso03.Fill(ev.muons_pfiso03_.at(i), w);
-        mpt += ev.muons_pt_.at(i);
+        h_mu_pt.Fill(ev.muons_.at(i).pt(), w);
+        h_mu_iso03.Fill(ev.muons_.at(i).iso03(), w);
+        mpt += ev.muons_.at(i).pt();
       }
       auto jpt = get_jets_ht(ev.jets_);
-      h_all_ht.Fill(jpt+mpt+ev.met_pt_, w);
+      h_all_ht.Fill(jpt+mpt+ev.met_.pt(), w);
 
       return true;
     }
