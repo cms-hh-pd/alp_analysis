@@ -24,14 +24,14 @@ args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts      # -1 to process all
-samList = ['st','tt']   # list of samples to be processed - append multiple lists 'st','tt'  data_singleMu
+samList = ['data_singleMu']   # list of samples to be processed - append multiple lists 'st','tt'  data_singleMu
 trgListD   = 'singleMu_2016' #singleMu_2016
 trgListN   = 'def_2016'
 intLumi_fb = 12.9          # data integrated luminosity
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v0_20161014'         # equal to ntuple's folder
-oDir       = './output/trg_mc_w'         # output dir mc_wReshape4 data_w2
+oDir       = './output/trg_data_w2'         # output dir mc_wReshape4 data_w2
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
