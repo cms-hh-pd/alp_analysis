@@ -12,6 +12,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -138,6 +139,10 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str))
+    selector.addOperator(ThrustFinderOperator(alp.Event)())
+    selector.addOperator(HemisphereProducerOperator(alp.Event)())
+    selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")    

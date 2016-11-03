@@ -20,6 +20,7 @@
 #include "Analysis/alp_analysis/interface/ThrustFinderOperator.h"
 #include "Analysis/alp_analysis/interface/HemisphereProducerOperator.h"
 #include "Analysis/alp_analysis/interface/HemisphereMixerOperator.h"
+#include "Analysis/alp_analysis/interface/HemisphereWriterOperator.h"
 #include "Analysis/alp_analysis/interface/MixedEventWriterOperator.h"
 
 
@@ -47,11 +48,13 @@ namespace {
     ThrustFinderOperator<EventBase> thrust_finder_operator;
     HemisphereProducerOperator<EventBase> hemisphere_producer_operator;
     HemisphereMixerOperator<EventBase> hemisphere_mixer_operator;
+    HemisphereWriterOperator<EventBase> hemisphere_writer_operator;
     MixedEventWriterOperator<EventBase> mixed_event_writer_operator;
   };
 
   struct event_formats {
     alp::Hemisphere alp_hemisphere;
+    std::vector<alp::Hemisphere> vector_alp_hemisphere;
     instances<alp::Event> instances_alp_event;
     };
 
