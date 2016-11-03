@@ -34,28 +34,16 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
     TTree tree_{"mix_tree","Tree wth mixed events"};
 
-     MixedEventWriterOperator(std::size_t n_h_mix = 1, std::size_t n_h_skip = 1,
-                bool root = false, std::string dir = "") :
+     MixedEventWriterOperator(std::size_t n_h_mix = 1, std::size_t n_h_skip = 1) :
       mix_jets_ptr_(&mix_jets_),  
       n_h_mix_(n_h_mix),
-      n_h_skip_(n_h_skip), 
-      root_(root),
-      dir_(dir) {}
+      n_h_skip_(n_h_skip) {}
 
     virtual ~MixedEventWriterOperator() {}
 
     virtual void init(TDirectory * tdir) {
-      if (root_) {
-        tdir = tdir->GetFile();
-        auto ndir = tdir->mkdir(dir_.c_str());
-        if (ndir == 0) {
-          tdir = tdir->GetDirectory(dir_.c_str());
-        } else {
-          tdir = ndir;
-        }
-      }
 
-      tree_.Branch("pfjets","std::vector<alp::Jet>",
+      tree_.Branch("Jets","std::vector<alp::Jet>",
                    &mix_jets_ptr_, 64000, 1);
 
 
