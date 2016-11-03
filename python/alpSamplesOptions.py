@@ -88,7 +88,7 @@ sam_opt = {
     ########## MC ##########
     ### Signals
     'HHTo4B_SM' :{
-        'sam_name': 'GluGluToHHTo4B_node_SM_13TeV-madgraph_v14-v1',
+        'sam_name': 'GluGluToHHTo4B_node_SM_13TeV-madgraph_reHLT-v1',
         'order'     : 2001,
         'fillcolor' : 632-4, #kRed
         'fillstyle' : 1,
@@ -100,7 +100,7 @@ sam_opt = {
 
     ### Backgrounds
     'TT' :{
-        'sam_name': 'TT_TuneCUETP8M1_13TeV-powheg-pythia8_v14_ext3-v1',
+        'sam_name': 'TT_TuneCUETP8M1_13TeV-powheg-pythia8_reHLT_ext3-v1',
         'order'     : 4,
         'fillcolor' : 4, #kBlue-2
         'fillstyle' : 1,
@@ -264,7 +264,7 @@ sam_opt = {
         'label'     : 'ST s-channel',
     },
     'ST_t-channel_4f_lept' :{
-        'sam_name'  : 'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_v14_ext1-v1',
+        'sam_name'  : 'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_withHLT_ext1-v1',
          'order'    : 1002,
         'fillcolor' : 616-2, #kMagenta
         'fillstyle' : 1,
