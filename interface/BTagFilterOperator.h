@@ -36,7 +36,7 @@
        calibCSV("CSVv2", data_path+ "CSVv2_ichep.csv"),
        calibCMVA("CMVAv2", data_path+"cMVAv2_ichep.csv")
        {
-         btcr.load(calibCSV,BTagEntry::FLAV_B,);
+         btcr.load(calibCSV,BTagEntry::FLAV_B, BTagSFmode);
          btcr.load(calibCSV,BTagEntry::FLAV_C, BTagSFmode);
          btcr.load(calibCSV,BTagEntry::FLAV_UDSG, BTagSFmode);
        }
