@@ -15,20 +15,21 @@ template <class EventClass> class IsoMuFilterOperator : public BaseOperator<Even
     std::size_t min_number_;
 
     IsoMuFilterOperator( double iso03_max, double pt_min , std::size_t min_number ) :
-    iso03_max_(iso03_max),
-    pt_min_(pt_min),
-    min_number_(min_number) {}
+      iso03_max_(iso03_max),
+      pt_min_(pt_min),
+      min_number_(min_number) {}
     virtual ~IsoMuFilterOperator() {}
 
     virtual bool process( EventClass & ev ) {
 
-      std::size_t nIsoMu = 0;
-      for(std::size_t i=0; i< ev.muons_.size(); ++i){
-          if ((ev.muons_.at(i).iso03() <= iso03_max_ ) && (ev.muons_.at(i).pt() >= pt_min_ )) nIsoMu++ ;
-      }
+      //check and remove muons out from selection
+      auto iter = remove_if(ev.muons_.begin(),ev.muons_.end(),   
+          [&] (const alp::Lepton & muon) { 
+             return ( muon.iso03() > iso03_max_  || muon.pt() < pt_min_ ) ; });
+      ev.muons_.erase(iter, ev.muons_.end());  
 
       //pass selection if at least min_number_ muons in region
-      if (nIsoMu < min_number_) return false;
+      if (ev.muons_.size() < min_number_) return false;
       return true;
     }
 

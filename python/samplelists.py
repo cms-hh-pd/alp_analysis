@@ -24,7 +24,7 @@ samlists = {
 
    'dibosons': ['ZH_HToBB_ZToQQ', 'WZ', 'ZZTo4Q'],
 
-   'bosons'  : [ 'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180', #'WJetsToQQ_HT-600ToInf',
+   'bosons'  : [ 'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180',
                 'VBFHToBB', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'], 
 
    'trigger' : ['TT',
@@ -49,6 +49,6 @@ samlists = {
 
    ## for testing 
    'short'   : ['HHTo4B_SM'],
-   'test'   : ['SingleMuonRun2016C-v2'], #'QCD_HT200to300'
+   'test'   : ['SingleMuonRun2016B-v2'], #'QCD_HT200to300''SingleMuonRun2016B-v2'
 
 }

@@ -21,9 +21,16 @@ inline void get_sortIndex_jets(std::vector<std::size_t> & j_sort, std::vector<al
   // to get sorting indexes for current jets list
   j_sort = std::vector<std::size_t>(jets.size());
   std::iota(j_sort.begin(), j_sort.end(), 0);
-  auto comparator = [&](std::size_t a, std::size_t b){ 
+
+  auto comp_disc = [&](std::size_t a, std::size_t b){ 
     return jets.at(a).disc(disc) > jets.at(b).disc(disc); };
-  std::sort(j_sort.begin(), j_sort.end(), comparator ); 
+
+  auto comp_pt = [&](std::size_t a, std::size_t b){   
+      return jets.at(a).pt() > jets.at(b).pt(); };
+
+  // sort in discriminator order 
+  if(disc == "pt")  std::sort(j_sort.begin(), j_sort.end(), comp_pt );
+  else std::sort(j_sort.begin(), j_sort.end(), comp_disc ); 
 }
 
 inline float get_jets_ht(std::vector<alp::Jet> & jets) {

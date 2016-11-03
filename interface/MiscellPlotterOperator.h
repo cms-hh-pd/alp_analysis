@@ -14,12 +14,14 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
  
     std::string disc_;
     std::vector<std::string> weights_;
+    std::string btagWname = "BTagWeight"; //make it more general?
+
     std::vector<std::size_t> j_sortInd_;
 
     TH1D h_all_ht {"h_all_ht", "ht mu+met+jets", 500,  0., 1500.};
     TH1D h_met_pt {"h_met_pt", "met pt", 250,  0., 500.};
-    TH1D h_mu_n {"h_mu_n", "# muons", 20,  0., 20.};
-    TH1D h_mu_pt {"h_mu_pt", "muons pt", 250,  0., 500.};
+    TH1D h_mu_n   {"h_mu_n", "# muons", 20,  0., 20.};
+    TH1D h_mu_pt  {"h_mu_pt", "muons pt", 250,  0., 500.};
     TH1D h_mu_iso03 {"h_mu_iso03", "muons iso03", 50,  0., 0.3};
     TH1D h_mu0_pt {"h_mu0_pt", "muon0 pt", 250,  0., 500.};
     TH1D h_mu0_iso03 {"h_mu0_iso03", "muon0 iso03", 50,  0., 0.3};
@@ -54,6 +56,9 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
 
       float w = 1.0;
       w *= ev.eventInfo_.eventWeight(weights_); 
+      if (ev.eventInfo_.hasWeight(btagWname)) {
+        w*=ev.eventInfo_.getWeight(btagWname);
+      }   
 
       h_mu_n.Fill(ev.muons_.size(), w);
       h_met_pt.Fill(ev.met_.pt(), w);

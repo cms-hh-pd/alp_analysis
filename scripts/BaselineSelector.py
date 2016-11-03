@@ -1,15 +1,19 @@
 #!/usr/bin/env python 
 
+# good old python modules
 import json
 import os
+import importlib
 from glob import glob
 
 # ROOT imports
-from ROOT import TChain, TH1F, TFile, vector
+import ROOT
+from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
 
+# imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
@@ -23,42 +27,36 @@ parser.add_argument("-e", "--numEvts", help="number of events", type=int, defaul
 args = parser.parse_args()
 
 # exe parameters
-numEvents  =  args.numEvts      
-samList = ['st','tt']     # list of samples to be processed - append multiple lists
-trgListD   = 'singleMu_2016'
-trgListN   = 'def_2016'
-intLumi_fb = 12.9
+numEvents  =  args.numEvts
+samList = ['SM']     # list of samples to be processed - append multiple lists
+trgList   = 'def_2016'
+intLumi_fb = 12.6
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
-ntuplesVer = 'v1_20161028'
-oDir       = './output/trg_mc_def'
+ntuplesVer = 'v1_20161028'         
+oDir       = './output/sig_def'
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'EventWeight'} #weights to be applied - EventWeight, PUWeight, GenWeight
+weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
-trg_namesD = triggerlists[trgListD]
-trg_namesN = triggerlists[trgListN]
-trg_names  = trg_namesD + trg_namesN
-print trg_namesD
-print trg_namesN
+trg_names = triggerlists[trgList]
 if not trg_names: print "### WARNING: empty hlt_names ###"
-trg_namesD_v = vector("string")()
-for t in trg_namesD: trg_namesD_v.push_back(t)
-trg_namesN_v = vector("string")()
-for t in trg_namesN: trg_namesN_v.push_back(t)
+trg_names_v = vector("string")()
+for t in trg_names: trg_names_v.push_back(t)
 
 # to convert weights 
 weights_v = vector("string")()
 for w in weights: weights_v.push_back(w)
 
+
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
-          "muons_branch_name" : "Muons",
-          "electrons_branch_name" : "Electrons",
-          "met_branch_name" : "MET",
+          #"muons_branch_name" : "",
+          #"electrons_branch_name" : "",
+          #"met_branch_name" : "",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -94,7 +92,7 @@ for sname in snames:
             print "WARNING: no HLT, skip samples"
             continue
 
-    #read counters to get generated events
+    #read counters to get generated eventsbj
     ngenev = 0
     nerr = 0
     hcount = TH1F('hcount', 'num of genrated events',1,0,1)
@@ -122,36 +120,24 @@ for sname in snames:
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(FolderOperator(alp.Event)("def"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pt",weights_v))
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2, config["isData"], data_path))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(MetFilterOperator(alp.Event)(40.))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v)) 
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
-    selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
+    selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
+
+    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("btag"))
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
+
+    selector.addOperator(JetPairingOperator(alp.Event)(4))
+    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("pair"))
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
+    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")    
@@ -166,4 +152,4 @@ for sname in snames:
     #some cleaning
     hcount.Reset()
 
-print "### processed {} samples ###".format(ns) 
+print "### processed {} samples ###".format(ns)

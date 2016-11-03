@@ -14,7 +14,11 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
  
     std::string disc_;
     std::vector<std::string> weights_;
+    std::string btagWname = "BTagWeight"; //make it more general?
+
     std::vector<std::size_t> j_sortInd_;
+
+    TH1D h_nevts {"h_nevts", "number of events", 1, 0., 1.};
 
     TH1D h_jets_pt {"h_jets_pt", "jets pt", 300, 0., 900.};
     TH1D h_jets_eta {"h_jets_eta", "jets eta", 100, -4.0, 4.0};
@@ -42,12 +46,20 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
     TH1D h_jet3_eta {"h_jet3_eta", "jet3 eta", 100, -4.0, 4.0};
     TH1D h_jet3_csv {"h_jet3_csv", "jet3 csv", 300,  -1., 1.};
 
+    //jets sorted in pt
+    TH1D h_jet0pt_pt {"h_jet0pt_pt", "jet0pt pt", 300, 0., 900.};
+    TH1D h_jet1pt_pt {"h_jet1pt_pt", "jet1pt pt", 300, 0., 900.};
+    TH1D h_jet2pt_pt {"h_jet2pt_pt", "jet2pt pt", 300, 0., 900.};
+    TH1D h_jet3pt_pt {"h_jet3pt_pt", "jet3pt pt", 300, 0., 900.};
+
      JetPlotterOperator(std::string disc, const std::vector<std::string> & weights = {}) :
       disc_(disc),
       weights_(weights) {}
     virtual ~JetPlotterOperator() {}
 
     virtual void init(TDirectory * tdir) {
+
+      h_nevts.SetDirectory(tdir);
 
       h_jets_pt.SetDirectory(tdir);
       h_jets_eta.SetDirectory(tdir);
@@ -74,6 +86,13 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       h_jet3_eta.SetDirectory(tdir);
       h_jet3_csv.SetDirectory(tdir);
 
+      h_jet0pt_pt.SetDirectory(tdir);
+      h_jet1pt_pt.SetDirectory(tdir);
+      h_jet2pt_pt.SetDirectory(tdir);
+      h_jet3pt_pt.SetDirectory(tdir);
+
+      h_nevts.Sumw2();
+
       h_jets_pt.Sumw2();
       h_jets_eta.Sumw2();
       h_jets_csv.Sumw2();
@@ -98,14 +117,30 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       h_jet3_pt.Sumw2();
       h_jet3_eta.Sumw2();
       h_jet3_csv.Sumw2();
+
+      h_jet0pt_pt.Sumw2();
+      h_jet1pt_pt.Sumw2();
+      h_jet2pt_pt.Sumw2();
+      h_jet3pt_pt.Sumw2();
    }
 
 
     virtual bool process( EventClass & ev ) {
-
       float w = 1.0;
-
       w*=ev.eventInfo_.eventWeight(weights_);
+      if (ev.eventInfo_.hasWeight(btagWname)) {
+        w*=ev.eventInfo_.getWeight(btagWname);
+      }   
+
+      h_nevts.Fill(0.5, w);
+
+      // get pt sorting
+      std::string d_ = "pt";
+      get_sortIndex_jets(j_sortInd_, ev.jets_, d_);
+      h_jet0pt_pt.Fill(ev.jets_.at(j_sortInd_[0]).pt(), w);
+      h_jet1pt_pt.Fill(ev.jets_.at(j_sortInd_[1]).pt(), w);
+      h_jet2pt_pt.Fill(ev.jets_.at(j_sortInd_[2]).pt(), w);
+      h_jet3pt_pt.Fill(ev.jets_.at(j_sortInd_[3]).pt(), w);
 
       // get index of ordering by discriminator
       get_sortIndex_jets(j_sortInd_, ev.jets_, disc_);
@@ -144,6 +179,7 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
 
     virtual bool output( TFile * tfile) {
 
+      std::cout<< "nevts " << h_nevts.GetBinContent(1) << "+-" << h_nevts.GetBinError(1) << std::endl; 
       return true;
 
     }

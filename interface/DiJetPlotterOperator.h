@@ -13,6 +13,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
   public:
  
     std::vector<std::string> weights_;
+    std::string btagWname = "BTagWeight"; //make it more general?
 
     TH1D h_H0_mass {"h_H0_mass", "", 300, 0., 900.};
     TH1D h_H0_pt   {"h_H0_pt", "", 300, 0., 900.};
@@ -51,7 +52,10 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
     virtual bool process( EventClass & ev ) {
 
       float w = 1.0;
-      float w_unc_sq = 1.0;
+      w*=ev.eventInfo_.eventWeight(weights_);
+      if (ev.eventInfo_.hasWeight(btagWname)) {
+        w*=ev.eventInfo_.getWeight(btagWname);
+      }   
 
       h_H0_mass.Fill(ev.dijets_.at(0).mass(), w);
       h_H0_pt.Fill(ev.dijets_.at(0).pt(), w);
