@@ -33,9 +33,9 @@ samList = ['SM']     # list of samples to be processed - append multiple lists
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = './output/sig_def'
+iDir       = './output/BSel_sig_def'
 ntuplesVer = ''         
-oDir       = './output/mixed_sig_def'
+oDir       = './output/mixSel_sig_def'
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
@@ -85,29 +85,8 @@ for sname in snames:
     if not files: 
         print "WARNING: files do not exist"
         continue
-    else:
-        if "Run" in files[0]: config["isData"] = True 
-        elif "_withHLT" in files[0]: isHLT = True
-        elif "_reHLT" in files[0]: isHLT = True
-        else:
-            print "WARNING: no HLT, skip samples"
-            continue
 
-    #read counters to get generated eventsbj
-    ngenev = 0
-    nerr = 0
-    hcount = TH1F('hcount', 'num of genrated events',1,0,1)
-    for f in files:
-        tf = TFile(f)
-        if tf.Get('counter/c_nEvents'):
-            hcount.Add(tf.Get('counter/c_nEvents'))
-        else:
-            nerr+=1        
-        tf.Close()
-    ngenev = hcount.GetBinContent(1)
-    config["n_gen_events"]=ngenev
-    print  "gen numEv {}".format(ngenev)
-    print  "empty files {}".format(nerr)
+    if "Run" in files[0]: config["isData"] = True 
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]
@@ -120,7 +99,7 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)())
+#    selector.addOperator(HemisphereMixerOperator(alp.Event)()) #debug
     selector.addOperator(MixedEventWriterOperator(alp.Event)())
 
     #create tChain and process each files

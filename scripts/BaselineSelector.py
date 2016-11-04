@@ -35,7 +35,7 @@ intLumi_fb = 12.6
 
 iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
 ntuplesVer = 'v1_20161028'         
-oDir       = './output/sig_def'
+oDir       = './output/BSel_sig_def'
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
