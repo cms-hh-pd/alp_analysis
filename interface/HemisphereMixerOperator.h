@@ -16,7 +16,6 @@
 #include "nanoflann.hpp"
 #include "prettyprint.hpp"
 
-
 // class to hold variables for NN search
 class HemisphereLibrary {
 

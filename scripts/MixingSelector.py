@@ -95,14 +95,19 @@ for sname in snames:
 
     json_str = json.dumps(config)
 
+    #get hem_tree for mixing
+    tch = TChain("pair/hem_tree")    
+    for f in files: 
+        tch.Add(f)
+
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-#    selector.addOperator(HemisphereMixerOperator(alp.Event)()) #debug
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch)) #debug - num events not fixed
     selector.addOperator(MixedEventWriterOperator(alp.Event)())
 
-    #create tChain and process each files
+    #create tChain and process each files   
     tchain = TChain("pair/tree")    
     for File in files:                     
         tchain.Add(File)       
