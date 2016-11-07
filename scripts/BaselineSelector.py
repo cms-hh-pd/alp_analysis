@@ -25,17 +25,22 @@ TH1F.AddDirectory(0)
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
+parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("-o", "--oDir", help="output directory", default="")
 args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts
-samList = ['SM']     # list of samples to be processed - append multiple lists
+if not args.samList: samList = ['qcd_b']  # list of samples to be processed - append multiple lists
+else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
-ntuplesVer = 'v1_20161028'         
-oDir       = './output/BSel_sig_def'
+iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
+ntuplesVer = "v1_20161028"        
+if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/BSel_MC_def"
+else: oDir = args.oDir
+
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
@@ -58,6 +63,8 @@ config = {"eventInfo_branch_name" : "EventInfo",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
+          "genbfromhs_branch_name" : "GenBFromHs",
+          "genhs_branch_name" : "GenHs",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -90,8 +97,7 @@ for sname in snames:
         elif "_withHLT" in files[0]: isHLT = True
         elif "_reHLT" in files[0]: isHLT = True
         else:
-            print "WARNING: no HLT, skip samples"
-            continue
+            print "WARNING: no HLT branch in tree."
 
     #read counters to get generated eventsbj
     ngenev = 0
