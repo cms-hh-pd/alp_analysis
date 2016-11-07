@@ -12,7 +12,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator
 from ROOT import EventWriterOperator, MixedEventWriterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMixerOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, SimplerMixerOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -33,7 +33,7 @@ samList = ['SM']     # list of samples to be processed - append multiple lists
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = './output/BSel_sig_def'
+iDir       = '/lustre/cmswork/hh/alp_baseSelector/MC_def/'
 ntuplesVer = ''         
 oDir       = './output/mixSel_sig_def'
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -50,6 +50,11 @@ for t in trg_names: trg_names_v.push_back(t)
 # to convert weights 
 weights_v = vector("string")()
 for w in weights: weights_v.push_back(w)
+
+nn_vars = ["thrustMayor","thrustMinor", "sumPz","invMass"]
+nn_vars_v = vector("string")()
+for v in nn_vars: nn_vars_v.push_back(v)
+
 
 
 # to parse variables to the anlyzer
@@ -100,12 +105,14 @@ for sname in snames:
     for f in files: 
         tch.Add(f)
 
+    print tch.GetEntries()    
+
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch)) #debug - num events not fixed
-    selector.addOperator(MixedEventWriterOperator(alp.Event)())
+    selector.addOperator(SimplerMixerOperator(alp.Event)(tch, nn_vars_v))
+#    selector.addOperator(MixedEventWriterOperator(alp.Event)())
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
@@ -118,6 +125,6 @@ for sname in snames:
     ns+=1
    
     #some cleaning
-    hcount.Reset()
+    #hcount.Reset()
 
 print "### processed {} samples ###".format(ns)

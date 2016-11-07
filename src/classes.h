@@ -23,6 +23,8 @@
 #include "Analysis/alp_analysis/interface/HemisphereWriterOperator.h"
 #include "Analysis/alp_analysis/interface/MixedEventWriterOperator.h"
 
+#include "Analysis/alp_analysis/interface/Utils.h"
+
 
 namespace {
 
@@ -48,6 +50,7 @@ namespace {
     ThrustFinderOperator<EventBase> thrust_finder_operator;
     HemisphereProducerOperator<EventBase> hemisphere_producer_operator;
     HemisphereMixerOperator<EventBase> hemisphere_mixer_operator;
+    SimplerMixerOperator<EventBase> simpler_mixer_operator;
     HemisphereWriterOperator<EventBase> hemisphere_writer_operator;
     MixedEventWriterOperator<EventBase> mixed_event_writer_operator;
   };

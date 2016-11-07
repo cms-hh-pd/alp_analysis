@@ -19,6 +19,7 @@
   <class pattern="ThrustFinderOperator<*>"/> 
   <class pattern="HemisphereProducerOperator<*>"/> 
   <class pattern="HemisphereMixerOperator<*>"/> 
+  <class pattern="SimplerMixerOperator<*>"/> 
   <class pattern="HemisphereWriterOperator<*>"/> 
   <class pattern="MixedEventWriterOperator<*>"/> 
 </lcgdict>  
