@@ -105,6 +105,7 @@ namespace alp {
         if (jets_reader_) jets_ = **jets_reader_;
         if (muons_reader_) muons_ = **muons_reader_;
         if (electrons_reader_) electrons_ = **electrons_reader_;
+        if (met_reader_) met_ = **met_reader_;
         if (genbfromhs_reader_) genbfromhs_ = **genbfromhs_reader_;
         if (genhs_reader_) genhs_ = **genhs_reader_;
 
