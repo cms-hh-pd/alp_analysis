@@ -69,12 +69,12 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       dijet0_pt =  ev.dijets_.at(0).pt();
       dijet0_eta =  ev.dijets_.at(0).eta();
       dijet0_phi =  ev.dijets_.at(0).phi();
-    //  dijet0_energy =  ev.dijets_.at(0).energy();
+      dijet0_energy =  ev.dijets_.at(0).energy();
 
       dijet1_pt =  ev.dijets_.at(1).pt();
       dijet1_eta =  ev.dijets_.at(1).eta();
       dijet1_phi =  ev.dijets_.at(1).phi();
-    //  dijet1_energy =  ev.dijets_.at(1).energy();
+      dijet1_energy =  ev.dijets_.at(1).energy();
 
       tree_.Fill();
 

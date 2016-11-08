@@ -34,6 +34,7 @@ if not args.samList: samList = ['SM']  # list of samples to be processed - appen
 else: samList = [args.samList]
 intLumi_fb = 12.6
 
+## WARNING -- input must be ntuples after four jets selection and pairing
 iDir       = "/lustre/cmswork/hh/alp_baseSelector/"
 ntuplesVer = "MC_def"        
 if not args.oDir: oDir = "./output/test"
@@ -52,6 +53,7 @@ for w in weights: weights_v.push_back(w)
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
+          "dijets_branch_name": "DiJets",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
@@ -108,7 +110,6 @@ for sname in snames:
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)
-    ns+=1
-  
+    ns+=1  
 
 print "### processed {} samples ###".format(ns)
