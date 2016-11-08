@@ -72,6 +72,7 @@ for s in samList:
 
 # process samples
 ns = 0
+nev = 0
 for sname in snames:
     isHLT = False
 
@@ -87,10 +88,6 @@ for sname in snames:
         continue
     else:
         if "Run" in files[0]: config["isData"] = True 
-        elif "_withHLT" in files[0]: isHLT = True
-        elif "_reHLT" in files[0]: isHLT = True
-        else:
-            print "WARNING: no HLT branch in tree."
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]
@@ -103,7 +100,6 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
-
     selector.addOperator(TreeConverterOperator(alp.Event)())
 
     #create tChain and process each files
