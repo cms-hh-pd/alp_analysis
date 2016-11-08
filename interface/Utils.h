@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include "Event.h"
+#include "Hemisphere.h"
 
 // WARNING: it sorts event related variable - used by different operators
 inline void order_jets_by_disc(std::vector<alp::Jet> & jets, std::string & disc) {
@@ -41,4 +42,3 @@ inline float get_jets_ht(std::vector<alp::Jet> & jets) {
   }
   return ht;
 }
-

@@ -23,6 +23,8 @@
 #include "Analysis/alp_analysis/interface/HemisphereWriterOperator.h"
 #include "Analysis/alp_analysis/interface/MixedEventWriterOperator.h"
 
+#include "Analysis/alp_analysis/interface/Utils.h"
+
 
 namespace {
 

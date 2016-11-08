@@ -24,11 +24,15 @@ namespace alp {
       std::vector<alp::Lepton> muons_;
       std::vector<alp::Lepton> electrons_;
       alp::Candidate met_;
+      std::vector<alp::Candidate> genbfromhs_;
+      std::vector<alp::Candidate> genhs_;
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Lepton>> * muons_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Lepton>> * electrons_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Candidate>> * genbfromhs_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Candidate>> * genhs_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
@@ -72,6 +76,16 @@ namespace alp {
             met_reader_ = new TTreeReaderValue<alp::Candidate>(reader, 
                 config.at("met_branch_name").get_ref<const std::string &>().c_str());      
         }                                                                               
+        // load GenBFromHs
+        if (config.find("genbfromhs_branch_name") != config.end()) {
+            genbfromhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader, 
+                config.at("genbfromhs_branch_name").get_ref<const std::string &>().c_str());      
+        }                                                                               
+        // load GenHs 
+        if (config.find("genhs_branch_name") != config.end()) {
+            genhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader, 
+                config.at("genhs_branch_name").get_ref<const std::string &>().c_str());      
+        }                                                                               
 
       }
       virtual ~Event() {
@@ -80,6 +94,8 @@ namespace alp {
         delete muons_reader_;
         delete electrons_reader_;
         delete met_reader_;
+        delete genbfromhs_reader_;
+        delete genhs_reader_;
       }
 
       virtual void update() {
@@ -89,7 +105,8 @@ namespace alp {
         if (jets_reader_) jets_ = **jets_reader_;
         if (muons_reader_) muons_ = **muons_reader_;
         if (electrons_reader_) electrons_ = **electrons_reader_;
-        if (met_reader_) met_ = **met_reader_;
+        if (genbfromhs_reader_) genbfromhs_ = **genbfromhs_reader_;
+        if (genhs_reader_) genhs_ = **genhs_reader_;
 
         dijets_.clear();
         free_is_.clear();
