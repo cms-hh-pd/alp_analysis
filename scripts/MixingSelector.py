@@ -12,7 +12,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator
 from ROOT import EventWriterOperator, MixedEventWriterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, SimplerMixerOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMixerOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -111,8 +111,8 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(SimplerMixerOperator(alp.Event)(tch, nn_vars_v))
-#    selector.addOperator(MixedEventWriterOperator(alp.Event)())
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch, nn_vars_v))
+    selector.addOperator(MixedEventWriterOperator(alp.Event)())
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    

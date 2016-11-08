@@ -135,27 +135,37 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
     std::size_t knn_;
 
     HemisphereMixerOperator( TChain * tc_hm,
-                     FuncIVec funcIVec = { FuncI( [] (const alp::Hemisphere & hem) {
-                                            int nJets = alp::Hemisphere::nJets(hem);
-                                            return ( nJets > 3 ? 4 : nJets);
-                                          }),
-                                          FuncI( [] (const alp::Hemisphere & hem) {
-                                            int nTags = alp::Hemisphere::nTags(hem,"pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800);
-                                            return ( nTags > 3 ? 4 : nTags);
-                                          })},
-                     FuncDVec funcDVec = { FuncD(&alp::Hemisphere::thrustMayor),
-                                           FuncD(&alp::Hemisphere::thrustMinor),
-                                           FuncD(&alp::Hemisphere::sumPz),
-                                           FuncD(&alp::Hemisphere::invMass)},
-                     Scaling scaling = Scaling::set,
-                     std::size_t knn = 10) :
-      funcIVec_(funcIVec),
-      funcDVec_(funcDVec),
+      std::vector<std::string> nn_vars = { "thrustMayor","thrustMinor",
+                                           "sumPz","invMass"},
+      Scaling scaling = Scaling::set,
+      std::size_t knn = 10) :
       scaling_(scaling),
-      var_stds_(funcDVec_.size(), 0.0),
+      var_stds_(nn_vars.size(), 0.0),
       knn_(knn) {
 
-        std::cout << "initializing HemisphereMixer" << std::endl;  
+      funcIVec_ = { FuncI( [] (const alp::Hemisphere & hem) {
+                       int nJets = alp::Hemisphere::nJets(hem);
+                       return ( nJets > 3 ? 4 : nJets);
+                  }),
+                  FuncI( [] (const alp::Hemisphere & hem) {
+                       int nTags = alp::Hemisphere::nTags(hem,
+                           "pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800);
+                       return ( nTags > 3 ? 4 : nTags);
+                 })};
+        
+     	FuncDMap funcDMap = {{"thrustMayor", FuncD(&alp::Hemisphere::thrustMayor)},
+      											 {"thrustMinor",FuncD(&alp::Hemisphere::thrustMinor)},
+                            {"sumPz", FuncD(&alp::Hemisphere::sumPz)},
+                            {"invMass", FuncD(&alp::Hemisphere::invMass)}};
+
+       for (const auto & nn_var : nn_vars) {
+         if (funcDMap.count(nn_var) < 1) {
+           std::cout << nn_var << " not present in function map, skipping " << std::endl; 
+         } else {
+           funcDVec_.emplace_back(funcDMap.at(nn_var));
+         } 
+       }
+
 
       // setup readers  
       TTreeReader hem_reader(tc_hm);
@@ -232,8 +242,6 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
         it->second->buildIndex();
 			}
 
-        std::cout << "initializion HemisphereMixer complete" << std::endl;  
-
     }
 
     virtual ~HemisphereMixerOperator() {}
@@ -269,7 +277,6 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
 
         std::vector<std::size_t> index_nns(knn_);
         std::vector<double> dist_nns(knn_);
-        std::cout << "going to do knn search" << std::endl;
         // query kdtree
         index_m_.at(h_cat)->knnSearch(&h_vars[0], knn_, &index_nns[0], &dist_nns[0]);
         // vector of hemispheres corresponding to category 
@@ -286,7 +293,6 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
         }   
       }
 
-        std::cout << "mixed done" << std::endl;
 
       return true;
     }
@@ -298,57 +304,4 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
     }
 
 };
-
-
-template <class EventClass> class SimplerMixerOperator : public HemisphereMixerOperator<EventClass> {
-  public:
-
-    typedef std::function<int(const alp::Hemisphere &)> FuncI;
-    typedef std::vector<std::function<int(const alp::Hemisphere &)>> FuncIVec;
-    typedef std::function<double(const alp::Hemisphere &)> FuncD;
-    typedef std::vector<std::function<double(const alp::Hemisphere &)>> FuncDVec;
-    typedef std::vector<alp::Hemisphere> HemVec;
-    typedef std::vector<int> IntVec;
-    typedef std::map<std::string,std::function<double(const alp::Hemisphere &)>> FuncDMap;
-
-    SimplerMixerOperator(TChain * tc_hm, 
-                            std::vector<std::string> nn_vars = { "thrustMayor","thrustMinor",
-                                                                "sumPz","invMass"},
-                            Scaling scaling = Scaling::set,
-                            std::size_t knn = 10) :
-		 HemisphereMixerOperator<EventClass>(tc_hm,
-                            { FuncI( [] (const alp::Hemisphere & hem) {
-                                         int nJets = alp::Hemisphere::nJets(hem);
-                                         return ( nJets > 3 ? 4 : nJets); }),
-                              FuncI( [] (const alp::Hemisphere & hem) {
-                                         int nTags = alp::Hemisphere::nTags(hem, "pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800);
-                                         return ( nTags > 3 ? 4 : nTags); })
-                            },
-                            FuncDVec([] (const std::vector<std::string> & nn_vars) {
-                              std::cout << "calling nn_vars lambda" << std::endl;
-                            	FuncDMap funcDMap = {{"thrustMayor", FuncD(&alp::Hemisphere::thrustMayor)},
-                             											 {"thrustMinor",FuncD(&alp::Hemisphere::thrustMinor)},
-                                                   {"sumPz", FuncD(&alp::Hemisphere::sumPz)},
-                                                   {"invMass", FuncD(&alp::Hemisphere::invMass)}};
-
-        											FuncDVec funcDVec; 
-											        for (const auto & nn_var : nn_vars) {
-											          if (funcDMap.count(nn_var) < 1) {
-											            std::cout << nn_var << " not present in function map, skipping " << std::endl; 
-											          } else {
-											            funcDVec.emplace_back(funcDMap.at(nn_var));
-											          } 
-											        }
-															return funcDVec;
-                            }),
-														scaling,
-                            knn)
-{
-}
-
-    virtual ~SimplerMixerOperator() {}
-
-};
-
-
 
