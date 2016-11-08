@@ -25,17 +25,21 @@ TH1F.AddDirectory(0)
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
+parser.add_argument("-s", "--samList", help="sample list"     , default="")
+parser.add_argument("-o", "--oDir"   , help="output directory", default="")
 args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts
-samList = ['SM']     # list of samples to be processed - append multiple lists
+if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
+else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = '/lustre/cmswork/hh/alp_baseSelector/MC_def/'
+iDir       = '/lustre/cmswork/hh/alp_baseSelector/data_def/'
 ntuplesVer = ''         
-oDir       = './output/mixSel_sig_def'
+if not args.oDir: oDir = "./output/mixSel_sig_def"
+else: oDir = args.oDir
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------

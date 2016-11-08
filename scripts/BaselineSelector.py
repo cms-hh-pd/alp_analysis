@@ -38,7 +38,7 @@ intLumi_fb = 12.6
 
 iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
 ntuplesVer = "v1_20161028"        
-if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/MC_def"
+if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/data_def"
 else: oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
