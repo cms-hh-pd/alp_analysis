@@ -36,7 +36,7 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = '/lustre/cmswork/hh/alp_baseSelector/data_def/'
+iDir       = '/lustre/cmswork/hh/alp_baseSelector/MC_def/'
 ntuplesVer = ''         
 if not args.oDir: oDir = "./output/mixSel_sig_def"
 else: oDir = args.oDir

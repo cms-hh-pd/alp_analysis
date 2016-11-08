@@ -17,7 +17,6 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWri
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
-from Analysis.alp_analysis.triggerlists import triggerlists
 
 TH1F.AddDirectory(0)
 
@@ -72,7 +71,6 @@ for s in samList:
 
 # process samples
 ns = 0
-nev = 0
 for sname in snames:
     isHLT = False
 
@@ -86,8 +84,8 @@ for sname in snames:
     if not files: 
         print "WARNING: files do not exist"
         continue
-    else:
-        if "Run" in files[0]: config["isData"] = True 
+
+    if "Run" in files[0]: config["isData"] = True 
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]

@@ -33,8 +33,6 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
 
     TTree tree_{"tree","Tree using  dataformats"};
 
-    json config_ = {};
-
     TreeConverterOperator(const std::vector<std::string> & weights = {}) :
       weights_(weights) {}
 
