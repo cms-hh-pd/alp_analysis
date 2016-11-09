@@ -16,6 +16,7 @@
   <class pattern="JetPlotterOperator<*>"/>     
   <class pattern="DiJetPlotterOperator<*>"/>    
   <class pattern="EventWriterOperator<*>"/> 
+  <class pattern="TreeConverterOperator<*>"/> 
   <class pattern="ThrustFinderOperator<*>"/> 
   <class pattern="HemisphereProducerOperator<*>"/> 
   <class pattern="HemisphereMixerOperator<*>"/> 
