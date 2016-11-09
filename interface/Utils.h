@@ -47,16 +47,6 @@ inline float get_jets_ht(std::vector<alp::Jet> & jets) {
   return ht;
 }
 
-inline float get_dj_dPhiabs(alp::Jet & jet0, alp::Jet & jet1) {
-  // to compute abs deltaPhi of Jets
-  return (pi - std::abs(std::abs(jet0.phi() - jet1.phi()) - pi));
-}
-
-inline float get_ddj_dPhiabs(alp::PtEtaPhiEVector & dijet0, alp::PtEtaPhiEVector & dijet1) {
-  // to compute abs deltaPhi of diJets
-  return (pi - std::abs(std::abs(dijet0.phi() - dijet1.phi()) - pi));
-}
-
 float get_absCosThetaStar(alp::PtEtaPhiEVector dj, alp::PtEtaPhiEVector ddj){     
   // to get star angle computation    
   alp::PtEtaPhiEVector boosted_dj =  ROOT::Math::VectorUtil::boost(dj, -ddj.BoostToCM());
