@@ -38,7 +38,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
 
     TH1D h_H0H1_mass {"h_H0H1_mass", "four-body mass"    , 300, 0., 900.};
     TH1D h_H0H1_pt   {"h_H0H1_pt"  , "four-body pt"      , 300, 0., 900.};
-    TH1D h_H0H1_eta  {"h_H0H1_eta" , "four-body eta"     , 100, -4.0, 4.0};
+    TH1D h_H0H1_eta  {"h_H0H1_eta" , "four-body eta"     , 100, -6.0, 6.0};
     TH1D h_H0H1_dr   {"h_H0H1_dr"  , "four-body deltaR"  , 100, 0., 7.};
     TH1D h_H0H1_deta {"h_H0H1_deta", "four-body deltaEta", 100, -4.0, 4.0};
     TH1D h_H0H1_dphi {"h_H0H1_dphi", "four-body deltaPhi", 100, -4.0, 4.0};
@@ -127,7 +127,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H0_deta.Fill(ev.jets_.at(0).eta()-ev.jets_.at(1).eta(), w);
       h_H0_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.jets_.at(0).p4_, ev.jets_.at(1).p4_), w);
       h_H0_deta_a.Fill(std::abs(ev.jets_.at(0).eta()-ev.jets_.at(1).eta()), w);
-      h_H0_dphi_a.Fill(std::abs(ROOT::Math::VectorUtil::DeltaR(ev.jets_.at(0).p4_, ev.jets_.at(1).p4_)), w);
+      h_H0_dphi_a.Fill(get_dj_dPhiabs(ev.jets_.at(0),ev.jets_.at(1)), w); //std::abs(ROOT::Math::VectorUtil::DeltaR(ev.jets_.at(0).p4_, ev.jets_.at(1).p4_))
 
       h_H1_mass.Fill(ev.dijets_.at(1).mass(), w);
       h_H1_pt.Fill(ev.dijets_.at(1).pt(), w);
@@ -137,7 +137,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H1_deta.Fill(ev.jets_.at(2).eta()-ev.jets_.at(3).eta(), w);
       h_H1_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.jets_.at(2).p4_, ev.jets_.at(3).p4_), w);
       h_H1_deta_a.Fill(std::abs(ev.jets_.at(2).eta()-ev.jets_.at(3).eta()), w);
-      h_H1_dphi_a.Fill(std::abs(ROOT::Math::VectorUtil::DeltaR(ev.jets_.at(2).p4_, ev.jets_.at(3).p4_)), w);
+      h_H1_dphi_a.Fill(get_dj_dPhiabs(ev.jets_.at(2),ev.jets_.at(3)), w); //std::abs(ROOT::Math::VectorUtil::DeltaR(ev.jets_.at(2).p4_, ev.jets_.at(3).p4_))
 
       h_H0H1_mass.Fill((ev.dijets_.at(0)+ev.dijets_.at(1)).mass(), w);
       h_H0H1_pt.Fill((ev.dijets_.at(0)+ev.dijets_.at(1)).pt(), w);
@@ -146,7 +146,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H0H1_deta.Fill(ev.dijets_.at(0).eta()-ev.dijets_.at(1).eta(), w);
       h_H0H1_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.dijets_.at(0), ev.dijets_.at(1)), w);
       h_H0H1_deta_a.Fill(std::abs(ev.dijets_.at(0).eta()-ev.dijets_.at(1).eta()), w);
-      h_H0H1_dphi_a.Fill(std::abs(ROOT::Math::VectorUtil::DeltaR(ev.dijets_.at(0), ev.dijets_.at(1))), w);
+      h_H0H1_dphi_a.Fill(get_ddj_dPhiabs(ev.dijets_.at(0), ev.dijets_.at(1)), w);//std::abs(ROOT::Math::VectorUtil::DeltaR(ev.dijets_.at(0), ev.dijets_.at(1)))
 
       h_H0_H1_mass.Fill(ev.dijets_.at(0).mass(), ev.dijets_.at(1).mass(), w);
 
