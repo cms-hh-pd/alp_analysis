@@ -1,4 +1,5 @@
 #!/usr/bin/env python 
+# to EXE: python scripts/BaselineSelector.py -s SM -o output/bSel_sig_def
 
 # good old python modules
 import json
