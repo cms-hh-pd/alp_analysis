@@ -1,4 +1,5 @@
 #!/usr/bin/env python 
+# to EXE: python scripts/MixingSelector.py -s data_ichep -i data_def -o output/mixSel_data_def
 
 # good old python modules
 import json
@@ -27,6 +28,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list"     , default="")
 parser.add_argument("-o", "--oDir"   , help="output directory", default="")
+parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="")
 args = parser.parse_args()
 
 # exe parameters
@@ -36,8 +38,10 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = '/lustre/cmswork/hh/alp_baseSelector/MC_def/'
-ntuplesVer = ''         
+iDir       = '/lustre/cmswork/hh/alp_baseSelector/'
+if not args.iDir: iDir += "MC_def"
+else: iDir += args.iDir
+
 if not args.oDir: oDir = "./output/mixSel_sig_def"
 else: oDir = args.oDir
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -85,7 +89,7 @@ for sname in snames:
     isHLT = False
 
     #get file names in all sub-folders:
-    reg_exp = iDir+ntuplesVer+"/"+sname+"*.root"
+    reg_exp = iDir+"/"+sname+"*.root"
     print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
