@@ -20,6 +20,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     std::vector<std::string> weights_;
 
     // variables to save in branches
+    float_t evtWeight = 1.;
     std::vector<alp::Jet> * jets_ptr = nullptr;
     std::vector<alp::Lepton> * muons_ptr = nullptr;
     std::vector<alp::Lepton> * electrons_ptr = nullptr;
@@ -41,6 +42,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     virtual ~EventWriterOperator() {}
 
     virtual void init(TDirectory * tdir) {
+
+      tree_.Branch("evtWeight", &evtWeight, "evtWeight/F");
 
       if (config_.find("eventInfo_branch_name") != config_.end()) {
         tree_.Branch(config_.at("eventInfo_branch_name").template get<std::string>().c_str(),
@@ -87,6 +90,9 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     virtual bool process( EventClass & ev ) {
 
       // to fill tree redirect pointers that where read
+      evtWeight = 1.;
+      evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
+
       eventInfo_ptr = dynamic_cast<alp::EventInfo *>(&ev.eventInfo_); 
       jets_ptr = dynamic_cast<std::vector<alp::Jet> *>(&ev.jets_); 
       muons_ptr = dynamic_cast<std::vector<alp::Lepton> *>(&ev.muons_); 

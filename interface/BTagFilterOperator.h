@@ -61,8 +61,9 @@
             w_btag *= btcr.eval(jf, ev.jets_.at(i).p4_.Eta(), ev.jets_.at(i).p4_.Pt(), ev.jets_.at(i).disc(disc_));
           }
         }
-        // add weight to event info and multiply EventWeight to bTag.
+        // add weight to event info
         ev.eventInfo_.weightPairs_.emplace_back("BTagWeight",w_btag);
+
         return true;
       }
 

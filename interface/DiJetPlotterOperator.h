@@ -14,8 +14,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
   public:
  
     std::vector<std::string> weights_;
-    std::string btagWname = "BTagWeight"; //make it more general?
-
+ 
     TH1D h_H0_mass   {"h_H0_mass",   "leading di-jet mass"    , 300, 0., 900.};
     TH1D h_H0_pt     {"h_H0_pt"  ,   "leading di-jet pt"      , 300, 0., 900.};
     TH1D h_H0_eta    {"h_H0_eta" ,   "leading di-jet eta"     , 100, -4.0, 4.0};
@@ -127,9 +126,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
 
       float w = 1.0;
       w*=ev.eventInfo_.eventWeight(weights_);
-      if (ev.eventInfo_.hasWeight(btagWname)) {
-        w*=ev.eventInfo_.getWeight(btagWname);
-      }   
+
      // debug - jets already sorted accordingly to pairing
       h_H0_mass.Fill(ev.dijets_.at(0).mass(), w);
       h_H0_pt.Fill(ev.dijets_.at(0).pt(), w);
