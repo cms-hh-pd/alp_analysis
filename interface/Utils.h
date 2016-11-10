@@ -5,9 +5,8 @@
 #include "Event.h"
 #include "Hemisphere.h"
 
+#include "TLorentzVector.h"
 #include "Math/VectorUtil.h"
-
-float pi=3.14159265;
 
 // WARNING: it sorts event related variable - used by different operators
 inline void order_jets_by_disc(std::vector<alp::Jet> & jets, std::string & disc) {
@@ -57,8 +56,15 @@ inline float get_ddj_dPhiabs(alp::PtEtaPhiEVector & dijet0, alp::PtEtaPhiEVector
   return (M_PI - std::abs(std::abs(dijet0.phi() - dijet1.phi()) - M_PI));
 }
 
-float get_absCosThetaStar(alp::PtEtaPhiEVector dj, alp::PtEtaPhiEVector ddj){     
+float get_absCosThetaStar(alp::PtEtaPhiEVector j, alp::PtEtaPhiEVector j_RF){     
   // to get star angle computation    
-  alp::PtEtaPhiEVector boosted_dj =  ROOT::Math::VectorUtil::boost(dj, -ddj.BoostToCM());
-  return std::abs(std::cos(boosted_dj.theta()));
+  TLorentzVector jv, jv_RF;
+  jv.SetPtEtaPhiE(j.pt(),j.eta(),j.phi(),j.energy());
+  jv_RF.SetPtEtaPhiE(j_RF.pt(),j_RF.eta(),j_RF.phi(),j_RF.energy());
+
+  jv.Boost(-jv_RF.BoostVector());
+  return std::abs(jv.CosTheta());
+//  alp::PtEtaPhiEVector boosted_dj =  ROOT::Math::VectorUtil::boost(dj, -ddj.BoostToCM());
+//  return std::abs(std::cos(boosted_dj.theta()));
 }
+
