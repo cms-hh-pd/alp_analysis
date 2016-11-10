@@ -58,13 +58,7 @@ inline float get_ddj_dPhiabs(alp::PtEtaPhiEVector & dijet0, alp::PtEtaPhiEVector
 
 float get_absCosThetaStar(alp::PtEtaPhiEVector j, alp::PtEtaPhiEVector j_RF){     
   // to get star angle computation    
-  TLorentzVector jv, jv_RF;
-  jv.SetPtEtaPhiE(j.pt(),j.eta(),j.phi(),j.energy());
-  jv_RF.SetPtEtaPhiE(j_RF.pt(),j_RF.eta(),j_RF.phi(),j_RF.energy());
-
-  jv.Boost(-jv_RF.BoostVector());
-  return std::abs(jv.CosTheta());
-//  alp::PtEtaPhiEVector boosted_dj =  ROOT::Math::VectorUtil::boost(dj, -ddj.BoostToCM());
-//  return std::abs(std::cos(boosted_dj.theta()));
+  alp::PtEtaPhiEVector boosted_dj =  ROOT::Math::VectorUtil::boost(j, j_RF.BoostToCM()); //minus already in the function
+  return std::abs(std::cos(boosted_dj.theta()));
 }
 
