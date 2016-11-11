@@ -43,7 +43,7 @@ if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/data_def"
 else: oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
+weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -146,7 +146,7 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(EventWriterOperator(alp.Event)(json_str))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
     selector.addOperator(HemisphereWriterOperator(alp.Event)())

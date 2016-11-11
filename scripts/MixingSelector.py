@@ -45,7 +45,7 @@ else: iDir += args.iDir
 if not args.oDir: oDir = "./output/mixSel_sig_def"
 else: oDir = args.oDir
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
+weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
