@@ -55,3 +55,9 @@ and run it:
 cd $CMSSW_BASE/src/Analysis/alp_analysis
 python scripts/Selector.py
 ```
+
+If you do not have ALPHA compiled do: 
+
+cd Analysis/alp_analysis/src/
+root -l
+> .L ../src/alp_objects.h++
