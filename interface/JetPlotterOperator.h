@@ -138,7 +138,7 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       h_jet2pt_pt.Fill(ev.jets_.at(j_sortInd_[2]).pt(), w);
       h_jet3pt_pt.Fill(ev.jets_.at(j_sortInd_[3]).pt(), w);
 
-      // get index of ordering by discriminator
+      // get index of ordering by discriminator - do not change ev.jets_ sorting.
       get_sortIndex_jets(j_sortInd_, ev.jets_, disc_);
 
       auto ht = get_jets_ht(ev.jets_);
