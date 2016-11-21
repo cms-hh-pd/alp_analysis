@@ -39,7 +39,7 @@ intLumi_fb = 12.6
 
 iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
 ntuplesVer = "v1_20161028"        
-if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/data_def"
+if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/def"
 else: oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -128,7 +128,7 @@ for sname in snames:
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+   # selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
