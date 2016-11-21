@@ -37,7 +37,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
     TH1D h_H1_deta_a {"h_H1_deta_a", "trailing di-jet deltaEta",100, 0., 4.0};
     TH1D h_H1_dphi_a {"h_H1_dphi_a", "trailing di-jet deltaPhi",100, 0., 4.0};
 
-    TH1D h_H0H1_mass {"h_H0H1_mass", "four-body mass"    , 300, 0., 900.};
+    TH1D h_H0H1_mass {"h_H0H1_mass", "four-body mass"    , 300, 0., 1200.};
     TH1D h_H0H1_pt   {"h_H0H1_pt"  , "four-body pt"      , 300, 0., 900.};
     TH1D h_H0H1_eta  {"h_H0H1_eta" , "four-body eta"     , 100, -6.0, 6.0};
     TH1D h_H0H1_csthst0_a {"h_H0H1_csthst0_a", "dijet0 - four-body |costh*|"  ,100, 0., 1.};

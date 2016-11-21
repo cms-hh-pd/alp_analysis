@@ -27,6 +27,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="")
 parser.add_argument("-o", "--oDir", help="output directory", default="")
 args = parser.parse_args()
 
@@ -37,9 +38,10 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
-ntuplesVer = "v1_20161028"        
-if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/def"
+iDir       = "./output/" #"/lustre/cmswork/hh/alpha_ntuples/"
+if not args.ntuplesVer: ntuplesVer = "MC_def_noTrg"
+else: ntuplesVer = args.ntuplesVer
+if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/data_def"
 else: oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -61,6 +63,7 @@ for w in weights: weights_v.push_back(w)
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
+          "dijets_branch_name": "DiJets",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
@@ -81,10 +84,8 @@ for s in samList:
 # process samples
 ns = 0
 for sname in snames:
-    isHLT = False
-
     #get file names in all sub-folders:
-    reg_exp = iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root"
+    reg_exp = iDir+ntuplesVer+"/"+sname+".root"
     print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -93,28 +94,20 @@ for sname in snames:
     if not files: 
         print "WARNING: files do not exist"
         continue
-    else:
-        if "Run" in files[0]: config["isData"] = True 
-        elif "_withHLT" in files[0]: isHLT = True
-        elif "_reHLT" in files[0]: isHLT = True
-        else:
-            print "WARNING: no HLT branch in tree."
+    if "Run" in files[0]: config["isData"] = True
 
     #read counters to get generated eventsbj
     ngenev = 0
-    nerr = 0
-    hcount = TH1F('hcount', 'num of genrated events',1,0,1)
-    for f in files:
-        tf = TFile(f)
-        if tf.Get('counter/c_nEvents'):
-            hcount.Add(tf.Get('counter/c_nEvents'))
-        else:
-            nerr+=1        
-        tf.Close()
-    ngenev = hcount.GetBinContent(1)
+    h_genEvts = TH1F('h_genEvts', 'num of generated events',1,0,1)
+    tf = TFile(files[0])
+    if tf.Get('h_genEvts'):
+        h_genEvts = tf.Get('h_genEvts')
+    else:
+        print "ERROR: no generated evts histos"
+        continue       
+    tf.Close()
+    ngenev = h_genEvts.GetBinContent(1)
     config["n_gen_events"]=ngenev
-    print  "gen numEv {}".format(ngenev)
-    print  "empty files {}".format(nerr)
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]
@@ -128,21 +121,9 @@ for sname in snames:
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
-   # selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
-    selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))
-
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4, config["isData"], data_path))
-    selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
-
-    selector.addOperator(JetPairingOperator(alp.Event)(4))
-    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
@@ -152,7 +133,7 @@ for sname in snames:
     selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
-    tchain = TChain("ntuple/tree")    
+    tchain = TChain("pair/tree")    
     for File in files:                     
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
@@ -160,8 +141,5 @@ for sname in snames:
     print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)
     ns+=1
-   
-    #some cleaning
-    hcount.Reset()
 
 print "### processed {} samples ###".format(ns)

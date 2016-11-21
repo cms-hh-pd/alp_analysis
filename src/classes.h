@@ -17,6 +17,8 @@
 #include "Analysis/alp_analysis/interface/DiJetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/EventWriterOperator.h"
 #include "Analysis/alp_analysis/interface/TreeConverterOperator.h"
+#include "Analysis/alp_analysis/interface/MCTruthOperator.h"
+#include "Analysis/alp_analysis/interface/DiHiggsFilterOperator.h"
 
 #include "Analysis/alp_analysis/interface/ThrustFinderOperator.h"
 #include "Analysis/alp_analysis/interface/HemisphereProducerOperator.h"
@@ -49,6 +51,8 @@ namespace {
     DiJetPlotterOperator<EventBase> di_jet_plotter_operator; 
     EventWriterOperator<EventBase> event_writer_operator; 
     TreeConverterOperator<EventBase> tree_converter_operator; 
+    MCTruthOperator<EventBase> mc_truth_operator; 
+    DiHiggsFilterOperator<EventBase> dihigg_filter_operator; 
     ThrustFinderOperator<EventBase> thrust_finder_operator;
     HemisphereProducerOperator<EventBase> hemisphere_producer_operator;
     HemisphereMixerOperator<EventBase> hemisphere_mixer_operator;

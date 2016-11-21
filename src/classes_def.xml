@@ -17,6 +17,8 @@
   <class pattern="DiJetPlotterOperator<*>"/>    
   <class pattern="EventWriterOperator<*>"/> 
   <class pattern="TreeConverterOperator<*>"/> 
+  <class pattern="MCTruthOperator<*>"/> 
+  <class pattern="DiHiggsFilterOperator<*>"/> 
   <class pattern="ThrustFinderOperator<*>"/> 
   <class pattern="HemisphereProducerOperator<*>"/> 
   <class pattern="HemisphereMixerOperator<*>"/> 
