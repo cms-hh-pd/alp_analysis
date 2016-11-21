@@ -27,8 +27,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
-parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="")
-parser.add_argument("-o", "--oDir", help="output directory", default="")
+parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="MC_def_noTrg")
+parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/data_def")
 args = parser.parse_args()
 
 # exe parameters
@@ -39,10 +39,8 @@ trgList   = 'def_2016'
 intLumi_fb = 12.6
 
 iDir       = "./output/" #"/lustre/cmswork/hh/alpha_ntuples/"
-if not args.ntuplesVer: ntuplesVer = "MC_def_noTrg"
-else: ntuplesVer = args.ntuplesVer
-if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/data_def"
-else: oDir = args.oDir
+ntuplesVer = args.ntuplesVer
+oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied

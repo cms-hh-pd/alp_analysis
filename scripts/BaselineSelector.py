@@ -27,7 +27,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
-parser.add_argument("-o", "--oDir", help="output directory", default="")
+parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/def")
 args = parser.parse_args()
 
 # exe parameters
@@ -39,8 +39,7 @@ intLumi_fb = 12.6
 
 iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
 ntuplesVer = "v1_20161028"        
-if not args.oDir: oDir = "/lustre/cmswork/hh/alp_baseSelector/def"
-else: oDir = args.oDir
+oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied
@@ -123,27 +122,34 @@ for sname in snames:
 
     json_str = json.dumps(config)
 
+    w2 = {'PUWeight', 'GenWeight'}
+    w2_v = vector("string")()
+    for w in w2: w2_v.push_back(w)
+
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("base"))
+    selector.addOperator(CounterOperator(alp.Event)(w2_v))
 
-   # selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
-    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("acc"))
+    selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
+    selector.addOperator(CounterOperator(alp.Event)(w2_v)) #debug - no bTagWeight?
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))
 
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4, config["isData"], data_path))
-    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("btag"))
+    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 4, config["isData"], data_path))
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
 
-    selector.addOperator(JetPairingOperator(alp.Event)(4))
-    selector.addOperator(CounterOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("pair"))
+    selector.addOperator(JetPairingOperator(alp.Event)(4))
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+
+    selector.addOperator(FolderOperator(alp.Event)("trg"))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
