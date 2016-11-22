@@ -42,9 +42,9 @@ args = parser.parse_args()
 # exe parameters
 
 numEvents  =  args.numEvts
-samList = ['qcd', 'tt', 'SM'] #,'SM'  # debug - qcd never as last sample
-fraction = [0.80, 0.19 , 5.668e-6 ] #5.668e-6 what is it?
-times_sm = [1., 1., args.hh_times_sm]
+samList = ['qcd', 'tt'] #,'SM'  # debug - qcd never as last sample
+fraction = [0.80, 0.20 ] #5.668e-6 what is it?
+times_sm = [1., 1.] #, args.hh_times_sm
 intLumi_fb = 12.6
 lumi_factor = args.lumi_factor
 lumi = intLumi_fb*lumi_factor
@@ -92,49 +92,80 @@ for s in samList:
 
 tc_hem = TChain("pair/hem_tree")
 tchain = TChain("pair/tree")
-n_evs = [0]
-
 #to get weights
-order_prec = -1
-ws = []
-weights_sum = []
-ns = 0
-for s, sname in enumerate(snames):
-    samOpt = sam_opt[sname]
-    print sname
-    ws.append( samples[sname]["xsec_br"]*samples[sname]["matcheff"]*samples[sname]["kfactor"] )
-    if(samOpt['order'] != order_prec): 
-        weights_sum.append(ws[s])
-        if s>0 : ns+=1
-    else: weights_sum[ns] += ws[s]
-    order_prec = sam_opt[sname]['order']
+#order_prec = -1
+#ws = []
+#weights_sum = []
+#ns = 0
+#for s, sname in enumerate(snames):
+#    samOpt = sam_opt[sname]
+#    print sname
+#    ws.append( samples[sname]["xsec_br"]*samples[sname]["matcheff"]*samples[sname]["kfactor"] )
+#    if(samOpt['order'] != order_prec): 
+#        weights_sum.append(ws[s])
+#        if s>0 : ns+=1
+#    else: weights_sum[ns] += ws[s]
+#    order_prec = sam_opt[sname]['order']
 
 #add file to tchain and normalize wieght to 1
+#
+#
 ns = 0
-ws_n = []
+ord_prev = -1
+n_ev_subsam = []
+n_ev_sample = []
 for s, sname in enumerate(snames):
+    tc = TChain("pair/tree")
     samOpt = sam_opt[sname]
     reg_exp = iDir+ntuplesVer+"/"+sname+".root"
     tc_hem.Add(reg_exp)
     tchain.Add(reg_exp)
-    n_evs.append(tchain.GetEntries())
-    if s>0 and samOpt['order'] != order_prec : ns+=1
-    ws_n.append(ws[s]/weights_sum[ns])
-    order_prec = sam_opt[sname]['order']
+    tc.Add(reg_exp)
+    n_ev_subsam.append(tc.GetEntries())
+    if(samOpt['order'] != ord_prev): 
+        n_ev_sample.append(tc.GetEntries())
+        if s>0 : ns+=1
+    else: n_ev_sample[ns] += tc.GetEntries()
+    ord_prev = sam_opt[sname]['order']
+    print "{} ev_sam {}".format(s, n_ev_sample)
+    print "   ev_subsam {}".format(n_ev_subsam)
 
-#cross check
-for s,sname in enumerate(snames):
-    print ws_n[s]
+# set max number of events
+tot_ev = tchain.GetEntries()
+tot_frac = []
+for s, sam in enumerate(samList):
+    tot_frac.append(fraction[s]) #*times_sm[s]*lumi_factor
+    if n_ev_sample[s]*tot_frac[s] < tot_ev*tot_frac[s]: tot_ev = n_ev_sample[s]/tot_frac[s]
+
+# get fractions
+#to be improved for qcd HT
+print "tot_ev {}".format(tot_ev)
+n_ev_sfrac = []
+for s, sam in enumerate(samList):
+    n_ev_sfrac.append(tot_frac[s]*tot_ev)
+    print n_ev_sfrac
+
+#order_prec = -1
+#ws_n = []
+#for s, sname in enumerate(snames):
+#    samOpt = sam_opt[sname]
+#    if s>0 and samOpt['order'] != order_prec : ns+=1
+#    ws_n.append(ws[s]/weights_sum[ns]*n_evL[ns])
+#    order_prec = sam_opt[sname]['order']
+
+##cross check
+#for s,sname in enumerate(snames):
+#    print ws_n[s]
 
 json_str = json.dumps(config)
 
 els = [TEventList("el"+sname,"el"+sname) for sname in snames]
+n_ev_base = 0
+#to be improved for qcd HT
 for s, sname in enumerate(snames):
-    print ws_n[s]
-    tot_frac = ws_n[s]*fraction[s]*times_sm[s]*lumi_factor
-    n_ev = float((n_evs[s+1]-n_evs[s])*tot_frac)
-    print "# {} events to use: {} ".format(sname, n_ev)
-    print tchain.Draw(">>el{}".format(sname),"(Entry$ > {}) && ( Entry$ <= {} ) {}".format(n_evs[s], n_evs[s]+n_ev, extra_cut))
+    print "# {} events to use: {} ".format(sname, n_ev_sfrac[s])
+    print tchain.Draw(">>el{}".format(sname),"(Entry$ > {}) && ( Entry$ <= {} ) {}".format(n_ev_base, n_ev_base+n_ev_sfrac[s], extra_cut))
+    n_ev_base += n_ev_sample[s]
 el = TEventList("el","el")
 for list_to_add in els:
     el.Add(list_to_add)
