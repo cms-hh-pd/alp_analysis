@@ -38,10 +38,10 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir = '/lustre/cmswork/hh/alp_baseSelector/' + args.iDir
+iDir = 'output/' + args.iDir #/lustre/cmswork/hh/alp_baseSelector/
 oDir = args.oDir
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
+weights = {}  #weights to be applied - EventWeight, PUWeight, GenWeight 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -65,6 +65,7 @@ for v in nn_vars: nn_vars_v.push_back(v)
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
           "dijets_branch_name": "DiJets",
+         # "dihiggs_branch_name": "DiHiggs",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
@@ -74,6 +75,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
          }
 
 snames = []

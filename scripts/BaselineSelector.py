@@ -27,7 +27,9 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/def")
+parser.set_defaults(doTrigger=False)
 args = parser.parse_args()
 
 # exe parameters
@@ -42,7 +44,7 @@ ntuplesVer = "v1_20161028"
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied
+weights = {}  #weights to be applied 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -71,6 +73,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
          }
 
 snames = []
@@ -122,7 +125,7 @@ for sname in snames:
 
     json_str = json.dumps(config)
 
-    w2 = {'PUWeight', 'GenWeight'}
+    w2 = {} 
     w2_v = vector("string")()
     for w in w2: w2_v.push_back(w)
 
@@ -146,9 +149,10 @@ for sname in snames:
     selector.addOperator(JetPairingOperator(alp.Event)(4))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
-    selector.addOperator(FolderOperator(alp.Event)("trg"))
-    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    if args.doTrigger:
+        selector.addOperator(FolderOperator(alp.Event)("pair_trg"))
+        selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+        selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
@@ -161,7 +165,8 @@ for sname in snames:
     tchain = TChain("ntuple/tree")    
     for File in files:                     
         tchain.Add(File)       
-    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
+    nev = int(tchain.GetEntries()/10) #debug
+#    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)
