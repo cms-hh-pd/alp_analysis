@@ -131,16 +131,16 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
 
    //hist with number of generated events
     if (config_.find("n_gen_events") != config_.end()) n_genev_ = config_.at("n_gen_events");
-    h_genev.SetBinContent(1,n_genev_);
+    if (!config_.at("isMixed")) h_genev.SetBinContent(1,n_genev_);
 
     //hist with event weight = xsec*BR*genEff
     if (config_.find("xsec_br") != config_.end()) w_xsecbr_ = config_.at("xsec_br");
     if (config_.find("matcheff") != config_.end()) w_eff_ = config_.at("matcheff");
     if (config_.find("kfactor") != config_.end()) w_kfact_ = config_.at("kfactor");
-    h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_*w_kfact_);
+    if (!config_.at("isMixed")) h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_*w_kfact_);
 
     //hist with event weight to 1 fb-1
-    if(config_.at("isData")) {
+    if(config_.at("isData") || config_.at("isMixed")) {
       if (config_.find("lumiFb") != config_.end()) lumiFb_ = config_.at("lumiFb");
       h_w_oneInvFb.SetBinContent(1,1./lumiFb_); // isData -> 1/int.Lumi
     }

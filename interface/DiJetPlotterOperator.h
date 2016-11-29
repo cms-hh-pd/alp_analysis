@@ -150,11 +150,11 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H1_deta_a.Fill(std::abs(ev.jets_.at(2).eta()-ev.jets_.at(3).eta()), w);
       h_H1_dphi_a.Fill(get_dj_dPhiabs(ev.jets_.at(2),ev.jets_.at(3)), w);
 
-      h_H0H1_mass.Fill((ev.dijets_.at(0)+ev.dijets_.at(1)).mass(), w);
-      h_H0H1_pt.Fill((ev.dijets_.at(0)+ev.dijets_.at(1)).pt(), w);
-      h_H0H1_eta.Fill((ev.dijets_.at(0)+ev.dijets_.at(1)).eta(), w);
-      h_H0H1_csthst0_a.Fill(get_absCosThetaStar(ev.dijets_.at(0),ev.dijets_.at(0)+ev.dijets_.at(1)), w);
-      h_H0H1_csthst1_a.Fill(get_absCosThetaStar(ev.dijets_.at(1),ev.dijets_.at(0)+ev.dijets_.at(1)), w);
+      h_H0H1_mass.Fill(ev.dihiggs_.at(0).mass(), w);
+      h_H0H1_pt.Fill(ev.dihiggs_.at(0).pt(), w);
+      h_H0H1_eta.Fill(ev.dihiggs_.at(0).eta(), w);
+      h_H0H1_csthst0_a.Fill(get_absCosThetaStar(ev.dijets_.at(0),ev.dihiggs_.at(0)), w);
+      h_H0H1_csthst1_a.Fill(get_absCosThetaStar(ev.dijets_.at(1),ev.dihiggs_.at(0)), w);
       h_H0H1_dr.Fill(ROOT::Math::VectorUtil::DeltaR(ev.dijets_.at(0), ev.dijets_.at(1)), w);
       h_H0H1_deta.Fill(ev.dijets_.at(0).eta()-ev.dijets_.at(1).eta(), w);
       h_H0H1_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.dijets_.at(0), ev.dijets_.at(1)), w);
