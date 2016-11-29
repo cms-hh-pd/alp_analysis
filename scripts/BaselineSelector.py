@@ -44,7 +44,7 @@ ntuplesVer = "v1_20161028"
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {}  #weights to be applied 
+weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -125,7 +125,7 @@ for sname in snames:
 
     json_str = json.dumps(config)
 
-    w2 = {} 
+    w2 = {'PUWeight', 'GenWeight'} 
     w2_v = vector("string")()
     for w in w2: w2_v.push_back(w)
 
@@ -149,8 +149,7 @@ for sname in snames:
     selector.addOperator(JetPairingOperator(alp.Event)(4))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
-    if args.doTrigger:
-        selector.addOperator(FolderOperator(alp.Event)("pair_trg"))
+    if args.doTrigger: #saved in pair folder
         selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
         selector.addOperator(CounterOperator(alp.Event)(weights_v))
 

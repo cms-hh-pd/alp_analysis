@@ -323,6 +323,17 @@ sam_opt = {
         'linestyle' : 1,
         'label'     : 'QCD',
     },
+    'QCD_HT1000to1500_m' : {
+        'sam_name': 'QCD_HT1000to1500_merged',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
+
     'QCD_HT1500to2000' : {
         'sam_name': 'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0-v3',
         'order'     : 5,
@@ -335,6 +346,16 @@ sam_opt = {
     },
     'QCD_HT1500to2000_ext' : {
         'sam_name': 'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0_ext1-v1',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
+    'QCD_HT1500to2000_m' : {
+        'sam_name': 'QCD_HT1500to2000_merged',
         'order'     : 5,
         'fillcolor' : 415, #kGreen-2
         'fillstyle' : 1,
@@ -363,6 +384,16 @@ sam_opt = {
         'linestyle' : 1,
         'label'     : 'QCD',
     },
+    'QCD_HT2000toInf_m' : {
+        'sam_name': 'QCD_HT2000toInf_merged',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
     'QCD_HT200to300' : {
         'sam_name': 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0-v1',
         'order'     : 5,
@@ -375,6 +406,16 @@ sam_opt = {
     },
     'QCD_HT200to300_ext' : {
         'sam_name': 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0_ext1-v1',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
+    'QCD_HT200to300_m' : {
+        'sam_name': 'QCD_HT200to300_merged',
         'order'     : 5,
         'fillcolor' : 415, #kGreen-2
         'fillstyle' : 1,
@@ -403,6 +444,16 @@ sam_opt = {
         'linestyle' : 1,
         'label'     : 'QCD',
     },
+    'QCD_HT300to500_m' : {
+        'sam_name': 'QCD_HT300to500_merged',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
     'QCD_HT500to700' : {
         'sam_name': 'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0-v1',
         'order'     : 5,
@@ -423,6 +474,16 @@ sam_opt = {
         'linestyle' : 1,
         'label'     : 'QCD',
     },
+    'QCD_HT500to700_m' : {
+        'sam_name': 'QCD_HT500to700_merged',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
     'QCD_HT700to1000' : {
         'sam_name': 'QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0-v1',
         'order'     : 5,
@@ -435,6 +496,16 @@ sam_opt = {
     },
     'QCD_HT700to1000_ext' : {
         'sam_name': 'QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v0_ext1-v1',
+        'order'     : 5,
+        'fillcolor' : 415, #kGreen-2
+        'fillstyle' : 1,
+       'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD',
+    },
+    'QCD_HT700to1000_m' : {
+        'sam_name': 'QCD_HT700to1000_merged',
         'order'     : 5,
         'fillcolor' : 415, #kGreen-2
         'fillstyle' : 1,
@@ -762,5 +833,77 @@ sam_opt = {
         'linestyle' : 1,
         'label'     : 'WJetsToLNu',
     },   
+
+    #additional samples (for second level filters)
+    'QCD_HT200toInf' :{
+        'sam_name':'QCD_HT200toInf',
+        'order'    : 9999,
+        'fillcolor' : 440,
+        'fillstyle' : 1,
+        'linecolor' : 440, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD HT>200',
+    },  
+    'QCD_HT500toInf' :{
+        'sam_name':'QCD_HT500toInf',
+        'order'    : 9999,
+        'fillcolor' : 430, #kCyan-2
+        'fillstyle' : 1,
+        'linecolor' : 430, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD HT>500',
+    },  
+    'QCD_HT200to500' :{
+        'sam_name':'QCD_HT200to500',
+        'order'    : 9999,
+        'fillcolor' : 430,
+        'fillstyle' : 1,
+        'linecolor' : 430, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD 200<HT<500',
+    },  
+    'QCD500_tt_SM300' :{
+        'sam_name':'QCD500_tt_SM300',
+        'order'    : 9999,
+        'fillcolor' : 410,
+        'fillstyle' : 1,
+        'linecolor' : 410, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD HT<500 + tt + 300SM',
+    },      
+    'QCD500_tt_SM100k' :{
+        'sam_name':'QCD500_tt_SM100k',
+        'order'    : 9999,
+        'fillcolor' : 410,
+        'fillstyle' : 1,
+        'linecolor' : 410, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'QCD HT<500 + tt + 100SM',
+    },    
+    'Data_BDT_28_11_16_15h_sig' :{ #debug
+        'sam_name':'Data_BDT_28_11_16_15h_sig',
+        'order'    : 9999,
+        'fillcolor' : 410,
+        'fillstyle' : 1,
+        'linecolor' : 410, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : '',
+    },   
+    'Data_BDT_28_11_16_15h_bkg' :{  #debug
+        'sam_name':'Data_BDT_28_11_16_15h_bkg',
+        'order'    : 9999,
+        'fillcolor' : 410,
+        'fillstyle' : 1,
+        'linecolor' : 410, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : '',
+    },  
 
 }
