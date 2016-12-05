@@ -38,6 +38,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
     TH1D h_H1_dphi_a {"h_H1_dphi_a", "trailing di-jet deltaPhi",100, 0., 4.0};
 
     TH1D h_H0H1_mass {"h_H0H1_mass", "four-body mass"    , 300, 0., 1200.};
+    TH1D h_X_mass {"h_X_mass", "X mass"    , 300, 0., 1200.};
     TH1D h_H0H1_pt   {"h_H0H1_pt"  , "four-body pt"      , 300, 0., 900.};
     TH1D h_H0H1_eta  {"h_H0H1_eta" , "four-body eta"     , 100, -6.0, 6.0};
     TH1D h_H0H1_csthst0_a {"h_H0H1_csthst0_a", "dijet0 - four-body |costh*|"  ,100, 0., 1.};
@@ -77,6 +78,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H1_deta_a.SetDirectory(tdir);
       h_H1_dphi_a.SetDirectory(tdir);
       h_H0H1_mass.SetDirectory(tdir);
+      h_X_mass.SetDirectory(tdir);
       h_H0H1_pt.SetDirectory(tdir);
       h_H0H1_eta.SetDirectory(tdir);
       h_H0H1_csthst0_a.SetDirectory(tdir);
@@ -88,6 +90,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H0H1_dphi_a.SetDirectory(tdir);
       h_H0_H1_mass.SetDirectory(tdir);
       h_H0_mass.Sumw2();
+      h_X_mass.Sumw2();
       h_H0_pt.Sumw2();
       h_H0_eta.Sumw2();
       h_H0_csthst0_a.Sumw2();
@@ -151,6 +154,7 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H1_dphi_a.Fill(get_dj_dPhiabs(ev.jets_.at(2),ev.jets_.at(3)), w);
 
       h_H0H1_mass.Fill(ev.dihiggs_.at(0).mass(), w);
+      h_X_mass.Fill(ev.dihiggs_.at(0).mass()-ev.dijets_.at(0).mass()-ev.dijets_.at(1).mass()+2*125., w);
       h_H0H1_pt.Fill(ev.dihiggs_.at(0).pt(), w);
       h_H0H1_eta.Fill(ev.dihiggs_.at(0).eta(), w);
       h_H0H1_csthst0_a.Fill(get_absCosThetaStar(ev.dijets_.at(0),ev.dihiggs_.at(0)), w);

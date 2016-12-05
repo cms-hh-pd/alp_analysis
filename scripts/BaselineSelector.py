@@ -145,14 +145,16 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
 
-    selector.addOperator(FolderOperator(alp.Event)("pair"))
+    selector.addOperator(FolderOperator(alp.Event)("pair_"))
     selector.addOperator(JetPairingOperator(alp.Event)(4))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
-    if args.doTrigger: #saved in pair folder
+    if args.doTrigger:
+        selector.addOperator(FolderOperator(alp.Event)("trigger"))
         selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
         selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
+    selector.addOperator(FolderOperator(alp.Event)("pair")) # final tree always in pair folder for simplicity
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
@@ -164,8 +166,8 @@ for sname in snames:
     tchain = TChain("ntuple/tree")    
     for File in files:                     
         tchain.Add(File)       
-    nev = int(tchain.GetEntries()/10) #debug
-#    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
+    #nev = int(tchain.GetEntries()/10) #debug
+    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)
