@@ -5,6 +5,7 @@
 #include "Analysis/alp_analysis/interface/BaseOperator.h"
 #include "Analysis/alp_analysis/interface/FolderOperator.h"
 #include "Analysis/alp_analysis/interface/CounterOperator.h"
+#include "Analysis/alp_analysis/interface/JEShifterOperator.h"
 #include "Analysis/alp_analysis/interface/TriggerOperator.h"
 #include "Analysis/alp_analysis/interface/JetFilterOperator.h"
 #include "Analysis/alp_analysis/interface/IsoMuFilterOperator.h"
@@ -40,6 +41,7 @@ namespace {
     FolderOperator<EventBase> folder_operator; 
     CounterOperator<EventBase> counter_operator; 
     TriggerOperator<EventBase> trigger_operator; 
+    JEShifterOperator<EventBase> jes_shifter_operator;
     JetFilterOperator<EventBase> jet_filter_operator; 
     IsoMuFilterOperator<EventBase> isomu_filter_operator; 
     MetFilterOperator<EventBase> met_filter_operator; 

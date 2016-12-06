@@ -13,7 +13,8 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator
+
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -28,8 +29,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
+parser.add_argument("--jesUp", help="use JES up", action='store_true')
+parser.add_argument("--jesDown", help="use JES down", action='store_true')
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/def")
-parser.set_defaults(doTrigger=False)
+parser.set_defaults(doTrigger=False, jesUp=False, jesDown=False)
 args = parser.parse_args()
 
 # exe parameters
@@ -39,9 +42,11 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
-ntuplesVer = "v1_20161028"        
+iDir       = "/lustre/cmswork/dallosso/hh2016/CMSSW_8_0_12/src/Analysis/ALPHA/"   #"/lustre/cmswork/hh/alpha_ntuples/"
+ntuplesVer = "signal_nocut/" #"v1_20161206"       
 oDir = args.oDir
+if args.jesUp: oDir += "_JESup"
+elif args.jesDown: oDir += "_JESdown"
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied 
@@ -132,6 +137,9 @@ for sname in snames:
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
+    if args.jesUp: selector.addOperator(JEShifterOperator(alp.Event)(+1))
+    elif args.jesDown: selector.addOperator(JEShifterOperator(alp.Event)(-1))
+
     selector.addOperator(FolderOperator(alp.Event)("base"))
     selector.addOperator(CounterOperator(alp.Event)(w2_v))
 
