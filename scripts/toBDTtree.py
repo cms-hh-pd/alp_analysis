@@ -78,7 +78,9 @@ binMhh="baseline"
 #binMhh="HM"
 ##################
 # read the histos tree and contruct the tree of the relevant variables 
-path = "/lustre/cmswork/hh/alp_baseSelector/"
+#path = "/lustre/cmswork/hh/alp_baseSelector/"
+path = "/afs/cern.ch/work/a/acarvalh/public/toHH4b/alp_baseSelector/"
+
 #def_noTrg/
 files = []
 filesout = []
@@ -198,7 +200,7 @@ if binMhh=="HM" :
   normQCDb=4075.76277854
   normQCD=11827.0714417
 
-for ifile in range(42,len(files)) : # len(files)  
+for ifile in range(0,len(files)) : # len(files)  
   #print ifile
   file=ROOT.TFile(path+files[ifile]+".root")
   tree=file.pair.Get("tree")
@@ -253,7 +255,7 @@ for ifile in range(42,len(files)) : # len(files)
   jetHTrest = np.zeros(1, dtype=float)
   jetHTfull = np.zeros(1, dtype=float)
 
-  fileout=ROOT.TFile(filesout[ifile]+"-toBDT.root","recreate")
+  fileout=ROOT.TFile("/afs/cern.ch/work/a/acarvalh/public/toHH4b/to_BDT/"+filesout[ifile]+"-toBDT.root","recreate")
   treeout = TTree('treeout', 'treeout')
   treeout.Branch('mhh', mhh, 'mhh/D')
   treeout.Branch('mX', mX, 'mX/D')
@@ -460,7 +462,7 @@ for ifile in range(42,len(files)) : # len(files)
       DRh2[0] = PH2j1pt.DeltaR(PH2j2pt)
 
       HHDeta[0] = abs(PH1.Eta()-PH2.Eta())
-      HHDphi[0] = abs(PH1.Phi()-PH2.Phi())
+      HHDphi[0] = abs(PH1.DeltaPhi(PH2))
       #Dphih12[0] = PH1.DeltaR(PH2) #abs(PH1.Phi()-PH2.Phi())
       CSV4[0] = tree.Jets.at(CSVordered[0]).CSV() #+ tree.Jets.at(2).CSV()+ tree.Jets.at(3).CSV()
       CSV3[0] =  tree.Jets.at(CSVordered[1]).CSV()
@@ -479,8 +481,8 @@ for ifile in range(42,len(files)) : # len(files)
       H2Costbb[0] = H2Costbbc
       H1Detabb[0] = abs(PH1j1pt.Eta()-PH1j2pt.Eta()) # abs(abs(CosThetaStar(PH1j1, PH1))-abs(CosThetaStar(PH1j2, PH1))) # 
       H2Detabb[0] = abs(PH2j1pt.Eta()-PH2j2pt.Eta()) # abs(abs(CosThetaStar(PH2j1, PH2))-abs(CosThetaStar(PH2j2, PH2))) #
-      H1Dphibb[0] = abs(PH1j1pt.Phi()-PH1j2pt.Phi()) # abs(abs(CosThetaStar(PH1j1, PH1))-abs(CosThetaStar(PH1j2, PH1))) # 
-      H2Dphibb[0] = abs(PH2j1pt.Phi()-PH2j2pt.Phi()) # abs(abs(CosThetaStar(PH2j1, PH2))-abs(CosThetaStar(PH2j2, PH2))) #
+      H1Dphibb[0] = abs(PH1j1pt.DeltaPhi(PH1j2pt)) # abs(abs(CosThetaStar(PH1j1, PH1))-abs(CosThetaStar(PH1j2, PH1))) # 
+      H2Dphibb[0] = abs(PH2j1pt.DeltaPhi(PH2j2pt)) # abs(abs(CosThetaStar(PH2j1, PH2))-abs(CosThetaStar(PH2j2, PH2))) #
 
       jetpt1[0] = tree.Jets.at(PTordered[3]).p4_.Pt()
       jetpt2[0] = tree.Jets.at(PTordered[2]).p4_.Pt()
