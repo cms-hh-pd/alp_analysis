@@ -80,6 +80,7 @@ binMhh="baseline"
 # read the histos tree and contruct the tree of the relevant variables 
 #path = "/lustre/cmswork/hh/alp_baseSelector/"
 path = "/afs/cern.ch/work/a/acarvalh/public/toHH4b/alp_baseSelector/"
+outpath="/afs/cern.ch/work/a/acarvalh/public/toHH4b/to_BDT/"
 
 #def_noTrg/
 files = []
@@ -92,15 +93,19 @@ filesout.append(binMhh+"-TT_noTrg")
 
 files.append("def/HHTo4B_SM")
 filesout.append(binMhh+"-HHTo4B_SM")
-for ifile in range(2,13) : # the 13 is missing
+for ifile in range(2,14) : # the 13 is missing
   files.append("def/HHTo4B_BM"+str(ifile))
   filesout.append(binMhh+"-HHTo4B_BM"+str(ifile))
+files.append("def/HHTo4B_BMbox")
+filesout.append(binMhh+"-HHTo4B_BMbox")
 
 files.append("def_noTrg/HHTo4B_SM")
 filesout.append(binMhh+"-HHTo4B_SM_noTrg")
-for ifile in range(2,13) :
+for ifile in range(2,14) :
   files.append("def_noTrg/HHTo4B_BM"+str(ifile))
   filesout.append(binMhh+"-HHTo4B_BM"+str(ifile)+"_noTrg")
+files.append("def_noTrg/HHTo4B_BMbox")
+filesout.append(binMhh+"-HHTo4B_BMbox_noTrg")
 
 HT=["100to200","200to300","300to500","500to700","700to1000","1000to1500","1500to2000","2000toInf"]
 for ifile in range(1,8) :
@@ -156,8 +161,8 @@ TTto1fb=CXTT/(CXplainQCD)
 mixCX=[2059700,40283.14]
 mixN=[1194,10100]
 
-countSig=np.zeros((12)) 
-countSigNoTr=np.zeros((12)) 
+countSig=np.zeros((15)) 
+countSigNoTr=np.zeros((15)) 
 
 countttbar = 0
 countttbarNoHLT = 0
@@ -169,9 +174,9 @@ countdata=0
 countdatamix=0
 
 if binMhh=="baseline" :
-  normSig= [  0.30445146 ,  8.08541789 ,  9.07503515  , 7.87640546  , 5.54326759 , 9.07453435  , 8.89697223  , 4.99948358 ,  6.35276001   ,7.22011991 , 7.86669971 , 10.07471099]
+  normSig= [  0.30445146 ,  8.08541789 ,  9.07503515  , 7.87640546  , 5.54326759 , 9.07453435  , 8.89697223  , 4.99948358 ,  6.35276001   ,7.22011991 , 7.86669971 , 10.07471099 , 11.09319376  , 8.16508973 ]
   #np.ones((12)) 
-  normSigNoTr=[  0.39820884 , 11.45137869 , 11.73580169 , 11.05149414  , 9.95457663, 11.77125913 , 11.75794197,   9.89908847 , 10.58382588 , 10.83794821,11.1325214  , 12.18258459]
+  normSigNoTr=[  0.39820884 , 11.45137869 , 11.73580169 , 11.05149414  , 9.95457663, 11.77125913 , 11.75794197,   9.89908847 , 10.58382588 , 10.83794821,11.1325214  , 12.18258459, 1 , 1]
   #[ 6.41204264 , 6.53346172 , 6.13727502 , 5.55538704 , 6.49343605 , 6.56458484 , 5.52130693 , 5.87039014 , 5.9900769 , 6.17855073 , 6.74273375 , 0.21860946]
   normdata= 69047 #4318 #69036.0   
   normdatamix= 69047# 4318 #69047
@@ -200,7 +205,50 @@ if binMhh=="HM" :
   normQCDb=4075.76277854
   normQCD=11827.0714417
 
-for ifile in range(0,len(files)) : # len(files)  
+
+####
+# to make the histograms = do once ( remake with all events / no cuts )
+binsx = [250.,300.,350., 400.,450.,500.,550.,600.,700.,800.,900,1000.] 
+binsy = [ -1., -0.6,0.6,1. ]
+binsx = array( 'f', [250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000. ] )
+binsy = array( 'f', [-1, -0.55,0.55,1] )
+bincost=3
+binmhh=13
+hist = ROOT.TH2D('SumV1AnalyticalBin', '', binmhh,binsx,bincost,binsy)
+hist.SetTitle('HistSum2D')
+hist.SetXTitle('M_{HH}')
+hist.SetYTitle('cost*')
+histBench = ROOT.TH2D('SumV1BenchBin', '', 90,0.,1800.,10,-1,1.)
+histBench.SetTitle('HistSum2D')
+histBench.SetXTitle('M_{HH}')
+histBench.SetYTitle('cost*')
+histmhh = ROOT.TH1D('Mhh', '', 70,0,1000)
+histmhh.SetTitle('HistSum2D Mhh')
+histmhh.SetXTitle('M_{HH}')
+histcost = ROOT.TH1D('Cost', '', 10,-1,1)
+histcost.SetTitle('HistSum2D cost')
+histcost.SetXTitle('cost*')
+################
+# to make the weights onc the histograms are done
+sumW1=1
+fileHH=ROOT.TFile(outpath+"HistSum2D.root")
+sumHBenchBin = fileHH.Get("SumV1BenchBin")
+print "Sum to Bench hist ",sumHBenchBin.GetNbinsX(),sumHBenchBin.GetNbinsY(),sumHBenchBin.Integral()
+# check mhh hist to SM
+histmhhRe = ROOT.TH1D('Mhh', '', 70,0,1000)
+histmhhSM = ROOT.TH1D('Mhh', '', 70,0,1000)
+histmhhBench1 = ROOT.TH1D('Mhh', '', 70,0,1000)
+###############################################
+# histograms with JHEP benchmarks
+fileH=ROOT.TFile(outpath+"Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root")
+bench = []
+for ibench in range(0,12) : bench.append(fileH.Get(str(ibench)+"_bin1")) # in the old binning
+print "Bench hist ",bench[0].GetNbinsX(),bench[0].GetNbinsY(),bench[0].Integral()
+fileSM=ROOT.TFile(outpath+"Distros_5p_SM600k_sumBenchJHEP_13TeV.root")
+histSM = fileSM.Get("H0bin1")
+print "SM hist ",histSM.GetNbinsX(),histSM.GetNbinsY(),histSM.Integral()
+
+for ifile in range(2,17) : # len(files)  
   #print ifile
   file=ROOT.TFile(path+files[ifile]+".root")
   tree=file.pair.Get("tree")
@@ -235,8 +283,21 @@ for ifile in range(0,len(files)) : # len(files)
   H2Dphibb = np.zeros(1, dtype=float)
 
   weight = np.zeros(1, dtype=float)
-  weight1P = np.zeros(1, dtype=float)
-  weight1M = np.zeros(1, dtype=float)
+  # weight benchmarks JHEP
+  weightAnalytical = np.zeros(1, dtype=float)
+  weightSM = np.zeros(1, dtype=float)
+  weight1 = np.zeros(1, dtype=float)
+  weight2 = np.zeros(1, dtype=float)
+  weight3 = np.zeros(1, dtype=float)
+  weight4 = np.zeros(1, dtype=float)
+  weight5 = np.zeros(1, dtype=float)
+  weight6 = np.zeros(1, dtype=float)
+  weight7 = np.zeros(1, dtype=float)
+  weight8 = np.zeros(1, dtype=float)
+  weight9 = np.zeros(1, dtype=float)
+  weight10 = np.zeros(1, dtype=float)
+  weight11 = np.zeros(1, dtype=float)
+  weight12 = np.zeros(1, dtype=float)
 
   jetpt1 = np.zeros(1, dtype=float)
   jetpt2 = np.zeros(1, dtype=float)
@@ -254,8 +315,10 @@ for ifile in range(0,len(files)) : # len(files)
   jetN = np.zeros(1, dtype=float)
   jetHTrest = np.zeros(1, dtype=float)
   jetHTfull = np.zeros(1, dtype=float)
+  Genmhh = np.zeros(1, dtype=float)
+  GenHHCost = np.zeros(1, dtype=float) 
 
-  fileout=ROOT.TFile("/afs/cern.ch/work/a/acarvalh/public/toHH4b/to_BDT/"+filesout[ifile]+"-toBDT.root","recreate")
+  fileout=ROOT.TFile(outpath+filesout[ifile]+"-toBDT.root","recreate")
   treeout = TTree('treeout', 'treeout')
   treeout.Branch('mhh', mhh, 'mhh/D')
   treeout.Branch('mX', mX, 'mX/D')
@@ -283,8 +346,21 @@ for ifile in range(0,len(files)) : # len(files)
   treeout.Branch('CSV4', CSV4, 'CSV4/D')
 
   treeout.Branch('weight', weight, 'weight/D')
-  treeout.Branch('weight1P', weight1P, 'weight1P/D')
-  treeout.Branch('weight1M', weight1M, 'weight1M/D')
+
+  treeout.Branch('weightAnalytical', weightAnalytical, 'weightAnalytical/D')
+  treeout.Branch('weightSM', weightSM, 'weightSM/D')
+  treeout.Branch('weight1', weight1, 'weight1/D')
+  treeout.Branch('weight2', weight2, 'weight2/D')
+  treeout.Branch('weight3', weight3, 'weight3/D')
+  treeout.Branch('weight4', weight4, 'weight4/D')
+  treeout.Branch('weight5', weight5, 'weight5/D')
+  treeout.Branch('weight6', weight6, 'weight6/D')
+  treeout.Branch('weight7', weight7, 'weight7/D')
+  treeout.Branch('weight8', weight8, 'weight8/D')
+  treeout.Branch('weight9', weight9, 'weight9/D')
+  treeout.Branch('weight10', weight10, 'weight10/D')
+  treeout.Branch('weight11', weight11, 'weight11/D')
+  treeout.Branch('weight12', weight12, 'weight12/D')
 
   treeout.Branch('jetpt1', jetpt1, 'jetpt1/D')
   treeout.Branch('jetpt2', jetpt2, 'jetpt2/D')
@@ -298,10 +374,12 @@ for ifile in range(0,len(files)) : # len(files)
   treeout.Branch('jeteta4', jeteta4, 'jeteta4/D')
   #treeout.Branch('jeteta5', jeteta5, 'jeteta5/D')
 
-  #treeout.Branch('jetcsv5', jetcsv5, 'jetcsv5/D')
   treeout.Branch('jetN', jetN, 'jetN/D')
   treeout.Branch('jetHTrest', jetHTrest, 'jetHTrest/D')
   treeout.Branch('jetHTfull', jetHTfull, 'jetHTfull/D')
+
+  treeout.Branch('Genmhh', Genmhh, 'Genmhh/D')
+  treeout.Branch('GenHHCost', GenHHCost, 'GenHHCost/D')
 
   # save also weights == to QCD later...
   h_genEvts = file.Get( 'h_genEvts' )
@@ -337,6 +415,15 @@ for ifile in range(0,len(files)) : # len(files)
        dijetOrderpt=[1,0]
     # order jets by pt
 
+    if  ifile > 1 and ifile < 16 : 
+      GenPH1 = ROOT.TLorentzVector()
+      GenPH1.SetPxPyPzE(tree.TL_GenHs.at(0).p4_.Px(),tree.TL_GenHs.at(0).p4_.Py(),tree.TL_GenHs.at(0).p4_.Pz(),tree.TL_GenHs.at(0).p4_.E())
+
+      GenPH2 = ROOT.TLorentzVector()
+      GenPH2.SetPxPyPzE(tree.TL_GenHs.at(1).p4_.Px(),tree.TL_GenHs.at(1).p4_.Py(),tree.TL_GenHs.at(1).p4_.Pz(),tree.TL_GenHs.at(1).p4_.E())
+
+      GenPHH = ROOT.TLorentzVector()
+      GenPHH = GenPH1 + GenPH2
 
     PH1 = ROOT.TLorentzVector()
     PH1.SetPxPyPzE(tree.DiJets.at(dijetOrder[0]).Px(),tree.DiJets.at(dijetOrder[0]).Py(),tree.DiJets.at(dijetOrder[0]).Pz(),tree.DiJets.at(dijetOrder[0]).E())
@@ -368,6 +455,8 @@ for ifile in range(0,len(files)) : # len(files)
 
     PHH = ROOT.TLorentzVector()
     PHH = PH1 +PH2
+
+
     CSV= [ tree.Jets.at(0).CSV(), tree.Jets.at(1).CSV(), tree.Jets.at(2).CSV(), tree.Jets.at(3).CSV()]
     CSVordered = np.argsort(CSV)
 
@@ -381,60 +470,42 @@ for ifile in range(0,len(files)) : # len(files)
       if ifile == 0 :
         if counter==1 : print ifile, " ttbar ", filesout[ifile]," ",str(nev)
         weight[0]= (tree.evtWeight)*(w_oneInvFb)/normttbar
-        weight1P[0]= 1.1*(tree.evtWeight)*(w_oneInvFb)/normttbar
-        weight1M[0]= 0.9*(tree.evtWeight)*(w_oneInvFb)/normttbar
         countttbar+=(tree.evtWeight)*(w_oneInvFb)/normttbar 
       if ifile == 1 :
         if counter==1 : print ifile, " ttbar noHLT", filesout[ifile]," ",str(nev)
         #weight[0]= (tree.evtWeight)*(w_oneInvFb)/normttbarNoHLT
         weight[0]= (w_oneInvFb)/normttbarNoHLT
-        weight1P[0]= 1.1*(tree.evtWeight)*(w_oneInvFb)/normttbarNoHLT
-        weight1M[0]= 0.9*(tree.evtWeight)*(w_oneInvFb)/normttbarNoHLT
         countttbarNoHLT+=(w_oneInvFb)/normttbarNoHLT 
-      elif ifile >1 and ifile < 14 :
+      elif ifile >1 and ifile < 16 :
         if counter==1: print ifile," Sig ",str(ifile-2)," ", filesout[ifile]," ",str(nev)
         #weight[0]= (tree.evtWeight)*(w_oneInvFb)/normSig[ifile-2]
         weight[0]= (w_oneInvFb)/normSig[ifile-2]
-        weight1P[0]= 1.1*(tree.evtWeight)*(w_oneInvFb)/normSig[ifile-2]
-        weight1M[0]= 0.9*(tree.evtWeight)*(w_oneInvFb)/normSig[ifile-2]
         countSig[ifile-2]+=(w_oneInvFb)/normSig[ifile-2]
-      elif ifile >13 and ifile < 26 :
+      elif ifile >15 and ifile < 28 :
         if counter==1: print ifile," Sig NoTr",str(ifile-2-12)," ", filesout[ifile]," ",str(nev)
         #weight[0]= (tree.evtWeight)*(w_oneInvFb)/normSigNoTr[ifile-2-12]
         weight[0]= (w_oneInvFb)/normSigNoTr[ifile-2-12]
-        weight1P[0]= 1.1*(tree.evtWeight)*(w_oneInvFb)/normSigNoTr[ifile-2-12]
-        weight1M[0]= 0.9*(tree.evtWeight)*(w_oneInvFb)/normSigNoTr[ifile-2-12]
         countSigNoTr[ifile-2-12]+=(w_oneInvFb)/normSigNoTr[ifile-2-12]
-      elif ifile >25 and ifile < 40 :
+      elif ifile >27 and ifile < 42 :
         if counter==1: print ifile," QCD ", filesout[ifile]," ",str(nev)
 	#weight[0]= (tree.evtWeight)*(w_oneInvFb)/normQCD
 	weight[0]= (w_oneInvFb)/normQCD
-        weight1P[0]= 1.1*QCDto1fb*(tree.evtWeight)*(w_oneInvFb)/normQCD
-        weight1M[0]= 0.9*QCDto1fb*(tree.evtWeight)*(w_oneInvFb)/normQCD
-        if ifile >29 : countQCD+=(w_oneInvFb)/normQCD 
+        if ifile >31 : countQCD+=(w_oneInvFb)/normQCD 
       elif ifile ==40 :
         if counter==1: print ifile," QCD mix", filesout[ifile]," ",str(nev)
 	weight[0]= 1.0/1194.
-        weight1P[0]= 1.1*(tree.evtWeight)/11294.
-        weight1M[0]= 0.9*(tree.evtWeight)/11294.
         countQCDmixL+=1.0/1194.
-      elif ifile ==41 :
+      elif ifile ==43 :
         if counter==1: print ifile," QCD mix", filesout[ifile]," ",str(nev)
 	weight[0]= 1.0/10100.
-        weight1P[0]= 1.1*QCDto1fb*(tree.evtWeight)/1194.
-        weight1M[0]= 0.9*QCDto1fb*(tree.evtWeight)/1194.
         countQCDmixH+=1.0/10100 
-      elif ifile < 45 :
+      elif ifile < 47 and ifile > 41  :
         if counter==1: print ifile," data mix", filesout[ifile]," ",str(nev)
 	weight[0]= 1.0/normdatamix
-        weight1P[0]= 1.1
-        weight1M[0]= 0.9
         countdatamix+=1.0/normdatamix
-      elif ifile < 48 :
+      elif ifile < 51 and ifile > 44  :
         if counter==1: print ifile," data ", filesout[ifile]," ",str(nev)
 	weight[0]= 1.0/normdata
-        weight1P[0]= 1.1
-        weight1M[0]= 0.9
         countdata+=1.0/normdata
  
       """
@@ -452,6 +523,27 @@ for ifile in range(0,len(files)) : # len(files)
       """
       mhh[0] = PHH.M()
       mX[0] =  PHH.M() - PH1pt.M() - PH2pt.M() + 250. 
+      if  ifile > 1 and ifile < 16 : 
+        Genmhh[0] = GenPHH.M()
+        GenHHCost[0] =  CosThetaStar(GenPH1, GenPHH)
+        hist.Fill(GenPHH.M(),CosThetaStar(GenPH1, GenPHH))
+        histBench.Fill(GenPHH.M(),CosThetaStar(GenPH1, GenPHH))
+        histmhh.Fill(GenPHH.M())
+        histcost.Fill(CosThetaStar(GenPH1, GenPHH))
+        bmhh = histSM.GetXaxis().FindBin(GenPHH.M())
+        bcost = histSM.GetXaxis().FindBin(CosThetaStar(GenPH1, GenPHH))
+        if sumHBenchBin.GetBinContent(bmhh,bcost) >0 : 
+            weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100./100.772) # to be done with all events
+            weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100./100.772) # to be done with all events
+            weightAnalytical[0] = (1./ sumHBenchBin.GetBinContent(bmhh,bcost))
+        else : weightSM[0] = 0
+        sumW1+=weightSM[0]
+        # test
+        histmhhRe.Fill(GenPHH.M(),weightSM[0])
+        histmhhBench1.Fill(GenPHH.M(),weight1[0])
+        if ifile ==2 : histmhhSM.Fill(GenPHH.M())
+
+
       HHpt[0] =  PHH.Pt()
       HHetaAverage[0] = (PH1.Eta()+PH2.Eta())/2. 
       mh1[0] = PH1pt.M()
@@ -467,6 +559,7 @@ for ifile in range(0,len(files)) : # len(files)
       CSV4[0] = tree.Jets.at(CSVordered[0]).CSV() #+ tree.Jets.at(2).CSV()+ tree.Jets.at(3).CSV()
       CSV3[0] =  tree.Jets.at(CSVordered[1]).CSV()
       HHCost[0] =  abs(CosThetaStar(PH1, PHH))
+
       #if tree.Jets.at(jetOrder[0]).CSV() > tree.Jets.at(jetOrder[1]).CSV() : 
       #if PH1j1.Pt() > PH1j1.Pt() : 
       if 1>0 : 
@@ -515,6 +608,34 @@ for ifile in range(0,len(files)) : # len(files)
   print counter
   fileout.Write()
   fileout.Close()
+
+"""
+fileH=ROOT.TFile(outpath+"HistSum2D.root","recreate")
+fileH.cd()
+hist.Write()
+histBench.Write()
+histmhh.Write()
+histcost.Write()
+fileH.Close()
+"""
+
+cs=ROOT.TCanvas("cs","cs",10,10,500,500)
+leg = ROOT.TLegend(0.5,0.60,0.99,0.99);
+histmhhRe.Scale(1./histmhhRe.Integral())
+histmhhRe.Draw()
+leg.AddEntry(histmhhRe,"reweigted")
+histmhhSM.Scale(1./histmhhSM.Integral())
+histmhhSM.Draw("same")
+leg.AddEntry(histmhhSM,"SM")
+leg.Draw("same")
+cs.SaveAs("SMtest.png") 
+
+histmhhBench1.Scale(1./histmhhBench1.Integral())
+histmhhBench1.Draw()
+cs.SaveAs("Bench1.png") 
+
+print sumW1
+
 print "done "
 print "Sig ",countSig
 print "Sig NoHLT ",countSigNoTr
