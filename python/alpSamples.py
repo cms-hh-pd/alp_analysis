@@ -33,35 +33,165 @@ samples = {
         'kfactor' : 1.,
     },
 
+    'SingleMuonRun2016H-PromptReco-v2' : {
+        'sam_name': 'SingleMuonRun2016H-PromptReco-v2',
+        'nevents' : 171134793,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016H-PromptReco-v3' : {
+        'sam_name': 'SingleMuonRun2016H-PromptReco-v3',
+        'nevents' : 4393222,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
+    #re-reco 
+    'SingleMuonRun2016B-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016B-23Sep2016-v1',
+        'nevents' : 2789243,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016B-23Sep2016-v3' : {
+        'sam_name': 'SingleMuonRun2016B-23Sep2016-v3',
+        'nevents' : 158145722,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016C-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016C-23Sep2016-v1',
+        'nevents' : 67441308,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016D-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016D-23Sep2016-v1',
+        'nevents' : 98017996,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016E-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016E-23Sep2016-v1',
+        'nevents' : 90984718,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016F-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016F-23Sep2016-v1',
+        'nevents' : 65425108,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016G-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016G-23Sep2016-v1',
+        'nevents' : 149916849,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
    'BTagCSVRun2016B-v1' : {
         'sam_name': 'BTagCSVRun2016B-PromptReco-v1',
-        'nevents' : 1973077, #FIXME
+        'nevents' : 1973077,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
    'BTagCSVRun2016B-v2' : {
         'sam_name': 'BTagCSVRun2016B-PromptReco-v2',
-        'nevents' : 77545653, #FIXME
+        'nevents' : 77545653,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
    'BTagCSVRun2016C-v2' : {
         'sam_name': 'BTagCSVRun2016C-PromptReco-v2',
-        'nevents' : 31253722, #FIXME
+        'nevents' : 31253722,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
    'BTagCSVRun2016D-v2' : {
         'sam_name': 'BTagCSVRun2016D-PromptReco-v2',
-        'nevents' : 56725352, #FIXME
+        'nevents' : 56725352,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
+    },    
+
+    'BTagCSVRun2016H-PromptReco-v2' : {
+        'sam_name': 'BTagCSVRun2016H-PromptReco-v2',
+        'nevents' : 64179785,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
     },
-    
+    'BTagCSVRun2016H-PromptReco-v3' : {
+        'sam_name': 'BTagCSVRun2016H-PromptReco-v3',
+        'nevents' : 1695733,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,  
+    },
+    'BTagCSVRun2016B-23Sep2016-v2' : {
+        'sam_name': 'BTagCSVRun2016B-23Sep2016-v2',
+        'nevents' : 1972666,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016B-23Sep2016-v3' : {
+        'sam_name': 'BTagCSVRun2016B-23Sep2016-v3',
+        'nevents' : 77890616,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016C-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016C-23Sep2016-v1',
+        'nevents' : 30358567,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016D-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016D-23Sep2016-v1',
+        'nevents' : 56527008,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016E-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016E-23Sep2016-v1',
+        'nevents' : 60415444,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016F-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016F-23Sep2016-v1',
+        'nevents' : 37608672,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016G-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016G-23Sep2016-v1',
+        'nevents' : 100834056,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
 
     ########## MC ##########
     ### Signals

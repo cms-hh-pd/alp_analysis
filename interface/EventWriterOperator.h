@@ -27,6 +27,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     alp::Candidate * met_ptr = nullptr;
     std::vector<alp::Candidate> * genbfromhs_ptr = nullptr;
     std::vector<alp::Candidate> * genhs_ptr = nullptr;
+    std::vector<alp::Candidate> * tl_genhs_ptr = nullptr;
 
     // additional stuff to save
     std::vector<alp::PtEtaPhiEVector> * dijets_ptr = nullptr;
@@ -77,8 +78,14 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       // load GenHs 
       if (config_.find("genhs_branch_name") != config_.end()) {
         tree_.Branch(config_.at("genhs_branch_name").template get<std::string>().c_str(),
-                     "std::vector<alp::Candidate>",&genbfromhs_ptr, 64000, 2);
+                     "std::vector<alp::Candidate>",&genhs_ptr, 64000, 2);
       }                                                         
+      // load GenHs for re-weigthing
+      if (config_.find("tl_genhs_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("tl_genhs_branch_name").template get<std::string>().c_str(),
+                     "std::vector<alp::Candidate>",&tl_genhs_ptr, 64000, 2);
+      }
+
 
       tree_.Branch("DiJets","std::vector<alp::PtEtaPhiEVector>", &dijets_ptr, 64000, 2);
 
@@ -103,6 +110,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       met_ptr = dynamic_cast<alp::Candidate *>(&ev.met_); 
       genbfromhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genbfromhs_); 
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
+      tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);
 
       // also other event stuff
       dijets_ptr = dynamic_cast<std::vector<alp::PtEtaPhiEVector> *>(&ev.dijets_); 

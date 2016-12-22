@@ -10,9 +10,9 @@ template <class EventClass> class JEShifterOperator : public BaseOperator<EventC
 
   public:
 
-    int shift_;
+    double shift_;
 
-    JEShifterOperator( int shift = 0) :
+    JEShifterOperator(double shift = 0.) :
     shift_(shift) {}
     virtual ~JEShifterOperator() {}
 
@@ -20,8 +20,11 @@ template <class EventClass> class JEShifterOperator : public BaseOperator<EventC
 
       //get corrected pt and shift by uncertainty
       for (auto it = ev.jets_.begin(); it!=ev.jets_.end(); ++it) {
-        double pt_corr_shifted = (*it).pt()*(1+shift_*(*it).JESunc());
-        (*it).p4_.SetPt(pt_corr_shifted) ;
+        // PAS method - wrong:
+        //double pt_corr_shifted = (*it).pt()*(1+shift_*(*it).JESunc());
+        //(*it).p4_.SetPt(pt_corr_shifted) ;
+        
+        (*it).p4_ *= (1+shift_*(*it).JESunc()); //NOTE: need to scale the entire PtEtaPhiEVector!        
       };       
       return true;
     }
