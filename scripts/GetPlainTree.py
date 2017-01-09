@@ -25,7 +25,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
-parser.add_argument("-o", "--oDir", help="output directory", default="")
+parser.add_argument("-o", "--oDir", help="output directory", default="./output/test")
 args = parser.parse_args()
 
 # exe parameters
@@ -37,8 +37,7 @@ intLumi_fb = 12.6
 ## WARNING -- input must be ntuples after four jets selection and pairing
 iDir       = "/lustre/cmswork/hh/alp_baseSelector/"
 ntuplesVer = "MC_def"        
-if not args.oDir: oDir = "./output/test"
-else: oDir = args.oDir
+oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight

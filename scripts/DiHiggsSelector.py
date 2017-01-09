@@ -13,7 +13,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, DiHiggsFilterOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -29,6 +29,8 @@ parser.add_argument("-e", "--numEvts", help="number of events", type=int, defaul
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="MC_def_noTrg")
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/data_def")
+parser.add_argument("-b", "--doBlind", help="do blind", action='store_true')
+parser.set_defaults(doBlind=False)
 args = parser.parse_args()
 
 # exe parameters
@@ -38,12 +40,14 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = "./output/" #"/lustre/cmswork/hh/alpha_ntuples/"
-ntuplesVer = args.ntuplesVer
+iDir       = "/lustre/cmswork/hh/alp_baseSelector/" #"./output/"
+args.ntuplesVer
 oDir = args.oDir
+doBlind = args.doBlind
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied
+weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied ,'BTagWeight'
+opt = "" #_noBW
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -57,6 +61,8 @@ for t in trg_names: trg_names_v.push_back(t)
 weights_v = vector("string")()
 for w in weights: weights_v.push_back(w)
 
+if doBlind: opt += "_blind"
+else: opt += ""
 
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
@@ -73,6 +79,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
          }
 
 snames = []
@@ -119,16 +126,31 @@ for sname in snames:
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(CounterOperator(alp.Event)())
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+    selector.addOperator(DiHiggsFilterOperator(alp.Event)(doBlind, 0.))
     selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(FolderOperator(alp.Event)("pair"))
+    selector.addOperator(FolderOperator(alp.Event)("pair_minM0"+opt))
     selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
-    selector.addOperator(ThrustFinderOperator(alp.Event)())
-    selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereWriterOperator(alp.Event)())
+
+    selector.addOperator(DiHiggsFilterOperator(alp.Event)(doBlind, 250.))
+    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("pair_minM250"+opt))
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))
+    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
+
+
+    selector.addOperator(DiHiggsFilterOperator(alp.Event)(doBlind, 350.))
+    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("pair_minM350"+opt))
+    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))
+    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
+
+#    selector.addOperator(ThrustFinderOperator(alp.Event)())
+#    selector.addOperator(HemisphereProducerOperator(alp.Event)())
+#    selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     tchain = TChain("pair/tree")    

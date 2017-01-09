@@ -33,35 +33,165 @@ samples = {
         'kfactor' : 1.,
     },
 
+    'SingleMuonRun2016H-PromptReco-v2' : {
+        'sam_name': 'SingleMuonRun2016H-PromptReco-v2',
+        'nevents' : 171134793,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016H-PromptReco-v3' : {
+        'sam_name': 'SingleMuonRun2016H-PromptReco-v3',
+        'nevents' : 4393222,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
+    #re-reco 
+    'SingleMuonRun2016B-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016B-23Sep2016-v1',
+        'nevents' : 2789243,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016B-23Sep2016-v3' : {
+        'sam_name': 'SingleMuonRun2016B-23Sep2016-v3',
+        'nevents' : 158145722,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016C-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016C-23Sep2016-v1',
+        'nevents' : 67441308,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016D-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016D-23Sep2016-v1',
+        'nevents' : 98017996,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016E-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016E-23Sep2016-v1',
+        'nevents' : 90984718,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016F-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016F-23Sep2016-v1',
+        'nevents' : 65425108,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'SingleMuonRun2016G-23Sep2016-v1' : {
+        'sam_name': 'SingleMuonRun2016G-23Sep2016-v1',
+        'nevents' : 149916849,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
    'BTagCSVRun2016B-v1' : {
         'sam_name': 'BTagCSVRun2016B-PromptReco-v1',
-        'nevents' : 1973077, #FIXME
+        'nevents' : 1973077,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
    'BTagCSVRun2016B-v2' : {
         'sam_name': 'BTagCSVRun2016B-PromptReco-v2',
-        'nevents' : 77545653, #FIXME
+        'nevents' : 77545653,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
    'BTagCSVRun2016C-v2' : {
         'sam_name': 'BTagCSVRun2016C-PromptReco-v2',
-        'nevents' : 31253722, #FIXME
+        'nevents' : 31253722,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
    'BTagCSVRun2016D-v2' : {
         'sam_name': 'BTagCSVRun2016D-PromptReco-v2',
-        'nevents' : 56725352, #FIXME
+        'nevents' : 56725352,
         'xsec_br' : 1.,
         'matcheff': 1.,
         'kfactor' : 1.,
+    },    
+
+    'BTagCSVRun2016H-PromptReco-v2' : {
+        'sam_name': 'BTagCSVRun2016H-PromptReco-v2',
+        'nevents' : 64179785,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
     },
-    
+    'BTagCSVRun2016H-PromptReco-v3' : {
+        'sam_name': 'BTagCSVRun2016H-PromptReco-v3',
+        'nevents' : 1695733,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,  
+    },
+    'BTagCSVRun2016B-23Sep2016-v2' : {
+        'sam_name': 'BTagCSVRun2016B-23Sep2016-v2',
+        'nevents' : 1972666,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016B-23Sep2016-v3' : {
+        'sam_name': 'BTagCSVRun2016B-23Sep2016-v3',
+        'nevents' : 77890616,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016C-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016C-23Sep2016-v1',
+        'nevents' : 30358567,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016D-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016D-23Sep2016-v1',
+        'nevents' : 56527008,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016E-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016E-23Sep2016-v1',
+        'nevents' : 60415444,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016F-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016F-23Sep2016-v1',
+        'nevents' : 37608672,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016G-23Sep2016-v1' : {
+        'sam_name': 'BTagCSVRun2016G-23Sep2016-v1',
+        'nevents' : 100834056,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
 
     ########## MC ##########
     ### Signals
@@ -188,6 +318,13 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+    'QCD_HT1000to1500_m' :{
+        'sam_name': '',
+        'nevents' : 1,
+        'xsec_br' : 1207.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'QCD_HT1500to2000' :{
         'sam_name': 'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',
         'nevents' : 3846616,
@@ -198,6 +335,13 @@ samples = {
     'QCD_HT1500to2000_ext' :{
         'sam_name': 'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
         'nevents' : 7803965,
+        'xsec_br' : 119.9,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT1500to2000_m' :{
+        'sam_name': '',
+        'nevents' : 1,
         'xsec_br' : 119.9,
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -216,6 +360,13 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+    'QCD_HT2000toInf_m' :{
+        'sam_name': '',
+        'nevents' : 1,
+        'xsec_br' : 25.24,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'QCD_HT200to300' :{
         'sam_name': 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
         'nevents' : 18523829,
@@ -226,6 +377,13 @@ samples = {
     'QCD_HT200to300_ext' :{
         'sam_name': 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
         'nevents' : 38812676,
+        'xsec_br' : 1712000.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT200to300_m' :{
+        'sam_name': '',
+        'nevents' : 1,
         'xsec_br' : 1712000.,
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -244,6 +402,13 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+    'QCD_HT300to500_m' :{
+        'sam_name': '',
+        'nevents' : 1,
+        'xsec_br' : 347700.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'QCD_HT500to700' :{
         'sam_name': 'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
         'nevents' : 19199088,
@@ -254,6 +419,13 @@ samples = {
     'QCD_HT500to700_ext' :{
         'sam_name': 'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
         'nevents' : 44138665,
+        'xsec_br' : 32100.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT500to700_m' :{
+        'sam_name': '',
+        'nevents' : 1,
         'xsec_br' : 32100.,
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -272,6 +444,14 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },   
+    'QCD_HT700to1000_m' :{
+        'sam_name': '',
+        'nevents' : 1,
+        'xsec_br' : 6831.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },   
+
     
     # Background QCD bEnriched
     'QCD_b' :{
@@ -628,5 +808,27 @@ samples = {
         'kfactor' : 1.004,#0.01816/0.03089,
     },   
 
+    #additional samples (for second level filters)
+    'QCD_HT200toInf' :{
+        'sam_name': 'QCD_HT200toInf',
+    },   
+    'QCD_HT500toInf' :{
+        'sam_name': 'QCD_HT500toInf',
+    },   
+    'QCD_HT200to500' :{
+        'sam_name': 'QCD_HT200to500',
+    },   
+    'QCD500_tt_SM300' :{
+        'sam_name': 'QCD500_tt_SM300',
+    },
+    'QCD500_tt_SM100k' :{
+        'sam_name': 'QCD500_tt_SM100k',
+    },   
+    'Data_BDT_28_11_16_15h_sig' :{
+        'sam_name': 'Data_BDT_28_11_16_15h_sig',
+    }, 
+    'Data_BDT_28_11_16_15h_bkg' :{
+        'sam_name': 'Data_BDT_28_11_16_15h_bkg',
+    },    
 }
 

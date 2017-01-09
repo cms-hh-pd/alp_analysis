@@ -27,8 +27,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list"     , default="")
-parser.add_argument("-o", "--oDir"   , help="output directory", default="")
-parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="")
+parser.add_argument("-o", "--oDir"   , help="output directory", default="./output/mixSel_sig_def")
+parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="MC_def")
 args = parser.parse_args()
 
 # exe parameters
@@ -38,14 +38,10 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir       = '/lustre/cmswork/hh/alp_baseSelector/'
-if not args.iDir: iDir += "MC_def"
-else: iDir += args.iDir
-
-if not args.oDir: oDir = "./output/mixSel_sig_def"
-else: oDir = args.oDir
+iDir = 'output/' + args.iDir #/lustre/cmswork/hh/alp_baseSelector/
+oDir = args.oDir
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
+weights = {}  #weights to be applied - EventWeight, PUWeight, GenWeight 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -68,6 +64,8 @@ for v in nn_vars: nn_vars_v.push_back(v)
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
+          "dijets_branch_name": "DiJets",
+         # "dihiggs_branch_name": "DiHiggs",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
@@ -77,6 +75,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
          }
 
 snames = []
@@ -109,17 +108,17 @@ for sname in snames:
     json_str = json.dumps(config)
 
     #get hem_tree for mixing
-    tch = TChain("pair/hem_tree")    
+    tch_hem = TChain("pair/hem_tree")    
     for f in files: 
-        tch.Add(f)
+        tch_hem.Add(f)
 
-    print tch.GetEntries()    
+    print tch_hem.GetEntries()    
 
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch, nn_vars_v))
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, nn_vars_v))
     selector.addOperator(MixedEventWriterOperator(alp.Event)())
 
     #create tChain and process each files   

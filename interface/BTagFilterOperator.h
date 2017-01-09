@@ -9,6 +9,9 @@
 #include "Event.h"
 #include "Utils.h"
 
+constexpr auto CSV_name = "pfCombinedInclusiveSecondaryVertexV2BJetTags";
+constexpr auto CMVA_name = "pfCombinedMVAV2BJetTags";
+
   template <class EventClass> class BTagFilterOperator : public BaseOperator<EventClass> {
 
     public:
@@ -36,9 +39,19 @@
        calibCSV("CSVv2", data_path+ "CSVv2_ichep.csv"),
        calibCMVA("CMVAv2", data_path+"cMVAv2_ichep.csv")
        {
-         btcr.load(calibCSV,BTagEntry::FLAV_B, BTagSFmode);
-         btcr.load(calibCSV,BTagEntry::FLAV_C, BTagSFmode);
-         btcr.load(calibCSV,BTagEntry::FLAV_UDSG, BTagSFmode);
+         if(disc_ == CSV_name){
+           btcr.load(calibCSV,BTagEntry::FLAV_B, BTagSFmode);
+           btcr.load(calibCSV,BTagEntry::FLAV_C, BTagSFmode);
+           btcr.load(calibCSV,BTagEntry::FLAV_UDSG, BTagSFmode);
+         }
+         else if (disc_ == CMVA_name){
+           btcr.load(calibCMVA,BTagEntry::FLAV_B, BTagSFmode);
+           btcr.load(calibCMVA,BTagEntry::FLAV_C, BTagSFmode);
+           btcr.load(calibCMVA,BTagEntry::FLAV_UDSG, BTagSFmode);
+         }
+         else {
+           std::cout << "ERROR: wrong btag discr" << std::endl;
+         }
        }
       virtual ~BTagFilterOperator() {}
 
@@ -51,7 +64,7 @@
         for (std::size_t i=0; i < min_number_; i++) {
             if(ev.jets_.at(i).disc(disc_) < d_value_) return false;
         }
-        // compute BTagSF on all objects in acc - NOTE: needed because we sorted in csv
+        // compute BTagSF on all objects in acc - NOTE: needed because we sorted in btag
         float w_btag = 1.0;
         for (std::size_t i=0; i < ev.jets_.size(); i++) {
           if(!isdata_) {

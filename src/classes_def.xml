@@ -5,6 +5,7 @@
   <class pattern="ComposableSelector*"/>    
   <class pattern="FolderOperator<*>"/>    
   <class pattern="CounterOperator<*>"/>    
+  <class pattern="JEShifterOperator<*>"/>
   <class pattern="TriggerOperator<*>"/>    
   <class pattern="JetFilterOperator<*>"/>    
   <class pattern="MetFilterOperator<*>"/>    
