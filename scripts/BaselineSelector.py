@@ -1,6 +1,11 @@
 #!/usr/bin/env python 
 # to EXE: python scripts/BaselineSelector.py -s SM -o output/bSel_sig_def
 
+# bTag cuts ---
+# 2016 data - 80X values:
+CSVv2_c  = [ 0.460, 0.800, 0.935]  
+CMVAv2_c = [-0.715, 0.185, 0.875]
+
 # good old python modules
 import json
 import os
@@ -31,6 +36,7 @@ parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("--jesUp", help="use JES up", action='store_true')
 parser.add_argument("--jesDown", help="use JES down", action='store_true')
+parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/def")
 parser.set_defaults(doTrigger=False, jesUp=False, jesDown=False)
 args = parser.parse_args()
@@ -43,15 +49,21 @@ trgList   = 'def_2016'
 intLumi_fb = 12.6 #36.26 12.6
 
 iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
-ntuplesVer = "v1_20161028_noJetCut"    #_noJetCut -- 20161028  20161212
+ntuplesVer = "v1_20161028_noJetCut"    # _noJetCut -- 20161028 (ICHEP) -- 20161212
 oDir = args.oDir
 if args.jesUp: oDir += "_JESup"
 elif args.jesDown: oDir += "_JESdown"
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-#btagAlgo  = "pfCombinedMVAV2BJetTags"
-weights   = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied 
+if args.btag == 'cmva':  
+    btagAlgo = "pfCombinedMVAV2BJetTags"
+    btagCuts = CMVAv2_c
+elif args.btag == 'csv': 
+    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    btagCuts = CSVv2_c
+
+weights        = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied 
+weights_nobTag = {'PUWeight', 'GenWeight'} 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -64,7 +76,8 @@ for t in trg_names: trg_names_v.push_back(t)
 # to convert weights 
 weights_v = vector("string")()
 for w in weights: weights_v.push_back(w)
-
+w_nobTag_v = vector("string")()
+for w in weights_nobTag: w_nobTag_v.push_back(w)
 
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
@@ -74,7 +87,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           #"met_branch_name" : "",
           "genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
-          "tl_genhs_branch_name" : "TL_GenHs",
+          #"tl_genhs_branch_name" : "TL_GenHs", #only for latest alpha ntuples
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -133,9 +146,6 @@ for sname in snames:
 
     json_str = json.dumps(config)
 
-    w2 = {'PUWeight', 'GenWeight'} 
-    w2_v = vector("string")()
-    for w in w2: w2_v.push_back(w)
 
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
@@ -144,20 +154,21 @@ for sname in snames:
     elif args.jesDown: selector.addOperator(JEShifterOperator(alp.Event)(-1))
 
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(CounterOperator(alp.Event)(w2_v))
+    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
 
+    #trigger
     if args.doTrigger:
         selector.addOperator(FolderOperator(alp.Event)("trigger"))
         selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-        selector.addOperator(CounterOperator(alp.Event)(w2_v))
+        selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
-    selector.addOperator(CounterOperator(alp.Event)(w2_v)) #debug - no bTagWeight?
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, 0.800, 4, config["isData"], data_path)) #0.800 -- 0.185
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btagCuts[1], 4, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
