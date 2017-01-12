@@ -28,10 +28,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     std::vector<alp::Candidate> * genbfromhs_ptr = nullptr;
     std::vector<alp::Candidate> * genhs_ptr = nullptr;
     std::vector<alp::Candidate> * tl_genhs_ptr = nullptr;
-
-    // additional stuff to save
-    std::vector<alp::PtEtaPhiEVector> * dijets_ptr = nullptr;
-    std::vector<alp::PtEtaPhiEVector> * dihiggs_ptr = nullptr;
+    std::vector<alp::DiObject> * dijets_ptr = nullptr;
+    std::vector<alp::DiObject> * dihiggs_ptr = nullptr;
 
     TTree tree_{"tree","Tree using simplified alp dataformats"};
 
@@ -87,9 +85,9 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       }
 
 
-      tree_.Branch("DiJets","std::vector<alp::PtEtaPhiEVector>", &dijets_ptr, 64000, 2);
+      tree_.Branch("DiJets","std::vector<alp::DiObject>", &dijets_ptr, 64000, 2);
 
-      tree_.Branch("DiHiggs","std::vector<alp::PtEtaPhiEVector>", &dihiggs_ptr, 64000, 2);
+      tree_.Branch("DiHiggs","std::vector<alp::DiObject>", &dihiggs_ptr, 64000, 2);
 
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
@@ -111,10 +109,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       genbfromhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genbfromhs_); 
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
       tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);
-
-      // also other event stuff
-      dijets_ptr = dynamic_cast<std::vector<alp::PtEtaPhiEVector> *>(&ev.dijets_); 
-      dihiggs_ptr = dynamic_cast<std::vector<alp::PtEtaPhiEVector> *>(&ev.dihiggs_); 
+      dijets_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dijets_); 
+      dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 
 
       tree_.Fill();
 

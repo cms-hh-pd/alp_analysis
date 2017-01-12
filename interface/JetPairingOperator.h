@@ -83,12 +83,12 @@ template <class EventClass> class JetPairingOperator : public BaseOperator<Event
 
       // fill dijet objects
       ev.dijets_.clear();
-      ev.dijets_.emplace_back(ev.jets_.at(0).p4_ + ev.jets_.at(1).p4_);
-      ev.dijets_.emplace_back(ev.jets_.at(2).p4_ + ev.jets_.at(3).p4_);
+      ev.dijets_.emplace_back(ev.jets_.at(0).p4_ , ev.jets_.at(1).p4_);
+      ev.dijets_.emplace_back(ev.jets_.at(2).p4_ , ev.jets_.at(3).p4_);
 
       // fill dijet objects
       ev.dihiggs_.clear();
-      ev.dihiggs_.emplace_back(ev.dijets_.at(0) + ev.dijets_.at(1));
+      ev.dihiggs_.emplace_back(ev.dijets_.at(0).p4_ , ev.dijets_.at(1).p4_);
      
       // sort in discriminator order 
       auto comparator = [&](alp::Jet a, alp::Jet b){ 
@@ -220,12 +220,12 @@ template <class EventClass> class SetJetPairingOperator : public BaseOperator<Ev
 
       // fill dijet objects
       ev.dijets_.clear();
-      ev.dijets_.emplace_back(ev.jets_.at(0).p4_ + ev.jets_.at(1).p4_);
-      ev.dijets_.emplace_back(ev.jets_.at(2).p4_ + ev.jets_.at(3).p4_);
+      ev.dijets_.emplace_back(ev.jets_.at(0).p4_ , ev.jets_.at(1).p4_);
+      ev.dijets_.emplace_back(ev.jets_.at(2).p4_ , ev.jets_.at(3).p4_);
 
       // fill dihiggs objects
       ev.dihiggs_.clear();
-      ev.dihiggs_.emplace_back(ev.dijets_.at(0) + ev.dijets_.at(1));
+      ev.dihiggs_.emplace_back(ev.dijets_.at(0).p4_ , ev.dijets_.at(1).p4_);
 
       return true;
     }

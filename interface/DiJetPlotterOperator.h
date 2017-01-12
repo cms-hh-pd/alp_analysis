@@ -134,36 +134,36 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       h_H0_mass.Fill(ev.dijets_.at(0).mass(), w);
       h_H0_pt.Fill(ev.dijets_.at(0).pt(), w);
       h_H0_eta.Fill(ev.dijets_.at(0).eta(), w);
-      h_H0_csthst0_a.Fill(get_absCosThetaStar(ev.jets_.at(0).p4_,ev.dijets_.at(0)), w);
-      h_H0_csthst1_a.Fill(get_absCosThetaStar(ev.jets_.at(1).p4_,ev.dijets_.at(0)), w);
-      h_H0_dr.Fill(ROOT::Math::VectorUtil::DeltaR(ev.jets_.at(2).p4_, ev.jets_.at(3).p4_), w);
-      h_H0_deta.Fill(ev.jets_.at(0).eta()-ev.jets_.at(1).eta(), w);
-      h_H0_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.jets_.at(0).p4_, ev.jets_.at(1).p4_), w);
-      h_H0_deta_a.Fill(std::abs(ev.jets_.at(0).eta()-ev.jets_.at(1).eta()), w);
-      h_H0_dphi_a.Fill(get_dj_dPhiabs(ev.jets_.at(0),ev.jets_.at(1)), w); 
+      h_H0_csthst0_a.Fill(ev.dijets_.at(0).costhst(), w);
+      h_H0_csthst1_a.Fill(ev.dijets_.at(0).costhst1(), w); //computed using second jet
+      h_H0_dr.Fill(ev.dijets_.at(0).dr(), w);
+      h_H0_deta.Fill(ev.dijets_.at(0).deta(), w);
+      h_H0_dphi.Fill(ev.dijets_.at(0).dphi(), w);
+      h_H0_deta_a.Fill(ev.dijets_.at(0).detaabs(), w);
+      h_H0_dphi_a.Fill(ev.dijets_.at(0).dphiabs(), w);
 
       h_H1_mass.Fill(ev.dijets_.at(1).mass(), w);
       h_H1_pt.Fill(ev.dijets_.at(1).pt(), w);
       h_H1_eta.Fill(ev.dijets_.at(1).eta(), w);
-      h_H1_csthst2_a.Fill(get_absCosThetaStar(ev.jets_.at(2).p4_,ev.dijets_.at(1)), w);
-      h_H1_csthst3_a.Fill(get_absCosThetaStar(ev.jets_.at(3).p4_,ev.dijets_.at(1)), w);
-      h_H1_dr.Fill(ROOT::Math::VectorUtil::DeltaR(ev.jets_.at(2).p4_, ev.jets_.at(3).p4_), w);
-      h_H1_deta.Fill(ev.jets_.at(2).eta()-ev.jets_.at(3).eta(), w);
-      h_H1_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.jets_.at(2).p4_, ev.jets_.at(3).p4_), w);
-      h_H1_deta_a.Fill(std::abs(ev.jets_.at(2).eta()-ev.jets_.at(3).eta()), w);
-      h_H1_dphi_a.Fill(get_dj_dPhiabs(ev.jets_.at(2),ev.jets_.at(3)), w);
+      h_H1_csthst2_a.Fill(ev.dijets_.at(1).costhst(), w);
+      h_H1_csthst3_a.Fill(ev.dijets_.at(1).costhst1(), w); //computed using second jet
+      h_H1_dr.Fill(ev.dijets_.at(1).dr(), w);
+      h_H1_deta.Fill(ev.dijets_.at(1).deta(), w);
+      h_H1_dphi.Fill(ev.dijets_.at(1).dphi(), w);
+      h_H1_deta_a.Fill(ev.dijets_.at(1).detaabs(), w);
+      h_H1_dphi_a.Fill(ev.dijets_.at(1).dphiabs(), w);
 
       h_H0H1_mass.Fill(ev.dihiggs_.at(0).mass(), w);
       h_X_mass.Fill(ev.dihiggs_.at(0).mass()-ev.dijets_.at(0).mass()-ev.dijets_.at(1).mass()+2*125., w);
       h_H0H1_pt.Fill(ev.dihiggs_.at(0).pt(), w);
       h_H0H1_eta.Fill(ev.dihiggs_.at(0).eta(), w);
-      h_H0H1_csthst0_a.Fill(get_absCosThetaStar(ev.dijets_.at(0),ev.dihiggs_.at(0)), w);
-      h_H0H1_csthst1_a.Fill(get_absCosThetaStar(ev.dijets_.at(1),ev.dihiggs_.at(0)), w);
-      h_H0H1_dr.Fill(ROOT::Math::VectorUtil::DeltaR(ev.dijets_.at(0), ev.dijets_.at(1)), w);
-      h_H0H1_deta.Fill(ev.dijets_.at(0).eta()-ev.dijets_.at(1).eta(), w);
-      h_H0H1_dphi.Fill(ROOT::Math::VectorUtil::DeltaPhi(ev.dijets_.at(0), ev.dijets_.at(1)), w);
-      h_H0H1_deta_a.Fill(std::abs(ev.dijets_.at(0).eta()-ev.dijets_.at(1).eta()), w);
-      h_H0H1_dphi_a.Fill(get_ddj_dPhiabs(ev.dijets_.at(0), ev.dijets_.at(1)), w);
+      h_H0H1_csthst0_a.Fill(ev.dihiggs_.at(0).costhst(), w);
+      h_H0H1_csthst1_a.Fill(ev.dihiggs_.at(0).costhst1(), w); //computed using second dijet
+      h_H0H1_dr.Fill(ev.dihiggs_.at(0).dr(), w);
+      h_H0H1_deta.Fill(ev.dihiggs_.at(0).deta(), w);
+      h_H0H1_dphi.Fill(ev.dihiggs_.at(0).dphi(), w);
+      h_H0H1_deta_a.Fill(ev.dihiggs_.at(0).detaabs(), w);
+      h_H0H1_dphi_a.Fill(ev.dihiggs_.at(0).dphiabs(), w);
 
       h_H0_H1_mass.Fill(ev.dijets_.at(0).mass(), ev.dijets_.at(1).mass(), w);
 
