@@ -1,5 +1,5 @@
 #!/usr/bin/env python 
-# to EXE: python scripts/MixingSelector.py -s data_ichep -i data_def -o output/mixSel_data_def
+# to EXE: python scripts/MixingSelector.py -s data_ichep -i def_cmva
 
 # good old python modules
 import json
@@ -18,7 +18,6 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMix
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
-from Analysis.alp_analysis.triggerlists import triggerlists
 
 TH1F.AddDirectory(0)
 
@@ -27,39 +26,27 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list"     , default="")
-parser.add_argument("-o", "--oDir"   , help="output directory", default="./output/mixSel_sig_def")
-parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="MC_def")
+parser.add_argument("-o", "--oDir"   , help="output directory", default="mixed_ntuples")
+parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="def_cmva")
 args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts
 if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
-trgList   = 'def_2016'
 intLumi_fb = 12.6
 
-iDir = 'output/' + args.iDir #/lustre/cmswork/hh/alp_baseSelector/
-oDir = args.oDir
+iDir = '/lustre/cmswork/hh/alp_baseSelector/'+ args.iDir
+oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {}  #weights to be applied - EventWeight, PUWeight, GenWeight 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
-trg_names = triggerlists[trgList]
-if not trg_names: print "### WARNING: empty hlt_names ###"
-trg_names_v = vector("string")()
-for t in trg_names: trg_names_v.push_back(t)
-
-# to convert weights 
-weights_v = vector("string")()
-for w in weights: weights_v.push_back(w)
-
+# variables to check nearest-neightbour
 nn_vars = ["thrustMayor","thrustMinor", "sumPz","invMass"]
 nn_vars_v = vector("string")()
 for v in nn_vars: nn_vars_v.push_back(v)
-
-
 
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
@@ -100,11 +87,6 @@ for sname in snames:
 
     if "Run" in files[0]: config["isData"] = True 
 
-    #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
-
     json_str = json.dumps(config)
 
     #get hem_tree for mixing
@@ -112,7 +94,7 @@ for sname in snames:
     for f in files: 
         tch_hem.Add(f)
 
-    print tch_hem.GetEntries()    
+    print tch_hem.GetEntries()
 
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
@@ -131,7 +113,4 @@ for sname in snames:
     tchain.Process(selector, procOpt, nev)
     ns+=1
    
-    #some cleaning
-    #hcount.Reset()
-
 print "### processed {} samples ###".format(ns)

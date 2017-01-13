@@ -21,8 +21,8 @@ namespace alp {
       // objects which will be read from TTree before first operator
       alp::EventInfo eventInfo_;
       std::vector<alp::Jet> jets_;
-      std::vector<alp::PtEtaPhiEVector> dijets_;
-      std::vector<alp::PtEtaPhiEVector> dihiggs_;
+      std::vector<alp::DiObject> dijets_;
+      std::vector<alp::DiObject> dihiggs_;
       std::vector<alp::Lepton> muons_;
       std::vector<alp::Lepton> electrons_;
       alp::Candidate met_;
@@ -32,8 +32,8 @@ namespace alp {
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
-      TTreeReaderValue<std::vector<alp::PtEtaPhiEVector>> * dijets_reader_ = nullptr;
-      TTreeReaderValue<std::vector<alp::PtEtaPhiEVector>> * dihiggs_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::DiObject>> * dijets_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::DiObject>> * dihiggs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Lepton>> * muons_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Lepton>> * electrons_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * genbfromhs_reader_ = nullptr;
@@ -69,12 +69,12 @@ namespace alp {
         }
         // load dijet collection
         if (config.find("dijets_branch_name") != config.end()) {
-            dijets_reader_ = new TTreeReaderValue<std::vector<alp::PtEtaPhiEVector>>(reader, 
+            dijets_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader, 
                 config.at("dijets_branch_name").get_ref<const std::string &>().c_str());
         }
         // load dijet collection
         if (config.find("dihiggs_branch_name") != config.end()) {
-            dihiggs_reader_ = new TTreeReaderValue<std::vector<alp::PtEtaPhiEVector>>(reader,
+            dihiggs_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader,
                 config.at("dihiggs_branch_name").get_ref<const std::string &>().c_str());
         }
         // load muon collection

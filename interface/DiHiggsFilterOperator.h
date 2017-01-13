@@ -24,7 +24,7 @@ template <class EventClass> class DiHiggsFilterOperator : public BaseOperator<Ev
       }
       
       if(min_dihiggs_mass_) {
-        if((ev.dijets_.at(0)+ev.dijets_.at(1)).mass()< min_dihiggs_mass_) return false;
+        if(ev.dihiggs_.at(0).mass()< min_dihiggs_mass_) return false;
       }
 
       return true;
