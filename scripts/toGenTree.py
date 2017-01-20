@@ -12,7 +12,7 @@ from glob import glob
 import numpy as np
 import os, sys, time,math
 import shutil,subprocess
-
+from HHStatAnalysis.AnalyticalModels.NonResonantModel import NonResonantModel
 # ROOT imports
 import ROOT
 from ROOT import TChain, TH1F, TFile, vector, gROOT, TTree
@@ -33,7 +33,6 @@ my_test_lib = ctypes.cdll.LoadLibrary('../src/alp_objects_h.so')
 #out = proc.stdout.read()
 #ROOT.gSystem.Load("../src/alp_objects.h++") # == to have the jets CSV
 #include <Python.h>
-
 
 def CSaxis(H):
   p1 = ROOT.TLorentzVector();
@@ -56,7 +55,6 @@ def CosThetaStar(diphoton, dihiggs):
   #cosThetaStar = fCSaxis.Dot(diphoton_vect)
   cosThetaStar = diphoton.CosTheta()
   return cosThetaStar
-
  
 def CosThetaStarh1(parton, higgs):
   boost_higgs = -higgs.BoostVector()
@@ -78,6 +76,19 @@ def PtBalanceRest(jet1,jet2,H):
 #path = "/lustre/cmswork/hh/alp_baseSelector/"
 path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v1_20161028_noJetCut/" 
 outpath="/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/to_Reweighting/"
+data="/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/CMSSW_7_4_7/src/HHStatAnalysis_git/AnalyticalModels/data/"
+model = NonResonantModel()
+dumb = model.ReadCoefficients("../../../HHStatAnalysis/AnalyticalModels/data/coefficientsByBin_klkt.txt",model.effSM,model.effSum,model.MHH,model.COSTS,model.A1,model.A3,model.A7)  
+# to analytical re
+# We sum SM + box + the benchmarks from 2-13 
+# read the 2D histo referent to the sum of events
+fileHH=ROOT.TFile("/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/CMSSW_9_0_0_pre1/src/Support/NonResonant/Hist2DSum_V0_SM_box.root")
+sumHAnalyticalBin = fileHH.Get("SumV0_AnalyticalBin")
+sumHBenchBin = fileHH.Get("SumV0_AnalyticalBin") 
+# lambda scan: 0 ,  +-1 , 2 , 2.4 , 3, 5,7 , 10 , 15, 20
+
+
+
 fileoutput = "events_SumV0.root"
 files = []
 endfile = "_13TeV-madgraph_reHLT-v1.root"
@@ -90,60 +101,86 @@ normSig= np.ones((15)) # [  0.30445146/14. ,  8.08541789/14. ,  9.07503515/14.  
 if histdone==0 :
   ###############################################################
   # to make the histograms to save the sum of FulSim Benchmarks
-  binsx = [250.,300.,350., 400.,450.,500.,550.,600.,700.,800.,900,1000.] 
-  binsy = [ -1., -0.6,0.6,1. ]
   binsx = array( 'f', [250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000. ] )
-  binsy = array( 'f', [-1, -0.55,0.55,1] )
+  binsy = array( 'f', [-1., -0.55,0.55,1.] )
   bincost=3
   binmhh=13
   histAnalytical = ROOT.TH2D('SumV0_AnalyticalBin', '', binmhh,binsx,bincost,binsy)
   histAnalytical.SetTitle('HistSum2D')
   histAnalytical.SetXTitle('M_{HH}')
   histAnalytical.SetYTitle('cost*')
-  histBench = ROOT.TH2D('SumV0_BenchBin', '', 90,0.,1800.,10,-1,1.)
+  binsxV0 = array( 'f',  [250.,270.,290.,310.,330.,350.,390.,410.,450.,500.,550.,600.,700.,800.,1000.,1800 ] )
+  binsyV0 = array( 'f', [-1., -0.6,0.6,1.] )
+  histBench = ROOT.TH2D('SumV0_BenchBin_coarse', '', 48,240.,1200.,5,-1,1. ) #13,binsxV0,3,binsyV0) # (to match20 GeV binning)
   histBench.SetTitle('HistSum2D')
   histBench.SetXTitle('M_{HH}')
   histBench.SetYTitle('cost*')
-  histmhh = ROOT.TH1D('Mhh', '', 70,0,1000)
-  histmhh.SetTitle('HistSum2D Mhh')
-  histmhh.SetXTitle('M_{HH}')
-  histcost = ROOT.TH1D('Cost', '', 10,-1,1)
-  histcost.SetTitle('HistSum2D cost')
-  histcost.SetXTitle('cost*')
+  histBench0 = ROOT.TH2D('SumV0_BenchBin', '', 90,0.,1800.,10,-1,1.) #  version of Moriond 2016
+  histBench0.SetTitle('HistSum2D')
+  histBench0.SetXTitle('M_{HH}')
+  histBench0.SetYTitle('cost*')
 ##################################################
 # to make the weights once the histograms are done
 if histdone==1 :
   ################
-  sumWSM=1
-  sumW1=1
-  sumW2=1
-  sumW3=1
-  sumW4=1
-  sumW5=1
-  sumW6=1
-  sumW7=1
-  sumW8=1
-  sumW9=1
-  sumW10=1
-  sumW11=1
-  sumW12=1
-  fileHH=ROOT.TFile(outpath+"HistSum2D.root")
+  sumWSM=0
+  sumWSMA=0
+  sumW1=0
+  sumW2=0
+  sumW3=0
+  sumW4=0
+  sumW5=0
+  sumW6=0
+  sumW7=0
+  sumW8=0
+  sumW9=0
+  sumW10=0
+  sumW11=0
+  sumW12=0
+  #fileHH=ROOT.TFile(outpath+"HistSum2D.root")
+  fileHH=ROOT.TFile("../../../Support/NonResonant/Hist2DSum_V0_SM_box.root")
   sumHBenchBin = fileHH.Get("SumV0_BenchBin")
+  #sumHBenchBin.Draw("colz")
   sumHAnalyticalBin = fileHH.Get("SumV0_AnalyticalBin")
   print "Sum to Bench hist ",sumHBenchBin.GetNbinsX(),sumHBenchBin.GetNbinsY(),sumHBenchBin.Integral()
   # check mhh hist to SM
-  histmhhRe = ROOT.TH1D('Mhh', '', 20,0,1000)
-  histmhhSM = ROOT.TH1D('Mhh', '', 20,0,1000)
-  histmhhBench1 = ROOT.TH1D('Mhh', '', 20,0,1000)
+  binsxV0 = array( 'f',  [240.,250.,270.,290.,310.,330.,350.,390.,410.,450.,500.,550.,600.,700.,800.,1000.,1200 ])
+  binsyV0 = array( 'f', [-1., -0.6,0.6,1.] )
+  histmhhReA = ROOT.TH1D('MhhReA', '', 30,240.,1000. )
+  histmhhRe = ROOT.TH1D('MhhRe', '', 30,240.,1000. )#50,240,1000) # 14,binsxV0) #13,binsxV0)
+  histmhhSM = ROOT.TH1D('MhhSM', '', 30,240.,1000.) # 13,binsxV0)
+  histmhhBench1 = ROOT.TH1D('MhhBench1', '', 30,240.,1000.) # 50,240,1000)
+  histmhhBoxRe = ROOT.TH1D('MhhBoxRe', '', 30,240.,1000. )#50,240,1000) # 14,binsxV0) #13,binsxV0)
+  histmhhBox = ROOT.TH1D('MhhBox', '', 30,240.,1000.) # 13,binsxV0)
   ###############################################
   # Read histograms with JHEP benchmarks
-  fileH=ROOT.TFile("/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/to_BDT/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root")
+  fileH=ROOT.TFile("../../../Support/NonResonant/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root")
   bench = []
   for ibench in range(0,12) : bench.append(fileH.Get(str(ibench)+"_bin1")) # in the old binning
   print "Bench hist ",bench[0].GetNbinsX(),bench[0].GetNbinsY(),bench[0].Integral()
-  fileSM=ROOT.TFile("/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/to_BDT/Distros_5p_SM600k_sumBenchJHEP_13TeV.root")
-  histSM = fileSM.Get("H0bin1")
-  print "SM hist ",histSM.GetNbinsX(),histSM.GetNbinsY(),histSM.Integral(),histSM.GetXaxis().GetBinLowEdge(1),histSM.GetXaxis().GetBinUpEdge(90)
+  fileSM=ROOT.TFile("../../../Support/NonResonant/Distros_5p_SM3M_sumBenchJHEP_13TeV.root")
+  histSM = fileSM.Get("H0bin1") # fine binning (the H0bin2 is with the bin used to analytical)
+  #create a new TH2 with your bin arrays spec 
+  xaxis = histSM.GetXaxis()
+  yaxis = histSM.GetYaxis()
+  histmhhSM3M = fileSM.Get("0_mhh") # binning 200,0.,1000.
+  """
+  histSM = ROOT.TH2F("SMrebin","",48,240.,1200.,5,-1,1.)
+  histmhhSM3M = ROOT.TH1F("histmhhSM3M","",14,binsxV0)
+  for i in range(1,xaxis.GetNbins()+1) :
+     histmhhSM3M.Fill(xaxis.GetBinCenter(i),histmhhSM3M0.GetBinContent(i));  # 24,240.,1200.,5,-1,1.
+     for j in range(1,yaxis.GetNbins()+1) :
+         bmhh0= xaxis.GetBinCenter(i)
+         bcost0=yaxis.GetBinCenter(j)
+         if bmhh0>245 and bmhh0<1801 :
+           histSM.Fill(xaxis.GetBinCenter(i),yaxis.GetBinCenter(j),histSM0.GetBinContent(i,j));
+           #h1Sum.Fill(xaxis.GetBinCenter(i),yaxis.GetBinCenter(j),h1Sum.GetBinContent(i,j));
+  """
+
+  print "SM hist ",histSM.GetNbinsX(),histSM.GetNbinsY(),histSM.Integral(),histSM.GetXaxis().GetBinLowEdge(1),histSM.GetXaxis().GetBinUpEdge(xaxis.GetNbins())
+  print "Sum hist ",sumHBenchBin.GetNbinsX(),sumHBenchBin.GetNbinsY(),sumHBenchBin.Integral(),sumHBenchBin.GetXaxis().GetBinLowEdge(1),sumHBenchBin.GetXaxis().GetBinUpEdge(sumHBenchBin.GetXaxis().GetNbins())
+  print "Sum hist Analytical ",sumHAnalyticalBin.GetNbinsX(),sumHAnalyticalBin.GetNbinsY(),sumHAnalyticalBin.Integral(),sumHAnalyticalBin.GetXaxis().GetBinLowEdge(1),sumHAnalyticalBin.GetXaxis().GetBinUpEdge(sumHAnalyticalBin.GetXaxis().GetNbins())
+  #histSM.Draw("colz")
   ##############################################
   # do one file with events to test
   fileout=ROOT.TFile(outpath+fileoutput,"recreate")
@@ -151,8 +188,9 @@ if histdone==1 :
   Genmhh = np.zeros(1, dtype=float)
   GenHHCost = np.zeros(1, dtype=float) 
   # weight benchmarks JHEP
-  weightAnalytical = np.zeros(1, dtype=float)
+  effSumV0AnalyticalBin = np.zeros(1, dtype=float)
   weightSM = np.zeros(1, dtype=float)
+  weightSMA = np.zeros(1, dtype=float)
   weight1 = np.zeros(1, dtype=float)
   weight2 = np.zeros(1, dtype=float)
   weight3 = np.zeros(1, dtype=float)
@@ -167,8 +205,9 @@ if histdone==1 :
   weight12 = np.zeros(1, dtype=float)
   treeout.Branch('Genmhh', Genmhh, 'Genmhh/D')
   treeout.Branch('GenHHCost', GenHHCost, 'GenHHCost/D')
-  treeout.Branch('weightAnalytical', weightAnalytical, 'weightAnalytical/D')
+  treeout.Branch('effSumV0AnalyticalBin', effSumV0AnalyticalBin, 'effSumV0AnalyticalBin/D')
   treeout.Branch('weightSM', weightSM, 'weightSM/D')
+  treeout.Branch('weightSMA', weightSMA, 'weightSMA/D')
   treeout.Branch('weight1', weight1, 'weight1/D')
   treeout.Branch('weight2', weight2, 'weight2/D')
   treeout.Branch('weight3', weight3, 'weight3/D')
@@ -181,6 +220,11 @@ if histdone==1 :
   treeout.Branch('weight10', weight10, 'weight10/D')
   treeout.Branch('weight11', weight11, 'weight11/D')
   treeout.Branch('weight12', weight12, 'weight12/D')
+#########################################################
+normBench = [ 49976.6016382, 50138.2521798, 49990.0468825, 49993.1979924, 50041.0282539, 50038.5462286, 101.036904355, 50000.3090638, 50045.3506862, 49992.1242267, 50024.7055638, 50006.2937198]
+normSM = 299803.461384
+normSManal =  1.96357948093
+countweightbox=0
 ##############################################################
 # loop in all events
 countevent=0
@@ -206,30 +250,32 @@ for ifile in range(0,14) : # len(files)
     if histdone==0 :
       histAnalytical.Fill(GenPHH.M(),CosThetaStar(GenPH1, GenPHH))
       histBench.Fill(GenPHH.M(),CosThetaStar(GenPH1, GenPHH)) 
-      histmhh.Fill(GenPHH.M())
-      histcost.Fill(CosThetaStar(GenPH1, GenPHH))
+      histBench0.Fill(GenPHH.M(),CosThetaStar(GenPH1, GenPHH))
     # make tree for test
     if histdone==1 :
       Genmhh[0] = GenPHH.M()
-      GenHHCost[0] =  CosThetaStar(GenPH1, GenPHH)
+      #GenHHCost[0] =  CosThetaStar(GenPH1, GenPHH)
+      #print GenPHH.M(), CosThetaStar(GenPH1, GenPHH)
       # find the bin the event belong
       bmhh = histSM.GetXaxis().FindBin(GenPHH.M())
-      bcost = histSM.GetXaxis().FindBin(CosThetaStar(GenPH1, GenPHH))
-      if sumHBenchBin.GetBinContent(bmhh,bcost) >0 : # to be done with all events
-         weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./529.143984541) # 100k / 12 * 300k 
-         weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493)
-         weight2[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493)
-         weight3[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight4[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight5[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight6[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight7[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight8[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight9[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight10[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weight11[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493)
-         weight12[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100000./4140488)*(1./2747.43021493) 
-         weightAnalytical[0] = (1./ sumHAnalyticalBin.GetBinContent(bmhh,bcost))
+      bcost = histSM.GetYaxis().FindBin(CosThetaStar(GenPH1, GenPHH))
+      #print sumHBenchBin.GetBinContent(bmhh,bcost),bmhh,bcost 
+      mergecostSum = 0
+      for ii in range(1,11) : mergecostSum+= sumHBenchBin.GetBinContent(bmhh,ii) 
+      if mergecostSum >0 : # to be done with all events
+         weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / mergecostSum)/normSM # 100k / 12 * 300k * what is needed to make the sum of weights to be 1
+         weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[0] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1637128.75403) 
+         weight2[0] = (bench[1].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[1] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1023280.0075)
+         weight3[0] = (bench[2].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[2] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1277504.79631)  
+         weight4[0] = (bench[3].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[3] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1500606.32315)  
+         weight5[0] = (bench[4].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[4] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1227513.28444)  
+         weight6[0] = (bench[5].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[5] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./2020945.7276)  
+         weight7[0] = (bench[6].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[6] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./3019.80377538)  
+         weight8[0] = (bench[7].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[7] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1496218.05353)  
+         weight9[0] = (bench[8].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[8] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1185661.59471)  
+         weight10[0] = (bench[9].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[9] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./2529136.36765)  
+         weight11[0] = (bench[10].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[10] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1916322.26718) 
+         weight12[0] = (bench[11].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[11] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1957763.10013)  
          sumWSM+=weightSM[0]
          sumW1+=weight1[0]
          sumW2+=weight2[0]
@@ -243,35 +289,35 @@ for ifile in range(0,14) : # len(files)
          sumW10+=weight10[0]
          sumW11+=weight11[0]
          sumW12+=weight12[0]
-      elif 1>0 : weightSM[0] = 0
-      # make histogram to test
+      # weight analytical 
+      mhhcost= [GenPHH.M(),CosThetaStar(GenPH1, GenPHH)] # to store [mhh , cost] of that event
+      bmhh = sumHAnalyticalBin.GetXaxis().FindBin(mhhcost[0])
+      bcost = sumHAnalyticalBin.GetYaxis().FindBin(mhhcost[1])
+      weightbox=0
+      if sumHAnalyticalBin.GetBinContent(bmhh,bcost) >0 : # to be done with all events
+         # find the Nevents from the sum of events on that bin
+         effSumV0 = sumHAnalyticalBin.GetBinContent(bmhh,bcost)  # quantity of simulated events in that bin (without cuts)
+         weightSMA[0] = model.getScaleFactor(mhhcost,1.0, 1.0,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
+         weightbox = model.getScaleFactor(mhhcost,1.0, 0.01,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0)
+         sumWSMA+=weightSMA[0]
+         countweightbox+=weightbox
+      #elif 1>0 : weightSM[0] = 0
+      #if sumHAnalyticalBin.GetBinContent(bmhh,bcost) >0 : # to be done with all events
+      #   effSumV0AnalyticalBin[0] = sumHAnalyticalBin.GetBinContent(bmhh,bcost)
+      #elif 1>0 : weightAnalytical[0] = 0
+      treeout.Fill()
+      # make histogram to test*
+      histmhhBoxRe.Fill(GenPHH.M(),weightbox)
       histmhhRe.Fill(GenPHH.M(),weightSM[0])
+      histmhhReA.Fill(GenPHH.M(),weightSMA[0])
       histmhhBench1.Fill(GenPHH.M(),weight1[0])
       if ifile ==0 : histmhhSM.Fill(GenPHH.M())
+      if ifile ==1 : histmhhBox.Fill(GenPHH.M())
       countevent+=1
   print counter
 print countevent
 # save tree of events
 if histdone==1 :
-  fileout.Write()
-  fileout.Close()
-  cs=ROOT.TCanvas("cs","cs",10,10,500,500)
-  leg = ROOT.TLegend(0.5,0.60,0.99,0.99);
-  histmhhRe.Scale(1./histmhhRe.Integral())
-  histmhhRe.SetLineWidth(2)
-  histmhhRe.SetLineColor(1)
-  histmhhRe.Draw()
-  leg.AddEntry(histmhhRe,"reweigted")
-  histmhhSM.Scale(1./histmhhSM.Integral())
-  histmhhSM.SetLineWidth(2)
-  histmhhSM.SetLineColor(8)
-  histmhhSM.Draw("same")
-  leg.AddEntry(histmhhSM,"SM")
-  leg.Draw("same")
-  cs.SaveAs("SMtest.png") 
-  histmhhBench1.Scale(1./histmhhBench1.Integral())
-  histmhhBench1.Draw()
-  cs.SaveAs("Bench1.png") 
   print "W1",sumW1
   print "W2",sumW2
   print "W3",sumW3
@@ -285,12 +331,64 @@ if histdone==1 :
   print "W11",sumW11
   print "W12",sumW12
   print "WSM",sumWSM
+  print "WSMA",sumWSMA
+  print "WBoxA",countweightbox
+  fileout.Write()
+  fileout.Close()
+  cs=ROOT.TCanvas("cs","cs",10,10,500,500)
+  leg = ROOT.TLegend(0.5,0.60,0.99,0.99);
+  histmhhRe.Scale(1./histmhhRe.Integral())
+  histmhhRe.SetLineWidth(2)
+  histmhhRe.SetLineColor(2)
+  histmhhRe.Draw()
+  leg.AddEntry(histmhhRe,"reweigted (from histogram)")
+
+  histmhhReA.Scale(1./histmhhReA.Integral())
+  histmhhReA.SetLineWidth(2)
+  histmhhReA.SetLineColor(1)
+  histmhhReA.Draw("same")
+  leg.AddEntry(histmhhReA,"reweigted (from analytical)")
+
+  histmhhSM.Scale(1./histmhhSM.Integral())
+  histmhhSM.SetLineWidth(2)
+  histmhhSM.SetLineColor(8)
+  histmhhSM.Draw("same")
+  leg.AddEntry(histmhhSM,"SM (from 300k events)")
+  """
+  histmhhSM3M.Scale(1./histmhhSM3M.Integral())
+  histmhhSM3M.SetLineWidth(2)
+  histmhhSM3M.SetLineColor(2)
+  histmhhSM3M.Draw("same")
+  leg.AddEntry(histmhhSM3M,"SM (from 3M ev)")
+  """
+  leg.Draw("same")
+  leg.Clear()
+  cs.SaveAs("SMtest.png") 
+  histmhhBench1.Scale(1./histmhhBench1.Integral())
+  histmhhBench1.Draw()
+  cs.SaveAs("Bench1.png") 
+  cs.Clear() 
+
+  histmhhBoxRe.Scale(1./histmhhBoxRe.Integral())
+  histmhhBoxRe.SetLineWidth(2)
+  histmhhBoxRe.SetLineColor(1)
+  histmhhBoxRe.Draw("same")
+  leg.AddEntry(histmhhReA,"reweigted (from analytical)")
+
+  histmhhBox.Scale(1./histmhhBox.Integral())
+  histmhhBox.SetLineWidth(2)
+  histmhhBox.SetLineColor(8)
+  histmhhBox.Draw("same")
+  leg.AddEntry(histmhhBox,"Box (from 300k events)")
+  cs.SaveAs("Box.png")
+  leg.Draw("same") 
 # save histogram
 if histdone==0 :
   fileH=ROOT.TFile(outpath+"HistSum2D.root","recreate")
   fileH.cd()
   histAnalytical.Write()
-  histBench.Write()
+  histBench.Write() # coarse binnig
+  histBench0.Write()
   fileH.Close()
 
 

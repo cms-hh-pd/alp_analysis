@@ -280,6 +280,10 @@ if 1 > 0 :
   treeout.Branch('weightLm12p5', weightLm12p5, 'weightLm12p5/D')
   treeout.Branch('weightLm15', weightLm15, 'weightLm15/D')
   treeout.Branch('weightLm20', weightLm20, 'weightLm20/D')
+#########################################################
+normBench = [ 49976.6016382, 50138.2521798, 49990.0468825, 49993.1979924, 50041.0282539, 50038.5462286, 101.036904355, 50000.3090638, 50045.3506862, 49992.1242267, 50024.7055638, 50006.2937198]
+normSM = 299803.461384
+normSManal =  1.96357948093
 ##############################################################
 # loop in all events
 countevent=0
@@ -313,19 +317,19 @@ for ifile in range(0,14) : # len(files)
       mergecostSum = 0
       for ii in range(1,11) : mergecostSum+= sumHBenchBin.GetBinContent(bmhh,ii) 
       if mergecostSum >0 : # to be done with all events
-         weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / mergecostSum)*(1.) # 100k / 12 * 300k * what is needed to make the sum of weights to be 1
-         weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1637128.75403) 
-         weight2[0] = (bench[1].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1023280.0075)
-         weight3[0] = (bench[2].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1277504.79631)  
-         weight4[0] = (bench[3].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1500606.32315)  
-         weight5[0] = (bench[4].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1227513.28444)  
-         weight6[0] = (bench[5].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./2020945.7276)  
-         weight7[0] = (bench[6].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./3019.80377538)  
-         weight8[0] = (bench[7].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1496218.05353)  
-         weight9[0] = (bench[8].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1185661.59471)  
-         weight10[0] = (bench[9].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./2529136.36765)  
-         weight11[0] = (bench[10].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1916322.26718) 
-         weight12[0] = (bench[11].GetBinContent(bmhh,bcost) / mergecostSum )# (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1957763.10013)  
+         weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / mergecostSum)/normSM # 100k / 12 * 300k * what is needed to make the sum of weights to be 1
+         weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[0] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1637128.75403) 
+         weight2[0] = (bench[1].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[1] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1023280.0075)
+         weight3[0] = (bench[2].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[2] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1277504.79631)  
+         weight4[0] = (bench[3].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[3] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1500606.32315)  
+         weight5[0] = (bench[4].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[4] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1227513.28444)  
+         weight6[0] = (bench[5].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[5] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./2020945.7276)  
+         weight7[0] = (bench[6].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[6] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./3019.80377538)  
+         weight8[0] = (bench[7].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[7] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1496218.05353)  
+         weight9[0] = (bench[8].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[8] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1185661.59471)  
+         weight10[0] = (bench[9].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[9] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./2529136.36765)  
+         weight11[0] = (bench[10].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[10] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1916322.26718) 
+         weight12[0] = (bench[11].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[11] # (sumHBenchBin.GetBinContent(bmhh,bcost)))*(1./1957763.10013)   
          sumWSM+=weightSM[0]
          sumW1+=weight1[0]
          sumW2+=weight2[0]
@@ -349,7 +353,7 @@ for ifile in range(0,14) : # len(files)
          weightSMA[0] = model.getScaleFactor(mhhcost,1.0, 1.0,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
          sumWSMA+=weightSMA[0]
          # lambda scan
-         weightL0[0] = model.getScaleFactor(mhhcost,1.0, 0.0001,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
+         weightL0[0] = model.getScaleFactor(mhhcost,1.0, 0.01,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
          weightL2p4[0] = model.getScaleFactor(mhhcost,1.0, 2.4,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
          weightL3[0] = model.getScaleFactor(mhhcost,1.0, 3.0,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
          weightL4[0] = model.getScaleFactor(mhhcost,1.0, 4.0,model.effSM,model.MHH,model.COSTS,model.A1,model.A3,model.A7, effSumV0) 
@@ -467,26 +471,27 @@ if 1 > 0 :
   """
   leg.Draw("same")
   cs.SaveAs("SMtest_afterCuts.png") 
-  cs.Reset()
+  cs.Clear()
+  leg.Clear()
   ###########################
   histmhhBox.Scale(1./histmhhBox.Integral())
   histmhhBox.SetLineWidth(2)
   histmhhBox.SetLineColor(8)
   histmhhBox.Draw()
   leg.AddEntry(histmhhBox,"#kappa_{#lambda} = 0")
-  histmhhBox.Scale(1./histmhhBox.Integral())
+  histmhhBoxA.Scale(1./histmhhBoxA.Integral())
   histmhhBoxA.SetLineWidth(2)
   histmhhBoxA.SetLineColor(1)
   histmhhBoxA.Draw("same")
   leg.AddEntry(histmhhBoxA,"reweigted (from analitical)")
   leg.Draw("same")
   cs.SaveAs("Boxtest_afterCuts.png") 
-  cs.Reset()
+  cs.Clear()
   #################################################"
   histmhhBench1.Scale(1./histmhhBench1.Integral())
   histmhhBench1.Draw()
   cs.SaveAs("Bench1_afterCuts.png") 
-  cs.Reset()
+  cs.Clear()
   #################################################"
   histmhhL15.Scale(1./histmhhL15.Integral())
   histmhhL15.Draw()

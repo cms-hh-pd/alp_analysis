@@ -9,7 +9,8 @@ from glob import glob
 import numpy as np
 import os, sys, time,math
 import shutil,subprocess
-
+# to analytical reweighting
+from HHStatAnalysis.AnalyticalModels.NonResonantModel import NonResonantModel
 # ROOT imports
 import ROOT
 from ROOT import TChain, TH1F, TFile, vector, gROOT, TTree
@@ -79,8 +80,8 @@ binMhh="baseline"
 ##################
 # read the histos tree and contruct the tree of the relevant variables 
 #path = "/lustre/cmswork/hh/alp_baseSelector/"
-path = "/afs/cern.ch/work/a/acarvalh/public/toHH4b/alp_baseSelector/"
-outpath="/afs/cern.ch/work/a/acarvalh/public/toHH4b/to_BDT/"
+path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_baseSelector/"
+outpath="/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/to_BDT/"
 
 #def_noTrg/
 files = []
@@ -204,35 +205,12 @@ if binMhh=="HM" :
   normttbarNoHLT=314.429962884
   normQCDb=4075.76277854
   normQCD=11827.0714417
-
-
-####
-# to make the histograms = do once ( remake with all events / no cuts )
-binsx = [250.,300.,350., 400.,450.,500.,550.,600.,700.,800.,900,1000.] 
-binsy = [ -1., -0.6,0.6,1. ]
-binsx = array( 'f', [250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000. ] )
-binsy = array( 'f', [-1, -0.55,0.55,1] )
-bincost=3
-binmhh=13
-hist = ROOT.TH2D('SumV1AnalyticalBin', '', binmhh,binsx,bincost,binsy)
-hist.SetTitle('HistSum2D')
-hist.SetXTitle('M_{HH}')
-hist.SetYTitle('cost*')
-histBench = ROOT.TH2D('SumV1BenchBin', '', 90,0.,1800.,10,-1,1.)
-histBench.SetTitle('HistSum2D')
-histBench.SetXTitle('M_{HH}')
-histBench.SetYTitle('cost*')
-histmhh = ROOT.TH1D('Mhh', '', 70,0,1000)
-histmhh.SetTitle('HistSum2D Mhh')
-histmhh.SetXTitle('M_{HH}')
-histcost = ROOT.TH1D('Cost', '', 10,-1,1)
-histcost.SetTitle('HistSum2D cost')
-histcost.SetXTitle('cost*')
-################
-# to make the weights onc the histograms are done
+###############################################
+# to make the weights 
 sumW1=1
 fileHH=ROOT.TFile(outpath+"HistSum2D.root")
-sumHBenchBin = fileHH.Get("SumV1BenchBin")
+sumHAnalyticalBin = fileHH.Get("SumV0_AnalyticalBin") # 
+sumHBenchBin = fileHH.Get("SumV0_SumV0_BenchBin") # 
 print "Sum to Bench hist ",sumHBenchBin.GetNbinsX(),sumHBenchBin.GetNbinsY(),sumHBenchBin.Integral()
 # check mhh hist to SM
 histmhhRe = ROOT.TH1D('Mhh', '', 70,0,1000)
@@ -247,7 +225,6 @@ print "Bench hist ",bench[0].GetNbinsX(),bench[0].GetNbinsY(),bench[0].Integral(
 fileSM=ROOT.TFile(outpath+"Distros_5p_SM600k_sumBenchJHEP_13TeV.root")
 histSM = fileSM.Get("H0bin1")
 print "SM hist ",histSM.GetNbinsX(),histSM.GetNbinsY(),histSM.Integral()
-
 for ifile in range(2,17) : # len(files)  
   #print ifile
   file=ROOT.TFile(path+files[ifile]+".root")
@@ -286,6 +263,7 @@ for ifile in range(2,17) : # len(files)
   # weight benchmarks JHEP
   weightAnalytical = np.zeros(1, dtype=float)
   weightSM = np.zeros(1, dtype=float)
+  weightSMAn = np.zeros(1, dtype=float)
   weight1 = np.zeros(1, dtype=float)
   weight2 = np.zeros(1, dtype=float)
   weight3 = np.zeros(1, dtype=float)
@@ -349,6 +327,7 @@ for ifile in range(2,17) : # len(files)
 
   treeout.Branch('weightAnalytical', weightAnalytical, 'weightAnalytical/D')
   treeout.Branch('weightSM', weightSM, 'weightSM/D')
+  treeout.Branch('weightSMAn', weightSMAn, 'weightSMAn/D')
   treeout.Branch('weight1', weight1, 'weight1/D')
   treeout.Branch('weight2', weight2, 'weight2/D')
   treeout.Branch('weight3', weight3, 'weight3/D')
@@ -463,8 +442,6 @@ for ifile in range(2,17) : # len(files)
     PT= [ tree.Jets.at(0).p4_.Pt(), tree.Jets.at(1).p4_.Pt(), tree.Jets.at(2).p4_.Pt(), tree.Jets.at(3).p4_.Pt()]
     PTordered = np.argsort(PT)
     #print [ tree.Jets.at(CSVordered[0]).CSV(), tree.Jets.at(CSVordered[1]).CSV(), tree.Jets.at(CSVordered[2]).CSV(), tree.Jets.at(CSVordered[3]).CSV()]
-
-
     if PHH.M() < massup and PHH.M() > massdo : 
       counter+=1
       if ifile == 0 :
@@ -513,9 +490,6 @@ for ifile in range(2,17) : # len(files)
         if counter==1: print ifile," QCD-b ", filesout[ifile]," ",str(nev)
 	weight[0]= (tree.evtWeight)*(w_oneInvFb)/normQCDb
         countQCDb+=(tree.evtWeight)*(w_oneInvFb)/normQCDb # LM
-      """
-
-      """
       elif ifile == 2 :
         if counter==1: print ifile," ttbar no trigger ", filesout[ifile]," ",str(nev)
         weight[0]= (tree.evtWeight)*(w_oneInvFb)/normttbarNoHLT
@@ -535,7 +509,7 @@ for ifile in range(2,17) : # len(files)
         if sumHBenchBin.GetBinContent(bmhh,bcost) >0 : 
             weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100./100.772) # to be done with all events
             weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / sumHBenchBin.GetBinContent(bmhh,bcost))*(100./100.772) # to be done with all events
-            weightAnalytical[0] = (1./ sumHBenchBin.GetBinContent(bmhh,bcost))
+            weightAnalytical[0] = (1./ sumHBenchBin.GetBinContent(bmhh,bcost)) # sumHAnalyticalBin
         else : weightSM[0] = 0
         sumW1+=weightSM[0]
         # test
