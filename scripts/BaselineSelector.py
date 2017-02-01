@@ -37,7 +37,7 @@ parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='st
 parser.add_argument("--jesUp", help="use JES up", action='store_true')
 parser.add_argument("--jesDown", help="use JES down", action='store_true')
 parser.add_argument("--btag", help="which btag algo", default='cmva')
-parser.add_argument("-i", "--iDir", help="input directory", default="v1_20161028") # _noJetCut -- 20161028 (ICHEP) -- 20161212 -- def_cmva
+parser.add_argument("-i", "--iDir", help="input directory", default="v1_20161028_noJetCut") # _noJetCut -- 20161028 (ICHEP) -- 20161212 -- def_cmva
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
 parser.add_argument("-m", "--doMixed", help="to process mixed samples", action='store_true') 
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
@@ -92,8 +92,8 @@ else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
               "genbfromhs_branch_name" : "GenBFromHs",
               "genhs_branch_name" : "GenHs",
+              "tl_genhs_branch_name" : "TL_GenHs",
             }
-#"tl_genhs_branch_name" : "TL_GenHs", #only for latest alpha ntuples
 #"muons_branch_name" : "",
 #"electrons_branch_name" : "",
 #"met_branch_name" : "",

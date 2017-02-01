@@ -10,7 +10,7 @@ from glob import glob
 import ROOT
 from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
-from ROOT import alp, ComposableSelector
+from ROOT import alp, ComposableSelector, CounterOperator, EventWriterOperator
 
 TH1F.AddDirectory(0)
 
@@ -19,41 +19,65 @@ from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
 
+# parsing parameters
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
+parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("--jesUp", help="use JES up", action='store_true')
+parser.add_argument("--jesDown", help="use JES down", action='store_true')
+parser.add_argument("-i", "--iDir", help="input directory", default="v1_20161028_noJetCut") # _noJetCut -- 20161028 (ICHEP) -- 20161212 -- def_cmva
+parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
+# NOTICE: do not use trigger, jesUp, jesDown with '-m'
+parser.set_defaults(doTrigger=False, jesUp=False, jesDown=False, doMixed=False)
+args = parser.parse_args()
 
 # exe parameters
-numEvents  = 1000       # -1 to process all (10000)
-samList    = {'trigger'}   # list of samples to be processed - append multiple lists , 'data', 'mainbkg'    , 'datall', 'mainbkg', 'minortt', 'dibosons', 'bosons','trigger'
-trgList    = 'singleMu_2016'
-trgListN   = 'def_2016'
-intLumi_fb = 12.6          # data integrated luminosity
+numEvents  =  args.numEvts
+if not args.samList: samList = ['test']  # list of samples to be processed - append multiple lists
+else: samList = [args.samList]
+trgList   = 'def_2016'
+intLumi_fb = 12.6 #36.26 12.6
 
-iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
-ntuplesVer = 'v0_20161004'         # equal to ntuple's folder
-oDir       = './output/v0_Simple'         # output dir ('./test')
-operator_file = "LiveOperator.h"
+iDir = "/lustre/cmswork/hh/alpha_ntuples/" + args.iDir
+oDir = '/lustre/cmswork/hh/alp_baseSelector/' + args.oDir
+if args.jesUp: oDir += "_JESup"
+elif args.jesDown: oDir += "_JESdown"
+
+data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
+
+#weights to be applied 
+weights        = {'PUWeight', 'GenWeight', 'BTagWeight'} 
+weights_nobTag = {'PUWeight', 'GenWeight'} 
+
+# to convert weights 
+weights_v = vector("string")()
+for w in weights: weights_v.push_back(w)
+w_nobTag_v = vector("string")()
+for w in weights_nobTag: w_nobTag_v.push_back(w)
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
-trg_names = triggerlists[trgList]
-trg_namesN = triggerlists[trgListN]
-trg_names.extend(trg_namesN) #to pass all triggers in config
-if not trg_names: print "### WARNING: empty hlt_names ###"
-trg_names_v = vector("string")()
-for trg_name in trg_names: trg_names_v.push_back(trg_name)
-trg_namesN_v = vector("string")()
-for trg_nameN in trg_namesN: trg_namesN_v.push_back(trg_nameN)
-
-# to parse variables to the anlyzer
-config = {"jets_branch_name": "Jets",
-          "hlt_names": trg_names, 
-          "n_gen_events":0,
+if args.doMixed: config = { "jets_branch_name": "Jets", }
+else: config = { "eventInfo_branch_name" : "EventInfo",
+              "jets_branch_name": "Jets",
+              "genbfromhs_branch_name" : "GenBFromHs",
+              "genhs_branch_name" : "GenHs",
+              "tl_genhs_branch_name" : "TL_GenHs",
+            }
+#"muons_branch_name" : "",
+#"electrons_branch_name" : "",
+#"met_branch_name" : "",
+config.update(        
+        { "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
-         }
+          "isMixed" : args.doMixed,
+         } )
 
 snames = []
 for s in samList:
@@ -61,12 +85,12 @@ for s in samList:
 
 # process samples
 ns = 0
-hcount = TH1F('hcount', 'num of genrated events',1,0,1)
 for sname in snames:
     isHLT = False
 
-    #get file names in all sub-folders:
-    files = glob(iDir+ntuplesVer+"/"+samples[sname]["sam_name"]+"/*/output.root")
+    reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
+    print "reg_exp: {}".format(reg_exp) 
+    files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
  
     #preliminary checks
@@ -75,13 +99,14 @@ for sname in snames:
         continue
     else:
         if "Run" in files[0]: config["isData"] = True 
-        elif "_v14" in files[0]: isHLT = True #patch - check better way to look for HLT
+        elif "_withHLT" in files[0]: isHLT = True
+        elif "_reHLT" in files[0]: isHLT = True
         else:
-            print "WARNING: no HLT, skip samples"
-            continue
+            print "WARNING: no HLT branch in tree."
 
     #read counters to get generated eventsbj
     ngenev = 0
+    hcount = TH1F('hcount', 'num of genrated events',1,0,1)
     for f in files:
         tf = TFile(f)
         hcount.Add(tf.Get('counter/c_nEvents'))
@@ -95,14 +120,14 @@ for sname in snames:
     config["matcheff"] = samples[sname]["matcheff"]
     config["kfactor"]  = samples[sname]["kfactor"]
 
-    # load the operator
-    gROOT.ProcessLine("#include \"{}\"".format(operator_file))
-    operator_name = os.path.splitext(os.path.basename(operator_file))[0]
-    Operator = importlib.import_module("ROOT.{}".format(operator_name))
+    json_str = json.dumps(config)
 
-    # define selectors list
-    selector = ComposableSelector(alp.Event)(0, json.dumps(config))
-    selector.addOperator(Operator(alp.Event)())
+    #define selectors list
+    selector = ComposableSelector(alp.Event)(0, json_str)
+
+    #simple dump of alpha ntuples in alp format
+    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str, w_nobTag_v))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")
