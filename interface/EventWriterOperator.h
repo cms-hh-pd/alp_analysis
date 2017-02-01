@@ -85,7 +85,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
                      "std::vector<alp::Candidate>",&tl_genhs_ptr, 64000, 2);
       }
 
-      tree_.Branch("GenHH","std::vector<alp::DiObject>", &tl_genhh_ptr, 64000, 2);
+      tree_.Branch("TL_GenHH","std::vector<alp::DiObject>", &tl_genhh_ptr, 64000, 2);
 
       tree_.Branch("DiJets","std::vector<alp::DiObject>", &dijets_ptr, 64000, 2);
 
