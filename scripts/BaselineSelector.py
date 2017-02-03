@@ -92,8 +92,8 @@ else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
               "genbfromhs_branch_name" : "GenBFromHs",
               "genhs_branch_name" : "GenHs",
+              "tl_genhs_branch_name" : "TL_GenHs",
             }
-#"tl_genhs_branch_name" : "TL_GenHs", #only for latest alpha ntuples
 #"muons_branch_name" : "",
 #"electrons_branch_name" : "",
 #"met_branch_name" : "",

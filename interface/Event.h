@@ -29,6 +29,7 @@ namespace alp {
       std::vector<alp::Candidate> genbfromhs_;
       std::vector<alp::Candidate> genhs_;
       std::vector<alp::Candidate> tl_genhs_;
+      std::vector<alp::DiObject>  tl_genhh_;
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
@@ -39,6 +40,7 @@ namespace alp {
       TTreeReaderValue<std::vector<alp::Candidate>> * genbfromhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * genhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * tl_genhs_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::DiObject>> * tl_genhh_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
@@ -107,6 +109,11 @@ namespace alp {
             tl_genhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader,
                 config.at("tl_genhs_branch_name").get_ref<const std::string &>().c_str());
         }      
+        // load GenHH for re-weighting
+        if (config.find("tl_genhh_branch_name") != config.end()) {
+            tl_genhh_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader,
+                config.at("tl_genhh_branch_name").get_ref<const std::string &>().c_str());
+        }      
         
       }
       virtual ~Event() {
@@ -120,6 +127,7 @@ namespace alp {
         delete genbfromhs_reader_;
         delete genhs_reader_;
         delete tl_genhs_reader_;
+        delete tl_genhh_reader_;
       }
 
       virtual void update() {
@@ -135,6 +143,7 @@ namespace alp {
         if (genbfromhs_reader_) genbfromhs_ = **genbfromhs_reader_;
         if (genhs_reader_) genhs_ = **genhs_reader_;
         if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
+        if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
 
         free_is_.clear();
         hems_.clear();
