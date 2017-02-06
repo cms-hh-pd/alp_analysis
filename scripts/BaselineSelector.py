@@ -63,10 +63,10 @@ elif args.jesDown: oDir += "_JESdown"
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 if args.btag == 'cmva':  
     btagAlgo = "pfCombinedMVAV2BJetTags"
-    btagCuts = CMVAv2_wp
+    btag_wp = CMVAv2_wp
 elif args.btag == 'csv': 
     btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-    btagCuts = CSVv2_wp
+    btag_wp = CSVv2_wp
 
 #weights to be applied 
 weights        = {}
@@ -178,7 +178,7 @@ for sname in snames:
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btagCuts[1], 4, config["isData"], data_path))
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
@@ -200,7 +200,7 @@ for sname in snames:
     else: treename = "ntuple/tree"
     tchain = TChain(treename)    
     for File in files:                     
-        tchain.Add(File)       
+        tchain.Add(File)
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)

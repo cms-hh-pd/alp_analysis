@@ -13,6 +13,9 @@ samlists = {
    'data_moriond'  : ['BTagCSVRun2016B-23Sep2016-v2', 'BTagCSVRun2016B-23Sep2016-v3', 'BTagCSVRun2016C-23Sep2016-v1',
                       'BTagCSVRun2016D-23Sep2016-v1', 'BTagCSVRun2016E-23Sep2016-v1', 'BTagCSVRun2016F-23Sep2016-v1', 
                       'BTagCSVRun2016G-23Sep2016-v1', 'BTagCSVRun2016H-PromptReco-v2', 'BTagCSVRun2016H-PromptReco-v3' ], #36.26 fb-1
+   'data_moriond1' : ['BTagCSVRun2016B-23Sep2016-v2', 'BTagCSVRun2016B-23Sep2016-v3', 'BTagCSVRun2016C-23Sep2016-v1', 'BTagCSVRun2016D-23Sep2016-v1'],
+   'data_moriond2' : ['BTagCSVRun2016E-23Sep2016-v1', 'BTagCSVRun2016F-23Sep2016-v1' ],
+   'data_moriond3' : ['BTagCSVRun2016G-23Sep2016-v1', 'BTagCSVRun2016H-PromptReco-v2', 'BTagCSVRun2016H-PromptReco-v3' ],
    'data_moriond_singleMu' : [ 'SingleMuonRun2016B-23Sep2016-v1', 'SingleMuonRun2016B-23Sep2016-v3', 'SingleMuonRun2016C-23Sep2016-v1',
                       'SingleMuonRun2016D-23Sep2016-v1', 'SingleMuonRun2016E-23Sep2016-v1', 'SingleMuonRun2016F-23Sep2016-v1', 
                       'SingleMuonRun2016G-23Sep2016-v1', 'SingleMuonRun2016H-PromptReco-v2', 'SingleMuonRun2016H-PromptReco-v3' ], #36.26 fb-1

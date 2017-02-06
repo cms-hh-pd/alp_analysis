@@ -18,6 +18,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     alp::EventInfo * eventInfo_ptr = nullptr;
 
     std::vector<std::string> weights_;
+    bool isData_ = false;
 
     // variables to save in branches
     float_t evtWeight = 1.;
@@ -94,6 +95,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
 
+      if(config_.at("isData")) isData_ = true;
+
    }
 
 
@@ -112,8 +115,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
       tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);
 
-      ev.tl_genhh_.clear();
-      ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_); // check if reasonable
+      if(!isData_){
+        ev.tl_genhh_.clear();
+        ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_); // check if reasonable
+      }
       tl_genhh_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.tl_genhh_);
       dijets_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dijets_); 
       dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 
