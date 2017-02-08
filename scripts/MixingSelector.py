@@ -109,7 +109,7 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, nn_vars_v, btagAlgo, btag_wp[1]))
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v))
     selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, 4))
 
     #create tChain and process each files   

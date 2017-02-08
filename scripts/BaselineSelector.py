@@ -64,7 +64,7 @@ elif args.btag == 'csv':
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'BTagWeight'} 
+    weights        = {'PUWeight', 'BTagWeight'}  #'PdfWeight'
     weights_nobTag = {'PUWeight' } 
 # ---------------
 
@@ -188,7 +188,7 @@ for sname in snames:
     if not args.doMixed:
         selector.addOperator(ThrustFinderOperator(alp.Event)())
         selector.addOperator(HemisphereProducerOperator(alp.Event)())
-        selector.addOperator(HemisphereWriterOperator(alp.Event)(btagAlgo, 4))
+        selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     if args.doMixed: treename = "mix_tree"

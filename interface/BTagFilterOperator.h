@@ -49,16 +49,16 @@
                         {4, BTagEntry::FLAV_C},
                         {0, BTagEntry::FLAV_UDSG}};
 
-         syst_map = {{BTagEntry::FLAV_B, {"Up_jes","Down_jes",
-                                          "Up_lf","Down_lf",
-                                          "Up_hfstats1", "Down_hfstats1",
-                                          "Up_hfstats2", "Down_hfstats2"}},
-                    {BTagEntry::FLAV_C, {"Up_cferr1","Down_cferr1",
-                                         "Up_cferr2", "Down_cferr2"}},
-                    {BTagEntry::FLAV_UDSG, {"Up_jes","Down_jes",
-                                            "Up_hf","Down_hf",
-                                            "Up_lfstats1", "Down_lfstats1",
-                                            "Up_lfstats2", "Down_lfstats2"}}};
+         syst_map = {{BTagEntry::FLAV_B, {"up_jes","down_jes",
+                                          "up_lf","down_lf",
+                                          "up_hfstats1", "down_hfstats1",
+                                          "up_hfstats2", "down_hfstats2"}},
+                    {BTagEntry::FLAV_C, {"up_cferr1","down_cferr1",
+                                         "up_cferr2", "down_cferr2"}},
+                    {BTagEntry::FLAV_UDSG, {"up_jes","down_jes",
+                                            "up_hf","down_hf",
+                                            "up_lfstats1", "down_lfstats1",
+                                            "up_lfstats2", "down_lfstats2"}}};
 
          btcalib = BTagCalibration(s_name_map.at(disc), data_path+s_name_map.at(disc)+"_Moriond17_B_H.csv"); //_ichep.csv
 

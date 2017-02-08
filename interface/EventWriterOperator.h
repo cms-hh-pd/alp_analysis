@@ -95,10 +95,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
 
-      if(config_.at("isData")) {
-        if(config_.at("isMixed")) hasGen_ = false;
-      }
-     // std::cout << hasGen_ std::endl; 
+      if(config_.at("isData" )) hasGen_ = false;
+      if(config_.at("isMixed")) hasGen_ = false;
 
    }
 
