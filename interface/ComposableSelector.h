@@ -173,7 +173,7 @@ template <class EventClass> bool  ComposableSelector<EventClass>::Process(Long64
 {
 
   n_entries++;
-  if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl; 
+  if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl;  
 
   // set TTreeReader entry
   reader_.SetLocalEntry(entry);

@@ -19,6 +19,7 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWri
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
+from Analysis.alp_analysis.workingpoints import wps
 
 TH1F.AddDirectory(0)
 
@@ -29,6 +30,7 @@ parser.add_argument("-e", "--numEvts", help="number of events", type=int, defaul
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="MC_def_noTrg")
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/data_def")
+parser.add_argument("--btag", help="which btag algo", default='cmva')
 args = parser.parse_args()
 
 # exe parameters
@@ -47,6 +49,13 @@ weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
+
+if args.btag == 'cmva':  
+    btagAlgo = "pfCombinedMVAV2BJetTags"
+    btag_wp = wps['CMVAv2_moriond']
+elif args.btag == 'csv': 
+    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    btag_wp = wps['CSVv2_moriond']
 
 trg_names = triggerlists[trgList]
 if not trg_names: print "### WARNING: empty hlt_names ###"
@@ -123,7 +132,7 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)())
 
     selector.addOperator(FolderOperator(alp.Event)("pair"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
     selector.addOperator(ThrustFinderOperator(alp.Event)())

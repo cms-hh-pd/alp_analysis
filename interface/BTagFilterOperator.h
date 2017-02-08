@@ -9,9 +9,6 @@
 #include "Event.h"
 #include "Utils.h"
 
-constexpr auto CSV_name  = "pfCombinedInclusiveSecondaryVertexV2BJetTags";
-constexpr auto CMVA_name = "pfCombinedMVAV2BJetTags";
-
   template <class EventClass> class BTagFilterOperator : public BaseOperator<EventClass> {
 
     public:

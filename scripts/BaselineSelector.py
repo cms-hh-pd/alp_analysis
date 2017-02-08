@@ -1,14 +1,6 @@
 #!/usr/bin/env python 
 # to EXE: python scripts/BaselineSelector.py -s data_moriond -t -o def_cmva
 
-## bTag WPs ##
-# 2016 data - ICHEP:
-#CSVv2_wp  = [ 0.460, 0.800, 0.935]  
-#CMVAv2_wp = [-0.715, 0.185, 0.875]
-# 2016 data - MORIOND:
-CSVv2_wp  = [ 0.5462, 0.8484, 0.9535]  
-CMVAv2_wp = [-0.5884, 0.4432, 0.9432]
-
 # good old python modules
 import json
 import os
@@ -23,11 +15,11 @@ from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetF
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
 from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator
 
-
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
+from Analysis.alp_analysis.workingpoints import wps
 
 TH1F.AddDirectory(0)
 
@@ -63,17 +55,17 @@ elif args.jesDown: oDir += "_JESdown"
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 if args.btag == 'cmva':  
     btagAlgo = "pfCombinedMVAV2BJetTags"
-    btag_wp = CMVAv2_wp
+    btag_wp = wps['CMVAv2_moriond']
 elif args.btag == 'csv': 
     btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-    btag_wp = CSVv2_wp
+    btag_wp = wps['CSVv2_moriond']
 
 #weights to be applied 
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'} 
-    weights_nobTag = {'PUWeight', 'PdfWeight'} 
+    weights        = {'PUWeight', 'BTagWeight'} 
+    weights_nobTag = {'PUWeight' } 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -168,9 +160,12 @@ for sname in snames:
 
     #trigger
     if args.doTrigger:
-        selector.addOperator(FolderOperator(alp.Event)("trigger"))
-        selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-        selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+        if not args.doMixed:
+	        selector.addOperator(FolderOperator(alp.Event)("trigger"))
+        	selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+        	selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+ 	else: 
+		print "WARNING: is Mixed sample - trigger filter applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
@@ -193,7 +188,7 @@ for sname in snames:
     if not args.doMixed:
         selector.addOperator(ThrustFinderOperator(alp.Event)())
         selector.addOperator(HemisphereProducerOperator(alp.Event)())
-        selector.addOperator(HemisphereWriterOperator(alp.Event)())
+        selector.addOperator(HemisphereWriterOperator(alp.Event)(btagAlgo, 4))
 
     #create tChain and process each files
     if args.doMixed: treename = "mix_tree"

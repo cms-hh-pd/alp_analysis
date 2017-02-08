@@ -191,7 +191,13 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-
+    'BTagCSVRun2016' : {
+        'sam_name': 'BTagCSVRun2016',
+        'nevents' : 1,
+        'xsec_br' : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
 
     ########## MC ##########
     ### Signals

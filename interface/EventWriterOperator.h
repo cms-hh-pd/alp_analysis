@@ -18,7 +18,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     alp::EventInfo * eventInfo_ptr = nullptr;
 
     std::vector<std::string> weights_;
-    bool isData_ = false;
+    bool hasGen_ = true;
 
     // variables to save in branches
     float_t evtWeight = 1.;
@@ -95,7 +95,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
 
-      if(config_.at("isData")) isData_ = true;
+      if(config_.at("isData")) {
+        if(config_.at("isMixed")) hasGen_ = false;
+      }
+     // std::cout << hasGen_ std::endl; 
 
    }
 
@@ -115,7 +118,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
       tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);
 
-      if(!isData_){
+      if(hasGen_){
         ev.tl_genhh_.clear();
         ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_); // check if reasonable
       }

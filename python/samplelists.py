@@ -7,7 +7,7 @@ samlists = {
    'signals' : ['HHTo4B_SM', 'HHTo4B_BM2','HHTo4B_BM3','HHTo4B_BM4','HHTo4B_BM5','HHTo4B_BM7','HHTo4B_BM8',
                 'HHTo4B_BM9','HHTo4B_BM10','HHTo4B_BM11','HHTo4B_BM12','HHTo4B_BM13','HHTo4B_BMbox','VBF_HHTo4B_SM'], #'HHTo4B_BM6',
 
-   'data_unblind'  : ['BTagCSVRun2016C-v2'],
+   'data'  : ['BTagCSVRun2016'],
    'data_ichep'    : ['BTagCSVRun2016B-v1','BTagCSVRun2016B-v2','BTagCSVRun2016C-v2','BTagCSVRun2016D-v2'], #12.6 fb-1
    'data_singleMu' : ['SingleMuonRun2016B-v1', 'SingleMuonRun2016B-v2', 'SingleMuonRun2016C-v2', 'SingleMuonRun2016D-v2'],
    'data_moriond'  : ['BTagCSVRun2016B-23Sep2016-v2', 'BTagCSVRun2016B-23Sep2016-v3', 'BTagCSVRun2016C-23Sep2016-v1',
@@ -81,6 +81,6 @@ samlists = {
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['BTagCSVRun2016D-23Sep2016-v1'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['BTagCSVRun2016'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
