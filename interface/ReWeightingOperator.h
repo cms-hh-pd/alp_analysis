@@ -36,6 +36,11 @@
         }
 
         for (const auto & sam : sam_list) {
+
+            //example on how to call ev variables
+            float costh = ev.dihiggs_.at(0).costhst();
+            float mhh = ev.dihiggs_.at(0).mass();
+
             //code to get weight
             //...........
             float weight = 1.;
