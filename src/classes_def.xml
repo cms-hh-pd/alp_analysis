@@ -26,4 +26,5 @@
   <class pattern="HemisphereMixerOperator<*>"/> 
   <class pattern="HemisphereWriterOperator<*>"/> 
   <class pattern="MixedEventWriterOperator<*>"/> 
+  <class pattern="ReWeightingOperator<*>"/> 
 </lcgdict>  
