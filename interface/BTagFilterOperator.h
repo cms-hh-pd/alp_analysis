@@ -109,8 +109,9 @@
            }
         }
 
-        for (auto & jet : ev.jets_) {
-          if(!isdata_) {
+
+        if(!isdata_) {
+          for (auto & jet : ev.jets_) {
             auto jet_flavour = flavour_map.at(jet.hadronFlavour());
             auto jet_eta = jet.eta();
             auto jet_pt = jet.pt();
@@ -142,7 +143,6 @@
               weight_map.at("BTagWeight_"+syst) *= syst_sf;
               if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,central_sf);
             }
-
           }
         }
 

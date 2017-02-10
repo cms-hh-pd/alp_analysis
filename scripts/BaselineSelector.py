@@ -13,7 +13,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -29,14 +29,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
-parser.add_argument("--jesUp", help="use JES up", action='store_true')
-parser.add_argument("--jesDown", help="use JES down", action='store_true')
+parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170202") # _noJetCut
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
 parser.add_argument("-m", "--doMixed", help="to process mixed samples", action='store_true') 
+parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
-parser.set_defaults(doTrigger=False, jesUp=False, jesDown=False, doMixed=False)
+parser.set_defaults(doTrigger=False, doMixed=False, savePlots=True)
 args = parser.parse_args()
 
 # exe parameters
@@ -49,8 +49,10 @@ intLumi_fb = 36.26
 if args.doMixed: iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir
 else: iDir = "/lustre/cmswork/hh/alpha_ntuples/" + args.iDir
 oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir
-if args.jesUp: oDir += "_JESup"
-elif args.jesDown: oDir += "_JESdown"
+if args.jetCorr   == 0: oDir += "_JESup"
+elif args.jetCorr == 1: oDir += "_JESdown"
+elif args.jetCorr == 2: oDir += "_JERup"
+elif args.jetCorr == 3: oDir += "_JERdown"
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 if args.btag == 'cmva':  
@@ -64,8 +66,8 @@ elif args.btag == 'csv':
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'BTagWeight'}  #'PdfWeight'
-    weights_nobTag = {'PUWeight' } 
+    weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
+    weights_nobTag = {'PUWeight', 'PdfWeight'} 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -152,8 +154,20 @@ for sname in snames:
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
-    if args.jesUp: selector.addOperator(JEShifterOperator(alp.Event)(+1))
-    elif args.jesDown: selector.addOperator(JEShifterOperator(alp.Event)(-1))
+    if args.jetCorr == 0:
+        print "- applying JEC Up -"
+        selector.addOperator(JEShifterOperator(alp.Event)(+1))
+    elif args.jetCorr == 1: 
+        print "- applying JEC Down -"
+        selector.addOperator(JEShifterOperator(alp.Event)(-1))
+    elif args.jetCorr == 2:
+        print "- applying JER Up -"
+        selector.addOperator(JERShifterOperator(alp.Event)(True))
+    elif args.jetCorr == 3:
+        print "- applying JER Down -"
+        selector.addOperator(JERShifterOperator(alp.Event)(False))
+    else:
+        print "- default JEC-JER applied -"
 
     selector.addOperator(FolderOperator(alp.Event)("base"))
     selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
@@ -170,20 +184,20 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
     selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
     selector.addOperator(FolderOperator(alp.Event)("pair_"))
     selector.addOperator(JetPairingOperator(alp.Event)(4))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("pair")) # final tree always in pair folder for simplicity
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
     if not args.doMixed:
         selector.addOperator(ThrustFinderOperator(alp.Event)())
