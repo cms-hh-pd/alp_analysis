@@ -62,28 +62,70 @@ def PtBalanceRest(jet1,jet2,H):
 ##################
 # read the histos tree and contruct the tree of the relevant variables 
 #path = "/lustre/cmswork/hh/alp_baseSelector/"
-#path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva/" 
-path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva/" 
+#path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva/" # signal
+#path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_mixed/" 
 #path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_JESup/" 
+
+
+#path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_moriond/"
+path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_moriond_mixed/"
 
 data="../../../HHStatAnalysis/AnalyticalModels/data/"
 model = NonResonantModel()
 # obtaining BSM/SM coeficients
 dumb = model.ReadCoefficients("../../../HHStatAnalysis/AnalyticalModels/data/coefficientsByBin_klkt.txt")  
 
-fileoutput = "HHTo4B_ALL.root"
+"""
+Data = 1
+fileoutput = "HHTo4B_SM_tree.root"
 files = []
 endfile = ".root"
 files.append("HHTo4B_SM")
-files.append("HHTo4B_BMbox")
-for ifile in range(2,14) : files.append("HHTo4B_BM"+str(ifile))
+#files.append("HHTo4B_BMbox")
+#for ifile in range(2,14) : files.append("HHTo4B_BM"+str(ifile))
 ########## add TCheins instead of loop in events
 fileout=ROOT.TFile(path+fileoutput,"recreate")
 cdtof = fileout.mkdir("pair")
-cdtof.cd()
+#cdtof.cd()
+tchain = TChain("pair/tree")    
+for ifile in range(0,1) : tchain.Add(path+files[ifile]+endfile)
+clone = tchain.CloneTree(0)
+
+
+Data = 0
+fileoutput = "HHTo4B_SM_tree.root"
+files = []
+endfile = ".root"
+files.append("HHTo4B_SM")
+#files.append("HHTo4B_BMbox")
+#for ifile in range(2,14) : files.append("HHTo4B_BM"+str(ifile))
+########## add TCheins instead of loop in events
+fileout=ROOT.TFile(path+fileoutput,"recreate")
+cdtof = fileout.mkdir("pair")
+#cdtof.cd()
 tchain = TChain("pair/tree")    
 for ifile in range(0,14) : tchain.Add(path+files[ifile]+endfile)
 clone = tchain.CloneTree(0)
+"""
+
+Data = 1
+fileoutput = "BTagCSVRun2016_moriond_weight.root"
+files = []
+endfile = ".root"
+files.append("BTagCSVRun2016_")
+########## add TCheins instead of loop in events
+fileout=ROOT.TFile(path+fileoutput,"recreate")
+cdtof = fileout.mkdir("pair")
+#cdtof.cd()
+tchain = TChain("pair/tree")    
+tchain.Add(path+files[0]+endfile)
+clone = tchain.CloneTree(0)
+
+
+# balanced samples to the BDT training
+balanceSM=0.02734
+balanceData=184879   
+#balanceData=66281 #53140
 
 # to analytical re
 # We sum SM + box + the benchmarks from 2-13 
@@ -112,6 +154,7 @@ if 1 > 0 :
   sumW11=0
   sumW12=0
   # lambda scan: 
+  sumData=0
   sumL0=0
   sumL2p4=0
   sumL3=0
@@ -181,6 +224,39 @@ if 1 > 0 :
   GenHHCost = np.zeros(1, dtype=float) 
   # weight benchmarks JHEP
   effSumV0AnalyticalBin = np.zeros(1, dtype=float)
+  weightBtag = np.zeros(1, dtype=float)
+  weightPU = np.zeros(1, dtype=float)
+  HHmx = np.zeros(1, dtype=float)
+  HHmhh = np.zeros(1, dtype=float)
+  HHpt = np.zeros(1, dtype=float)
+  HHcosts = np.zeros(1, dtype=float)
+
+  H1mass = np.zeros(1, dtype=float)
+  H2mass = np.zeros(1, dtype=float)
+  H1dr = np.zeros(1, dtype=float)
+  H2dr = np.zeros(1, dtype=float)
+  H1costs = np.zeros(1, dtype=float)
+  H2costs = np.zeros(1, dtype=float)
+  H1Dphi = np.zeros(1, dtype=float)
+  H2Dphi = np.zeros(1, dtype=float)
+
+  j1eta = np.zeros(1, dtype=float)
+  j2eta = np.zeros(1, dtype=float)
+  j3eta = np.zeros(1, dtype=float)
+  j4eta = np.zeros(1, dtype=float)
+
+  j1pt = np.zeros(1, dtype=float)
+  j2pt = np.zeros(1, dtype=float)
+  j3pt = np.zeros(1, dtype=float)
+  j4pt = np.zeros(1, dtype=float)
+
+  HTfull = np.zeros(1, dtype=float)
+  HTrest = np.zeros(1, dtype=float)
+  CMVA3 = np.zeros(1, dtype=float)
+  CMVA4 = np.zeros(1, dtype=float)
+
+  ################################################################
+
   weightSM = np.zeros(1, dtype=float)
   weightSMA = np.zeros(1, dtype=float)
   weight1 = np.zeros(1, dtype=float)
@@ -241,6 +317,39 @@ if 1 > 0 :
   sumLm12p5=0
   sumLm15=0
   sumLm20=0
+  #################################################
+  clone.Branch('weightBtag', weightBtag, 'weightBtag/D')
+  clone.Branch('weightPU', weightPU, 'weightPU/D')
+  clone.Branch('HHmx', HHmx, 'HHmx/D')
+  clone.Branch('HHmhh', HHmhh, 'HHmhh/D')
+  clone.Branch('HHpt', HHpt, 'HHpt/D')
+  clone.Branch('HHcosts', HHmhh, 'HHcosts/D')
+
+  clone.Branch('H1mass', H1mass, 'H1mass/D')
+  clone.Branch('H2mass', H2mass, 'H2mass/D')
+  clone.Branch('H2costs', H2costs, 'H2costs/D')
+  clone.Branch('H1dr', H1dr, 'H1dr/D')
+  clone.Branch('H2dr', H2dr, 'H2dr/D')
+  clone.Branch('H1costs', H1costs, 'H1costs/D')
+  clone.Branch('H2costs', H2costs, 'H2costs/D')
+  clone.Branch('H1Dphi', H1Dphi, 'H1Dphi/D')
+  clone.Branch('H2Dphi', H2Dphi, 'H2Dphi/D')
+
+  clone.Branch('j1eta', j1eta, 'j1eta/D')
+  clone.Branch('j2eta', j2eta, 'j2eta/D')
+  clone.Branch('j3eta', j3eta, 'j3eta/D')
+  clone.Branch('j4eta', j4eta, 'j4eta/D')
+
+  clone.Branch('j1pt', j1pt, 'j1pt/D')
+  clone.Branch('j2pt', j2pt, 'j2pt/D')
+  clone.Branch('j3pt', j3pt, 'j3pt/D')
+  clone.Branch('j4pt', j4pt, 'j4pt/D')
+
+  clone.Branch('HTfull', HTfull, 'HTfull/D')
+  clone.Branch('HTrest', HTrest, 'HTrest/D')
+  clone.Branch('CMVA3', CMVA3, 'CMVA3/D')
+  clone.Branch('CMVA4', CMVA4, 'CMVA4/D')
+
   #auto & weightPairs = EventInfo.weightPairs_
   #weightPairs.emplace_back("weightSM", weightSM)
   clone.Branch('Genmhh', Genmhh, 'Genmhh/D')
@@ -291,6 +400,7 @@ if histdone==1 :
   listLam=[0.0001,0.5,2, 2.5, 3.0, 4.0, 4.0, 5.0, 7.0, 10.0, 12.5, 15.0, 20.0, -1.0,-2.4, -3.0, -4.0, -5.0, -7.0, -10.0, -12.5, -15.0, -20.0]
   normL =[] 
   for ii in range(0,len(listLam)): normL.append(model.getNormalization(float(listLam[ii]),1.0,sumHAnalyticalBin))
+
 ##############################################################
 # loop in all events
 countevent=0
@@ -303,28 +413,71 @@ if 1 > 0 :
     tchain.LoadTree(iev);
     tchain.GetEntry(iev)
     njets=tchain.Jets.size()
-    #genMhh = tree.TL_GenHH.p4_.M()
-    #genCost=tree.TL_GenHH.costhst_
-    GenPH1 = ROOT.TLorentzVector()
-    GenPH1.SetPxPyPzE(tchain.TL_GenHs.at(0).p4_.Px(),tchain.TL_GenHs.at(0).p4_.Py(),tchain.TL_GenHs.at(0).p4_.Pz(),tchain.TL_GenHs.at(0).p4_.E())
-    GenPH2 = ROOT.TLorentzVector()
-    GenPH2.SetPxPyPzE(tchain.TL_GenHs.at(1).p4_.Px(),tchain.TL_GenHs.at(1).p4_.Py(),tchain.TL_GenHs.at(1).p4_.Pz(),tchain.TL_GenHs.at(1).p4_.E())
-    GenPHH = ROOT.TLorentzVector()
-    GenPHH = GenPH1 + GenPH2
-    genMhh =  GenPHH.M()
-    genCost=CosThetaStar(GenPH1, GenPHH)
+    if Data == 0 :
+      #genMhh = tchain.TL_GenHH.p4_.M()
+      #genCost=tchain.TL_GenHH.costhst_
+      GenPH1 = ROOT.TLorentzVector()
+      GenPH1.SetPxPyPzE(tchain.TL_GenHs.at(0).p4_.Px(),tchain.TL_GenHs.at(0).p4_.Py(),tchain.TL_GenHs.at(0).p4_.Pz(),tchain.TL_GenHs.at(0).p4_.E())
+      GenPH2 = ROOT.TLorentzVector()
+      GenPH2.SetPxPyPzE(tchain.TL_GenHs.at(1).p4_.Px(),tchain.TL_GenHs.at(1).p4_.Py(),tchain.TL_GenHs.at(1).p4_.Pz(),tchain.TL_GenHs.at(1).p4_.E())
+      GenPHH = ROOT.TLorentzVector()
+      GenPHH = GenPH1 + GenPH2
+      genMhh =  GenPHH.M()
+      genCost=CosThetaStar(GenPH1, GenPHH)
+    elif Data == 1 :
+      genMhh = -100
+      genCost=-100
+    ####################################
+    if Data == 0 :
+      weightBtag[0] = tchain.EventInfo.getWeightC("BTagWeight") 
+      # in Tbrowser: tchain.Scan("EventInfo.getWeightC(\"PUWeight\")")
+      weightPU[0] = tchain.EventInfo.getWeightC("PUWeight" ) 
+    elif Data == 1 :
+      weightBtag[0] = 1
+      weightPU[0] = 1 
+
+
+    H1mass[0] = tchain.DiJets[0].mass()
+    H2mass[0] = tchain.DiJets[1].mass()
+
+    HHmx[0] = tchain.DiHiggs[0].p4_.mass() - H1mass[0] - H2mass[0]+ 250
+    HHmhh[0] = tchain.DiHiggs[0].p4_.mass()
+    HHpt[0] = tchain.DiHiggs[0].p4_.pt()
+    HHcosts[0] = tchain.DiHiggs[0].costhst()
+
+    H1dr[0] = tchain.DiJets[0].dr()
+    H2dr[0] = tchain.DiJets[1].dr()
+    H1costs[0] = tchain.DiJets[0].costhst()
+    H2costs[0] = tchain.DiJets[1].costhst()
+    H1Dphi[0] = tchain.DiJets[0].dphi()
+    H2Dphi[0] = tchain.DiJets[1].dphi()
+
+    j1eta[0] = tchain.Jets[0].eta()
+    j2eta[0] = tchain.Jets[1].eta()
+    j3eta[0] = tchain.Jets[2].eta()
+    j4eta[0] = tchain.Jets[3].eta()
+
+    j1pt[0] = tchain.Jets[0].pt()
+    j2pt[0] = tchain.Jets[1].pt()
+    j3pt[0] = tchain.Jets[2].pt()
+    j4pt[0] = tchain.Jets[3].pt()
+
+    HTfull[0] = 1 #Sum$(Jets.pt())
+    HTrest[0] = 1 #Sum$(Jets.pt())
+    CMVA3[0] = tchain.Jets[2].CMVA()
+    CMVA4[0] = tchain.Jets[3].CMVA()
+
     # make weights to benchmarks
-    Genmhh[0] = GenPHH.M()
-    #GenHHCost[0] =  CosThetaStar(GenPH1, GenPHH)
-    #print GenPHH.M(), CosThetaStar(GenPH1, GenPHH)
-    # find the bin the event belong
-    bmhh = histSM.GetXaxis().FindBin(GenPHH.M())
-    bcost = histSM.GetYaxis().FindBin(CosThetaStar(GenPH1, GenPHH))
-    #print sumHBenchBin.GetBinContent(bmhh,bcost),bmhh,bcost 
-    mergecostSum = 0
-    for ii in range(1,11) : mergecostSum+= sumHBenchBin.GetBinContent(bmhh,ii) 
-    if mergecostSum >0 : # to be done with all events
-         weightSM[0] = (histSM.GetBinContent(bmhh,bcost) / mergecostSum)/normSM 
+    Genmhh[0] = genMhh
+    if Data == 0 :
+      # find the bin the event belong
+      bmhh = histSM.GetXaxis().FindBin(genMhh)
+      bcost = histSM.GetYaxis().FindBin(genCost)
+      #print sumHBenchBin.GetBinContent(bmhh,bcost),bmhh,bcost 
+      mergecostSum = 0
+      for ii in range(1,11) : mergecostSum+= sumHBenchBin.GetBinContent(bmhh,ii) 
+      if mergecostSum >0 : # to be done with all events
+         weightSM[0] = ((histSM.GetBinContent(bmhh,bcost) / mergecostSum)/normSM ) / balanceSM
          weight1[0] = (bench[0].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[0]  
          weight2[0] = (bench[1].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[1] 
          weight3[0] = (bench[2].GetBinContent(bmhh,bcost) / mergecostSum)/normBench[2]   
@@ -350,14 +503,14 @@ if 1 > 0 :
          sumW10+=weight10[0]
          sumW11+=weight11[0]
          sumW12+=weight12[0]
-    # weight analytical 
-    mhhcost= [GenPHH.M(),CosThetaStar(GenPH1, GenPHH)] # to store [mhh , cost] of that event
-    bmhh = sumHAnalyticalBin.GetXaxis().FindBin(mhhcost[0])
-    bcost = sumHAnalyticalBin.GetYaxis().FindBin(mhhcost[1])
-    if sumHAnalyticalBin.GetBinContent(bmhh,bcost) >0 : # to be done with all events
+      # weight analytical 
+      mhhcost= [genMhh,genCost] # to store [mhh , cost] of that event
+      bmhh = sumHAnalyticalBin.GetXaxis().FindBin(mhhcost[0])
+      bcost = sumHAnalyticalBin.GetYaxis().FindBin(mhhcost[1])
+      if sumHAnalyticalBin.GetBinContent(bmhh,bcost) >0 : # to be done with all events
          # find the Nevents from the sum of events on that bin
          effSumV0 = sumHAnalyticalBin.GetBinContent(bmhh,bcost)  # quantity of simulated events in that bin (without cuts)
-         weightSMA[0] = model.getScaleFactor(mhhcost,1.0, 1.0, effSumV0) 
+         weightSMA[0] = ( model.getScaleFactor(mhhcost,1.0, 1.0, effSumV0) ) / balanceSM
          sumWSMA+=weightSMA[0]
          # lambda scan
          weightL0[0] = model.getScaleFactor(mhhcost, 0.0001,1.0, effSumV0) / normL[0]
@@ -404,31 +557,42 @@ if 1 > 0 :
          sumLm12p5+=weightLm12p5[0]
          sumLm15+=weightLm15[0]
          sumLm20+=weightLm20[0]
+      # make histogram to test
+      histmhhReA.Fill(genMhh,weightSMA[0])
+      histmhhRe.Fill(genMhh,weightSM[0])
+      histmhhBoxA.Fill(genMhh,weightL0[0])
+      histmhhBench1.Fill(genMhh,weight1[0])
+      histmhhL15.Fill(genMhh,weightL15[0])
+      countevent+=1
+
+      histmhhRecoReA.Fill(HHmhh[0],weightSMA[0])
+      histmhhRecoRe.Fill(HHmhh[0],weightSM[0])
+      histmhhRecoBoxA.Fill(HHmhh[0],weightL0[0])
+      histptRecoReA.Fill(HHpt[0],weightSMA[0])
+      histptRecoRe.Fill(HHpt[0],weightSM[0])
+      histptRecoBoxA.Fill(HHpt[0],weightL0[0])
+    elif Data ==1 :
+         weightSMA[0] = 1./balanceData
+         weightSM[0] = 1./balanceData 
+         sumData+=weightSM[0]
+         weight1[0] = 1./balanceData 
+         weight2[0] = 1./balanceData 
+         weight3[0] = 1./balanceData   
+         weight4[0] = 1./balanceData   
+         weight5[0] = 1./balanceData   
+         weight6[0] = 1./balanceData   
+         weight7[0] = 1./balanceData  
+         weight8[0] = 1./balanceData   
+         weight9[0] = 1./balanceData  
+         weight10[0] = 1./balanceData   
+         weight11[0] = 1./balanceData 
+         weight12[0] = 1./balanceData   
     clone.Fill()
-    # make histogram to test
-    histmhhReA.Fill(GenPHH.M(),weightSMA[0])
-    histmhhRe.Fill(GenPHH.M(),weightSM[0])
-    histmhhBoxA.Fill(GenPHH.M(),weightL0[0])
-    histmhhBench1.Fill(GenPHH.M(),weight1[0])
-    histmhhL15.Fill(GenPHH.M(),weightL15[0])
-    countevent+=1
-    ### reco variables to test 
-    PH1 = ROOT.TLorentzVector()
-    PH1.SetPxPyPzE(tchain.DiJets.at(0).p4_.Px(),tchain.DiJets.at(0).p4_.Py(),tchain.DiJets.at(0).p4_.Pz(),tchain.DiJets.at(0).p4_.E())
-    PH2 = ROOT.TLorentzVector()
-    PH2.SetPxPyPzE(tchain.DiJets.at(1).p4_.Px(),tchain.DiJets.at(1).p4_.Py(),tchain.DiJets.at(1).p4_.Pz(),tchain.DiJets.at(1).p4_.E())
-    PHH = ROOT.TLorentzVector()
-    PHH = PH1 + PH2
-    histmhhRecoReA.Fill(PHH.M(),weightSMA[0])
-    histmhhRecoRe.Fill(PHH.M(),weightSM[0])
-    histmhhRecoBoxA.Fill(PHH.M(),weightL0[0])
-    histptRecoReA.Fill(PHH.Pt(),weightSMA[0])
-    histptRecoRe.Fill(PHH.Pt(),weightSM[0])
-    histptRecoBoxA.Fill(PHH.Pt(),weightL0[0])
   print counter
 print countevent
 ############# make histograms with SM and BOx simulated to check
-for ifile in range(0,2) : #  len(files)  
+if Data == 0 :
+ for ifile in range(0,2) : #  len(files)  
   print path+files[ifile]+endfile
   file=ROOT.TFile(path+files[ifile]+endfile)
   tree=file.pair.Get("tree")
@@ -477,8 +641,14 @@ for ifile in range(0,2) : #  len(files)
        histmhhBox.Fill(GenPHH.M())
        histmhhRecoBox.Fill(PHH.M())
        histptRecoBox.Fill(PHH.Pt())
+
 # save tree of events
-if 1 > 0 :
+fileout.pair.WriteTObject(clone) #.Write("",ROOT.TObject::kOverwrite)
+fileout.Write()
+fileout.Close()
+print sumData
+# make histograms
+if Data == 0 :
   print "W1",sumW1
   print "W2",sumW2
   print "W3",sumW3
@@ -518,11 +688,7 @@ if 1 > 0 :
   print -20,sumLm20
   #fileout = clone.GetCurrentFile()
   # Write selected data to output disk file
-  print  clone.GetEntries()
-  fileout.pair.WriteTObject(clone) #.Write("",ROOT.TObject::kOverwrite)
-
-  fileout.Write()
-  fileout.Close()
+  #print  clone.GetEntries()
   cs=ROOT.TCanvas("cs","cs",10,10,500,500)
   leg = ROOT.TLegend(0.5,0.60,0.99,0.99);
   ########################
