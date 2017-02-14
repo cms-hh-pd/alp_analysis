@@ -198,6 +198,20 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+    'BTagCSVRun2016_BE' : {
+        'sam_name': 'BTagCSVRun2016BE',
+        'nevents' : 1,
+        'xsec_br' : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016_FH' : {
+        'sam_name': 'BTagCSVRun2016FH',
+        'nevents' : 1,
+        'xsec_br' : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
 
     ########## MC ##########
     ### Signals
@@ -856,5 +870,6 @@ samples = {
     'Data_BDT_28_11_16_15h_bkg' :{
         'sam_name': 'Data_BDT_28_11_16_15h_bkg',
     },    
+
 }
 

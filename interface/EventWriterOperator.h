@@ -18,7 +18,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     alp::EventInfo * eventInfo_ptr = nullptr;
 
     std::vector<std::string> weights_;
-    bool hasGen_ = true;
+    bool hasGen_;
 
     // variables to save in branches
     float_t evtWeight = 1.;
@@ -39,7 +39,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
     EventWriterOperator(const std::string & config_s, const std::vector<std::string> & weights = {}) :
       config_(json::parse(config_s)), 
-      weights_(weights) {}
+      weights_(weights) {
+	if(config_s.find("isSignal")) hasGen_ = true;
+      	else hasGen_ = false;
+      }
 
     virtual ~EventWriterOperator() {}
 
@@ -95,9 +98,6 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
 
-      if(config_.at("isData" )) hasGen_ = false;
-      if(config_.at("isMixed")) hasGen_ = false;
-
    }
 
 
@@ -116,10 +116,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
       tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);
 
-      if(hasGen_){
-        ev.tl_genhh_.clear();
-        ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_); // check if reasonable
-      }
+      ev.tl_genhh_.clear();
+      //if(hasGen_) ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_); #FIXME
       tl_genhh_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.tl_genhh_);
       dijets_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dijets_); 
       dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 

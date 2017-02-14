@@ -31,7 +31,7 @@ parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("--btag", help="which btag algo", default='cmva')
-parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170202") # _noJetCut
+parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170210") 
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
 parser.add_argument("-m", "--doMixed", help="to process mixed samples", action='store_true') 
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
@@ -44,7 +44,7 @@ numEvents  =  args.numEvts
 if not args.samList: samList = ['test']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
 trgList   = 'def_2016'
-intLumi_fb = 36.26
+intLumi_fb = 35.9
 
 if args.doMixed: iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir
 else: iDir = "/lustre/cmswork/hh/alpha_ntuples/" + args.iDir
@@ -100,7 +100,8 @@ config.update(
           "xsec_br" : 0,
           "matcheff": 0,
           "kfactor" : 0,
-          "isData" : False,
+          "isData"  : False,
+          "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
          } )
@@ -126,6 +127,7 @@ for sname in snames:
         continue
     else:
         if "Run" in files[0]: config["isData"] = True
+        if "GluGluToHH" in files[0] or "HH4B" in files[0]: config["isSignal"] = True
 
     #read counters to get generated eventsbj (from alpha ntuple only)
     if not args.doMixed:
