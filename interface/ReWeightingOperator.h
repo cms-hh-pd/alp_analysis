@@ -18,12 +18,28 @@
       TFile filew_;
       TH1F hw_;      
 
-      ReWeightingOperator(std::string filew_name, std::string osample) :
+      ReWeightingOperator(std::string filew_name, std::string osample= "") :
       filew_name_(filew_name),
       osample_(osample)
-      {           
+      {
+           
         sam_list_ = {"SM","BM2","BM3","BM4","BM5","BM6",
                     "BM7","BM8","BM9","BM10","BM11","BM12","BM13","BMbox"};
+
+        //######
+        //# path to histograms
+        //######
+        //# sum of events to normalization
+        fileHH=ROOT.TFile("../../Support/NonResonant/Hist2DSum_V0_SM_box.root")  
+        sumHAnalyticalBin = fileHH.Get("SumV0_AnalyticalBin")
+        sumHBenchBin = fileHH.Get("SumV0_AnalyticalBin")
+        //# Read histograms with JHEP benchmarks
+        fileH= new TFile("../../Support/NonResonant/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root")
+        bench = []
+        for ibench in range(0,12) : bench.append(fileH.Get(str(ibench)+"_bin1")) //# in the old binning
+        //# to have the SM
+        fileSM= new TFile("../../../Support/NonResonant/Distros_5p_SM3M_sumBenchJHEP_13TeV.root")
+        histSM = fileSM.Get("H0bin1") //# fine binning (the H0bin2 is with the bin used to analytical)
 
         //get histogram related to sample
         std::string hanme = osample; //DEBUG
