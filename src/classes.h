@@ -6,6 +6,7 @@
 #include "Analysis/alp_analysis/interface/FolderOperator.h"
 #include "Analysis/alp_analysis/interface/CounterOperator.h"
 #include "Analysis/alp_analysis/interface/JEShifterOperator.h"
+#include "Analysis/alp_analysis/interface/JERShifterOperator.h"
 #include "Analysis/alp_analysis/interface/TriggerOperator.h"
 #include "Analysis/alp_analysis/interface/JetFilterOperator.h"
 #include "Analysis/alp_analysis/interface/IsoMuFilterOperator.h"
@@ -27,6 +28,7 @@
 #include "Analysis/alp_analysis/interface/HemisphereWriterOperator.h"
 #include "Analysis/alp_analysis/interface/MixedEventWriterOperator.h"
 
+#include "Analysis/alp_analysis/interface/ReWeightingOperator.h"
 #include "Analysis/alp_analysis/interface/Utils.h"
 
 
@@ -42,6 +44,7 @@ namespace {
     CounterOperator<EventBase> counter_operator; 
     TriggerOperator<EventBase> trigger_operator; 
     JEShifterOperator<EventBase> jes_shifter_operator;
+    JERShifterOperator<EventBase> jer_shifter_operator;
     JetFilterOperator<EventBase> jet_filter_operator; 
     IsoMuFilterOperator<EventBase> isomu_filter_operator; 
     MetFilterOperator<EventBase> met_filter_operator; 
@@ -60,6 +63,7 @@ namespace {
     HemisphereMixerOperator<EventBase> hemisphere_mixer_operator;
     HemisphereWriterOperator<EventBase> hemisphere_writer_operator;
     MixedEventWriterOperator<EventBase> mixed_event_writer_operator;
+    ReWeightingOperator<EventBase> reweighting_operator;
   };
 
   struct event_formats {

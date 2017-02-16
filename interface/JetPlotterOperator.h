@@ -23,7 +23,7 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
     TH1D h_jets_cmva {"h_jets_cmva", "jets cmva", 300,  -1., 1.};
 
     TH1D h_jet0_cmva {"h_jet0_cmva", "jet0 cmva", 300,  -1., 1.};
-    TH1D h_jet1_cmva {"h_jet1_cmva", "jet2 cmva", 300,  -1., 1.};
+    TH1D h_jet1_cmva {"h_jet1_cmva", "jet1 cmva", 300,  -1., 1.};
     TH1D h_jet2_cmva {"h_jet2_cmva", "jet2 cmva", 300,  -1., 1.};
     TH1D h_jet3_cmva {"h_jet3_cmva", "jet3 cmva", 300,  -1., 1.};
 

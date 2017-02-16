@@ -25,8 +25,8 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
     std::size_t n_h_skip_;
 
     // to order jets after mixing
-    std::string disc_ = "pfCombinedInclusiveSecondaryVertexV2BJetTags";
-    std::size_t n_fix_jets_ = 4;
+    std::string disc_;
+    std::size_t n_fix_jets_;
 
     bool root_;
     std::string dir_;
@@ -34,7 +34,9 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
     TTree tree_{"mix_tree","Tree wth mixed events"};
 
-     MixedEventWriterOperator(std::size_t n_h_mix = 1, std::size_t n_h_skip = 1) :
+     MixedEventWriterOperator(std::string disc, std::size_t n_fix_jets = 4, std::size_t n_h_mix = 1, std::size_t n_h_skip = 1) :
+      disc_(disc),     // to order jets after mixing
+      n_fix_jets_(n_fix_jets),
       mix_jets_ptr_(&mix_jets_),  
       n_h_mix_(n_h_mix),
       n_h_skip_(n_h_skip) {}

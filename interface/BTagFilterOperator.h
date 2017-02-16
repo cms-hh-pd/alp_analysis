@@ -9,9 +9,6 @@
 #include "Event.h"
 #include "Utils.h"
 
-constexpr auto CSV_name = "pfCombinedInclusiveSecondaryVertexV2BJetTags";
-constexpr auto CMVA_name = "pfCombinedMVAV2BJetTags";
-
   template <class EventClass> class BTagFilterOperator : public BaseOperator<EventClass> {
 
     public:
@@ -63,7 +60,7 @@ constexpr auto CMVA_name = "pfCombinedMVAV2BJetTags";
                                             "up_lfstats1", "down_lfstats1",
                                             "up_lfstats2", "down_lfstats2"}}};
 
-         btcalib = BTagCalibration(s_name_map.at(disc), data_path+s_name_map.at(disc)+"_ichep.csv");
+         btcalib = BTagCalibration(s_name_map.at(disc), data_path+s_name_map.at(disc)+"_Moriond17_B_H.csv"); //_ichep.csv
 
          cr_map.emplace("central",
                         BTagCalibrationReader{BTagEntry::OP_RESHAPING,
@@ -112,8 +109,9 @@ constexpr auto CMVA_name = "pfCombinedMVAV2BJetTags";
            }
         }
 
-        for (auto & jet : ev.jets_) {
-          if(!isdata_) {
+
+        if(!isdata_) {
+          for (auto & jet : ev.jets_) {
             auto jet_flavour = flavour_map.at(jet.hadronFlavour());
             auto jet_eta = jet.eta();
             auto jet_pt = jet.pt();
@@ -145,7 +143,6 @@ constexpr auto CMVA_name = "pfCombinedMVAV2BJetTags";
               weight_map.at("BTagWeight_"+syst) *= syst_sf;
               if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,central_sf);
             }
-
           }
         }
 

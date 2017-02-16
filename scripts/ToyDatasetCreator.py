@@ -23,6 +23,7 @@ from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.alpSamplesOptions  import sam_opt
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
+from Analysis.alp_analysis.workingpoints import wps
 
 TH1F.AddDirectory(0)
 
@@ -39,6 +40,7 @@ parser.add_argument('--extra_cut_name', default="",help="label for the extra cut
 parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="def_noTrg_test")
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/toy")
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
+parser.add_argument("--btag", help="which btag algo", default='cmva')
 #parser.add_argument("-s", "--samList", help="sample list", default="")
 args = parser.parse_args()
 
@@ -68,6 +70,13 @@ weights = {}  #weights to be applied 'PUWeight', 'GenWeight', 'BTagWeight'
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
+
+if args.btag == 'cmva':  
+    btagAlgo = "pfCombinedMVAV2BJetTags"
+    btag_wp = wps['CMVAv2_moriond']
+elif args.btag == 'csv': 
+    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    btag_wp = wps['CSVv2_moriond']
 
 # to convert weights 
 weights_v = vector("string")()
@@ -166,7 +175,7 @@ selector = ComposableSelector(alp.Event)(0, json_str)
 selector.addOperator(FolderOperator(alp.Event)("pair"))
 selector.addOperator(JetPairingOperator(alp.Event)(4))
 selector.addOperator(CounterOperator(alp.Event)(weights_v))
-selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))        
+selector.addOperator(JetPlotterOperator(alp.Event)(bTagAlgo,weights_v))        
 selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
 selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
 

@@ -107,8 +107,8 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
 
   public:
  
-    typedef std::function<int(const alp::Hemisphere &)> FuncI;
-    typedef std::vector<std::function<int(const alp::Hemisphere &)>> FuncIVec;
+    typedef std::function<int(const alp::Hemisphere &, std::string , double )> FuncI;
+    typedef std::vector<std::function<int(const alp::Hemisphere &, std::string , double)>> FuncIVec;
     typedef std::function<double(const alp::Hemisphere &)> FuncD;
     typedef std::vector<std::function<double(const alp::Hemisphere &)>> FuncDVec;
     typedef std::vector<alp::Hemisphere> HemVec;
@@ -119,6 +119,8 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
             	nanoflann::L2_Simple_Adaptor<double, HemisphereLibrary>,
 		          HemisphereLibrary > my_kd_tree_t;
 
+    std::string btagAlgo_;
+    double btagCut_;
     // map of vectors of hemipsheres (key is integer category) 
     std::map<IntVec, HemVec> hem_m_; 
     std::map<IntVec, HemisphereLibrary> hem_lib_; 
@@ -135,23 +137,25 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
     std::size_t knn_;
 
     HemisphereMixerOperator( TChain * tc_hm,
+      std::string btagAlgo, double btagCut,
       std::vector<std::string> nn_vars = { "thrustMayor","thrustMinor",
-                                           "sumPz","invMass"},
+                                           "sumPz","invMass"},   
       Scaling scaling = Scaling::set,
       std::size_t knn = 10) :
+      btagAlgo_(btagAlgo),
+      btagCut_(btagCut),
       scaling_(scaling),
       var_stds_(nn_vars.size(), 0.0),
-      knn_(knn) {
-
-      funcIVec_ = { FuncI( [] (const alp::Hemisphere & hem) {
+      knn_(knn)
+      {
+        funcIVec_ = { FuncI( [] (const alp::Hemisphere & hem, std::string disc, double cut) {
                        int nJets = alp::Hemisphere::nJets(hem);
                        return ( nJets > 3 ? 4 : nJets);
                   }),
-                  FuncI( [] (const alp::Hemisphere & hem) {
-                       int nTags = alp::Hemisphere::nTags(hem,
-                           "pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800);
+                    FuncI( [] (const alp::Hemisphere & hem, std::string disc, double cut) {
+                       int nTags = alp::Hemisphere::nTags(hem, disc, cut);
                        return ( nTags > 3 ? 4 : nTags);
-                 })};
+                  })};
         
      	FuncDMap funcDMap = {{"thrustMayor", FuncD(&alp::Hemisphere::thrustMayor)},
       											 {"thrustMinor",FuncD(&alp::Hemisphere::thrustMinor)},
@@ -181,7 +185,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
           hem_reader.SetEntry(chainEntry);
           for (const auto & hem : *hems) {
             IntVec cat;
-            for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem));
+            for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem, btagAlgo_, btagCut_));
             if (hem_m_.count(cat) < 1) hem_m_[cat] = {};
             hem_m_.at(cat).emplace_back(hem);
           }
@@ -191,7 +195,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
         while (hem_reader.Next()) {
           for (const auto & hem : *hems) {
             IntVec cat;
-            for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem));
+            for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem, btagAlgo_, btagCut_));
             if (hem_m_.count(cat) < 1) hem_m_[cat] = {};
             hem_m_.at(cat).emplace_back(hem);
           }
@@ -258,7 +262,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
 
         // get integer category
         std::vector<int> h_cat;  
-        for (const auto & funcI : funcIVec_) h_cat.emplace_back(funcI(h));
+        for (const auto & funcI : funcIVec_) h_cat.emplace_back(funcI(h, btagAlgo_, btagCut_));
         if (index_m_.count(h_cat) < 1) { 
           std::cout << "No index for category: " << h_cat << std::endl;
           return false; // remove event

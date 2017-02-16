@@ -19,6 +19,7 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWri
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
+from Analysis.alp_analysis.workingpoints import wps
 
 TH1F.AddDirectory(0)
 
@@ -30,6 +31,7 @@ parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-v", "--ntuplesVer", help="input sub-folder", default="MC_def_noTrg")
 parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/data_def")
 parser.add_argument("-b", "--doBlind", help="do blind", action='store_true')
+parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.set_defaults(doBlind=False)
 args = parser.parse_args()
 
@@ -49,6 +51,13 @@ data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"]
 weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied ,'BTagWeight'
 opt = "" #_noBW
 # ---------------
+
+if args.btag == 'cmva':  
+    btagAlgo = "pfCombinedMVAV2BJetTags"
+    btag_wp = wps['CMVAv2_moriond']
+elif args.btag == 'csv': 
+    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    btag_wp = wps['CSVv2_moriond']
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 

@@ -4,29 +4,28 @@
 samlists = {
 
    'SM'      : ['HHTo4B_SM'],
-   'BM3'     : ['HHTo4B_BM3'],
-   'BM13'    : ['HHTo4B_BM13'],
+   'signals' : ['HHTo4B_SM', 'HHTo4B_BM2','HHTo4B_BM3','HHTo4B_BM4','HHTo4B_BM5','HHTo4B_BM7','HHTo4B_BM8',
+                'HHTo4B_BM9','HHTo4B_BM10','HHTo4B_BM11','HHTo4B_BM12','HHTo4B_BM13','HHTo4B_BMbox','VBF_HHTo4B_SM'], #'HHTo4B_BM6',
 
-   'signals' : ['HHTo4B_SM', 'HHTo4B_BM2','HHTo4B_BM3','HHTo4B_BM4','HHTo4B_BM5','HHTo4B_BM6','HHTo4B_BM7','HHTo4B_BM8',
-                'HHTo4B_BM9','HHTo4B_BM10','HHTo4B_BM11','HHTo4B_BM12','HHTo4B_BM13','HHTo4B_BMbox'],
-
-   'data_unblind'  : ['BTagCSVRun2016C-v2'],
+   'data'  : ['BTagCSVRun2016'],
+   'dataBE'  : ['BTagCSVRun2016_BE'],
+   'dataFH'  : ['BTagCSVRun2016_FH'],
    'data_ichep'    : ['BTagCSVRun2016B-v1','BTagCSVRun2016B-v2','BTagCSVRun2016C-v2','BTagCSVRun2016D-v2'], #12.6 fb-1
    'data_singleMu' : ['SingleMuonRun2016B-v1', 'SingleMuonRun2016B-v2', 'SingleMuonRun2016C-v2', 'SingleMuonRun2016D-v2'],
    'data_moriond'  : ['BTagCSVRun2016B-23Sep2016-v2', 'BTagCSVRun2016B-23Sep2016-v3', 'BTagCSVRun2016C-23Sep2016-v1',
                       'BTagCSVRun2016D-23Sep2016-v1', 'BTagCSVRun2016E-23Sep2016-v1', 'BTagCSVRun2016F-23Sep2016-v1', 
                       'BTagCSVRun2016G-23Sep2016-v1', 'BTagCSVRun2016H-PromptReco-v2', 'BTagCSVRun2016H-PromptReco-v3' ], #36.26 fb-1
+   'data_moriond1' : ['BTagCSVRun2016B-23Sep2016-v2', 'BTagCSVRun2016B-23Sep2016-v3', 'BTagCSVRun2016C-23Sep2016-v1', 'BTagCSVRun2016D-23Sep2016-v1'],
+   'data_moriond2' : ['BTagCSVRun2016E-23Sep2016-v1', 'BTagCSVRun2016F-23Sep2016-v1' ],
+   'data_moriond3' : ['BTagCSVRun2016G-23Sep2016-v1', 'BTagCSVRun2016H-PromptReco-v2', 'BTagCSVRun2016H-PromptReco-v3' ],
    'data_moriond_singleMu' : [ 'SingleMuonRun2016B-23Sep2016-v1', 'SingleMuonRun2016B-23Sep2016-v3', 'SingleMuonRun2016C-23Sep2016-v1',
                       'SingleMuonRun2016D-23Sep2016-v1', 'SingleMuonRun2016E-23Sep2016-v1', 'SingleMuonRun2016F-23Sep2016-v1', 
                       'SingleMuonRun2016G-23Sep2016-v1', 'SingleMuonRun2016H-PromptReco-v2', 'SingleMuonRun2016H-PromptReco-v3' ], #36.26 fb-1
 
-   'mainbkg' : ['QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
+   'mainbkg' : ['QCD_HT100to200',
+                'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
                 'QCD_HT2000toInf', 'QCD_HT2000toInf_ext', 'QCD_HT200to300', 'QCD_HT200to300_ext', 'QCD_HT300to500',
                 'QCD_HT300to500_ext', 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
-                'QCD_bEnriched_HT1000to1500', 'QCD_bEnriched_HT100to200', 'QCD_bEnriched_HT1500to2000', 'QCD_bEnriched_HT2000toInf',
-                'QCD_bEnriched_HT200to300', 'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000',
-                'QCD_HT1000to1500_BGenFilter', 'QCD_HT100to200_BGenFilter', 'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter',
-                'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter',
                 'TT' ],
 
    'minortt' : ['ttHTobb', 'TTZToQQ', 'TTWJetsToQQ', 'TTTT', 'ttbb', 'ST_tW_antitop_5f_incl', 'ST_tW_top_5f_incl'],
@@ -84,6 +83,6 @@ samlists = {
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['QCDHT500toInf'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['BTagCSVRun2016_'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
