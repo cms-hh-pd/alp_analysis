@@ -3,6 +3,7 @@
 # sum data:  python ReWeighting.py -s signalsGF -o def_cmva/
 
 
+
 # good old python modules
 import json
 import os
@@ -15,9 +16,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-#from ROOT import  ReWeightingOperator
-# ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator,
-
+from ROOT import  ReWeightingOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples

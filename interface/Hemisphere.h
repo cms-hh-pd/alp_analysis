@@ -64,8 +64,8 @@ namespace alp {
       }
   
       static int nTags(const Hemisphere & hem,
-                       std::string disc = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
-                       float wp = 0.8) {
+                       std::string disc,
+                       float wp) {
         int nTags = 0;
         for (const auto & j : hem.jets_) {
           if (j.disc(disc) > wp) nTags++;
@@ -94,7 +94,7 @@ namespace alp {
         return nJets(*this);
       }
   
-      int getNTags(std::string disc = "pfCombinedInclusiveSecondaryVertexV2BJetTags", float wp = 0.8) {
+      int getNTags(std::string disc, float wp) {
         return nTags(*this,disc,wp);
       }
   

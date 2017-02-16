@@ -123,6 +123,32 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
 
 
    tfile_ = new TFile(o_filename.c_str(), "RECREATE");
+
+   //write histos with weights and generated events
+   TH1F h_genev {"h_genEvts", "num of genrated events", 1, 0., 1.};
+   TH1F h_w_XsBrEff {"h_w_XsBrEff", "event weight = xsec*BR*genEff", 1, 0., 1.};
+   TH1F h_w_oneInvFb {"h_w_oneInvFb", "event weight = xsec*BR*genEff/genEvt", 1, 0., 1.};
+
+   //hist with number of generated events
+    if (config_.find("n_gen_events") != config_.end()) n_genev_ = config_.at("n_gen_events");
+    if (!config_.at("isMixed")) h_genev.SetBinContent(1,n_genev_);
+
+    //hist with event weight = xsec*BR*genEff
+    if (config_.find("xsec_br") != config_.end()) w_xsecbr_ = config_.at("xsec_br");
+    if (config_.find("matcheff") != config_.end()) w_eff_ = config_.at("matcheff");
+    if (config_.find("kfactor") != config_.end()) w_kfact_ = config_.at("kfactor");
+    if (!config_.at("isMixed")) h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_*w_kfact_);
+
+    //hist with event weight to 1 fb-1
+    if(config_.at("isData") || config_.at("isMixed")) {
+      if (config_.find("lumiFb") != config_.end()) lumiFb_ = config_.at("lumiFb");
+      h_w_oneInvFb.SetBinContent(1,1./lumiFb_); // isData -> 1/int.Lumi
+    }
+    else h_w_oneInvFb.SetBinContent(1, h_w_XsBrEff.GetBinContent(1)*1000./h_genev.GetBinContent(1)); // weight*1000/genEv -- pb to fb
+
+   h_genev.Write();
+   h_w_XsBrEff.Write();
+   h_w_oneInvFb.Write();
  
    // output folder handling
    auto root_dir = dynamic_cast<TDirectory *>(&(*tfile_));
@@ -139,31 +165,6 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
      }
      op->init(curr_dir);
    }
-
-   //write histos with weights and generated events
-   TH1D h_genev {"h_genEvts", "num of genrated events", 1, 0., 1.};
-   TH1D h_w_XsBrEff {"h_w_XsBrEff", "event weight = xsec*BR*genEff", 1, 0., 1.};
-
-   //hist with number of generated events
-   if (config_.find("n_gen_events") != config_.end()) n_genev_ = config_.at("n_gen_events");
-   h_genev.SetBinContent(1,n_genev_);
-
-   //hist with event weight = xsec*BR*genEff
-   if (config_.find("xsec_br") != config_.end()) w_xsecbr_ = config_.at("xsec_br");
-   if (config_.find("matcheff") != config_.end()) w_eff_ = config_.at("matcheff");
-   if (config_.find("kfactor") != config_.end()) w_kfact_ = config_.at("kfactor");
-   h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_*w_kfact_);
-
-   //hist with event weight to 1 fb-1
-
-   TH1F* h_w_oneInvFb = (TH1F*)h_w_XsBrEff.Clone("h_w_oneInvFb");
-   if (config_.find("lumiFb") != config_.end()) lumiFb_ = config_.at("lumiFb");
-   if(config_.at("isData")) h_w_oneInvFb->SetBinContent(1,1./lumiFb_); // isData -> 1/int.Lumi
-   else h_w_oneInvFb->Scale(1000./(h_genev.GetBinContent(1))); // weight*1000/genEv -- pb to fb
-
-   h_genev.Write();
-   h_w_XsBrEff.Write();
-   h_w_oneInvFb->Write();
 }
 
 
@@ -172,9 +173,9 @@ template <class EventClass> bool  ComposableSelector<EventClass>::Process(Long64
 {
 
   n_entries++;
-  if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl; 
+  if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl;  
 
-  // set TTreeReader entry
+ // set TTreeReader entry
   reader_.SetLocalEntry(entry);
   // update event objects
   ev_.update();

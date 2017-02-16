@@ -5,6 +5,9 @@
 #include "Event.h"
 #include "Hemisphere.h"
 
+#include "TLorentzVector.h"
+#include "Math/VectorUtil.h"
+
 // WARNING: it sorts event related variable - used by different operators
 inline void order_jets_by_disc(std::vector<alp::Jet> & jets, std::string & disc) {
   auto compare_disc = [&](alp::Jet a, alp::Jet b){   
@@ -42,3 +45,20 @@ inline float get_jets_ht(std::vector<alp::Jet> & jets) {
   }
   return ht;
 }
+
+inline float get_dj_dPhiabs(alp::Jet & jet0, alp::Jet & jet1) {
+  // to compute abs deltaPhi of Jets
+  return (M_PI - std::abs(std::abs(jet0.phi() - jet1.phi()) - M_PI));
+}
+
+inline float get_ddj_dPhiabs(alp::PtEtaPhiEVector & dijet0, alp::PtEtaPhiEVector & dijet1) {
+  // to compute abs deltaPhi of diJets
+  return (M_PI - std::abs(std::abs(dijet0.phi() - dijet1.phi()) - M_PI));
+}
+
+float get_absCosThetaStar(alp::PtEtaPhiEVector j, alp::PtEtaPhiEVector j_RF){     
+  // to get star angle computation    
+  alp::PtEtaPhiEVector boosted_dj =  ROOT::Math::VectorUtil::boost(j, j_RF.BoostToCM()); //minus already in the function
+  return std::abs(std::cos(boosted_dj.theta()));
+}
+

@@ -1,4 +1,5 @@
 #!/usr/bin/env python 
+# to EXE: python scripts/MixingSelector.py -s data_moriond -i def_cmva
 
 # good old python modules
 import json
@@ -17,7 +18,7 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMix
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
-from Analysis.alp_analysis.triggerlists import triggerlists
+from Analysis.alp_analysis.workingpoints import wps
 
 TH1F.AddDirectory(0)
 
@@ -26,44 +27,41 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list"     , default="")
-parser.add_argument("-o", "--oDir"   , help="output directory", default="")
+parser.add_argument("-o", "--oDir"   , help="output directory (added to iDir)", default="mixed_ntuples")
+parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="def_cmva")
+parser.add_argument("--btag", help="which btag algo", default='cmva')
 args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts
 if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
-trgList   = 'def_2016'
-intLumi_fb = 12.6
+intLumi_fb = 36.26
 
-iDir       = '/lustre/cmswork/hh/alp_baseSelector/MC_def/'
-ntuplesVer = ''         
-if not args.oDir: oDir = "./output/mixSel_sig_def"
-else: oDir = args.oDir
+iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
+oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'EventWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
-trg_names = triggerlists[trgList]
-if not trg_names: print "### WARNING: empty hlt_names ###"
-trg_names_v = vector("string")()
-for t in trg_names: trg_names_v.push_back(t)
+if args.btag == 'cmva':  
+    btagAlgo = "pfCombinedMVAV2BJetTags"
+    btag_wp = wps['CMVAv2_moriond']
+elif args.btag == 'csv': 
+    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    btag_wp = wps['CSVv2_moriond']
 
-# to convert weights 
-weights_v = vector("string")()
-for w in weights: weights_v.push_back(w)
-
+# variables to check nearest-neightbour
 nn_vars = ["thrustMayor","thrustMinor", "sumPz","invMass"]
 nn_vars_v = vector("string")()
 for v in nn_vars: nn_vars_v.push_back(v)
 
-
-
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
+          "dijets_branch_name": "DiJets",
+          #"dihiggs_branch_name": "DiHiggs",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
@@ -73,6 +71,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
          }
 
 snames = []
@@ -85,7 +84,7 @@ for sname in snames:
     isHLT = False
 
     #get file names in all sub-folders:
-    reg_exp = iDir+ntuplesVer+"/"+sname+"*.root"
+    reg_exp = iDir+"/"+sname+".root"
     print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -97,26 +96,21 @@ for sname in snames:
 
     if "Run" in files[0]: config["isData"] = True 
 
-    #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
-
     json_str = json.dumps(config)
 
     #get hem_tree for mixing
-    tch = TChain("pair/hem_tree")    
+    tch_hem = TChain("pair/hem_tree")    
     for f in files: 
-        tch.Add(f)
+        tch_hem.Add(f)
 
-    print tch.GetEntries()    
+    print tch_hem.GetEntries()
 
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch, nn_vars_v))
-    selector.addOperator(MixedEventWriterOperator(alp.Event)())
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v))
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, 4))
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
@@ -128,7 +122,4 @@ for sname in snames:
     tchain.Process(selector, procOpt, nev)
     ns+=1
    
-    #some cleaning
-    #hcount.Reset()
-
 print "### processed {} samples ###".format(ns)

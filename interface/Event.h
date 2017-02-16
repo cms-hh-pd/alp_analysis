@@ -21,18 +21,27 @@ namespace alp {
       // objects which will be read from TTree before first operator
       alp::EventInfo eventInfo_;
       std::vector<alp::Jet> jets_;
+
+      std::vector<alp::DiObject> dijets_;
+      std::vector<alp::DiObject> dihiggs_;
       std::vector<alp::Lepton> muons_;
       std::vector<alp::Lepton> electrons_;
       alp::Candidate met_;
       std::vector<alp::Candidate> genbfromhs_;
       std::vector<alp::Candidate> genhs_;
+      std::vector<alp::Candidate> tl_genhs_;
+      std::vector<alp::DiObject>  tl_genhh_;
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::DiObject>> * dijets_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::DiObject>> * dihiggs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Lepton>> * muons_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Lepton>> * electrons_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * genbfromhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * genhs_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Candidate>> * tl_genhs_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::DiObject>> * tl_genhh_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
@@ -61,6 +70,16 @@ namespace alp {
             jets_reader_ = new TTreeReaderValue<std::vector<alp::Jet>>(reader, 
                 config.at("jets_branch_name").get_ref<const std::string &>().c_str());
         }
+        // load dijet collection
+        if (config.find("dijets_branch_name") != config.end()) {
+            dijets_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader, 
+                config.at("dijets_branch_name").get_ref<const std::string &>().c_str());
+        }
+        // load dijet collection
+        if (config.find("dihiggs_branch_name") != config.end()) {
+            dihiggs_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader,
+                config.at("dihiggs_branch_name").get_ref<const std::string &>().c_str());
+        }
         // load muon collection
         if (config.find("muons_branch_name") != config.end()) {
             muons_reader_ = new TTreeReaderValue<std::vector<alp::Lepton>>(reader, 
@@ -85,17 +104,31 @@ namespace alp {
         if (config.find("genhs_branch_name") != config.end()) {
             genhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader, 
                 config.at("genhs_branch_name").get_ref<const std::string &>().c_str());      
-        }                                                                               
-
+        }
+        // load GenHs for re-weighting
+        if (config.find("tl_genhs_branch_name") != config.end()) {
+            tl_genhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader,
+                config.at("tl_genhs_branch_name").get_ref<const std::string &>().c_str());
+        }      
+        // load GenHH for re-weighting
+        if (config.find("tl_genhh_branch_name") != config.end()) {
+            tl_genhh_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader,
+                config.at("tl_genhh_branch_name").get_ref<const std::string &>().c_str());
+        }      
+        
       }
       virtual ~Event() {
         delete eventInfo_reader_;
         delete jets_reader_;
+        delete dijets_reader_;
+        delete dihiggs_reader_;
         delete muons_reader_;
         delete electrons_reader_;
         delete met_reader_;
         delete genbfromhs_reader_;
         delete genhs_reader_;
+        delete tl_genhs_reader_;
+        delete tl_genhh_reader_;
       }
 
       virtual void update() {
@@ -103,11 +136,15 @@ namespace alp {
         // small copy overhead, only update if pointer not null
         if (eventInfo_reader_) eventInfo_ = **eventInfo_reader_;
         if (jets_reader_) jets_ = **jets_reader_;
+        if (dijets_reader_) dijets_ = **dijets_reader_;
+        if (dihiggs_reader_) dihiggs_ = **dihiggs_reader_;
         if (muons_reader_) muons_ = **muons_reader_;
         if (electrons_reader_) electrons_ = **electrons_reader_;
         if (met_reader_) met_ = **met_reader_;
         if (genbfromhs_reader_) genbfromhs_ = **genbfromhs_reader_;
         if (genhs_reader_) genhs_ = **genhs_reader_;
+        if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
+        if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
 
         dijets_.clear();
         free_is_.clear();

@@ -20,20 +20,26 @@ TH1F.AddDirectory(0)
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
+parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("-o", "--oDir", help="output directory", default="/lustre/cmswork/hh/alp_baseSelector/trg_mc_def")
 args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts      
-samList = ['st','tt']     # list of samples to be processed - append multiple lists
+if not args.samList: samList = ['st','tt']  # list of samples to be processed - append multiple lists
+else: samList = [args.samList]
 trgListD   = 'singleMu_2016'
 trgListN   = 'def_2016'
-intLumi_fb = 12.9
+intLumi_fb = 36.26
 
-iDir       = '/lustre/cmswork/hh/alpha_ntuples/'
-ntuplesVer = 'v1_20161028'
-oDir       = './output/trg_mc_def'
+
+iDir       = "/lustre/cmswork/hh/alpha_ntuples/"
+ntuplesVer = "v1_20161212"    # -- 20161028  20161212
+oDir = args.oDir
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'EventWeight'} #weights to be applied - EventWeight, PUWeight, GenWeight
+btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+#btagAlgo  = "pfCombinedMVAV2BJetTags"
+weights   = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -59,12 +65,16 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "muons_branch_name" : "Muons",
           "electrons_branch_name" : "Electrons",
           "met_branch_name" : "MET",
+          "genbfromhs_branch_name" : "GenBFromHs",
+          "genhs_branch_name" : "GenHs",
+          #"tl_genhs_branch_name" : "TL_GenHs",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
          }
 
 snames = []
@@ -117,41 +127,46 @@ for sname in snames:
 
     json_str = json.dumps(config)
 
+    w2 = {'PUWeight', 'GenWeight'} 
+    w2_v = vector("string")()
+    for w in w2: w2_v.push_back(w)
+
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("base"))
+    selector.addOperator(CounterOperator(alp.Event)(w2_v))
 
+    selector.addOperator(FolderOperator(alp.Event)("trigger"))
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(w2_v))
 
+    selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.5, 30., 4))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(w2_v)) #debug - no bTagWeight?
+    selector.addOperator(JetPlotterOperator(alp.Event)("pt",w2_v))
+    selector.addOperator(MiscellPlotterOperator(alp.Event)(w2_v))
 
-    selector.addOperator(FolderOperator(alp.Event)("def"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pt",weights_v))
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)())
-
-    selector.addOperator(BTagFilterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags", 0.800, 2, config["isData"], data_path))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(FolderOperator(alp.Event)("btag"))
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, 0.800, 4, config["isData"], data_path))
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(MetFilterOperator(alp.Event)(40.))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v)) 
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v)) 
     selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
-    selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
     selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pfCombinedInclusiveSecondaryVertexV2BJetTags",weights_v))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))
     selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")    

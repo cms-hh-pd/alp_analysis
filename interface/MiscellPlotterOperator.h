@@ -14,7 +14,6 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
  
     std::string disc_;
     std::vector<std::string> weights_;
-    std::string btagWname = "BTagWeight"; //make it more general?
 
     std::vector<std::size_t> j_sortInd_;
 
@@ -56,9 +55,6 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
 
       float w = 1.0;
       w *= ev.eventInfo_.eventWeight(weights_); 
-      if (ev.eventInfo_.hasWeight(btagWname)) {
-        w*=ev.eventInfo_.getWeight(btagWname);
-      }   
 
       h_mu_n.Fill(ev.muons_.size(), w);
       h_met_pt.Fill(ev.met_.pt(), w);
