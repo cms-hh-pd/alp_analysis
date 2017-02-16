@@ -1,6 +1,7 @@
 #!/usr/bin/env python 
 # to EXE: python scripts/BaselineSelector.py -s data_moriond -t -o def_cmva
-# sum data python ReWeighting.py -s signalsGF -o def_cmva/
+# sum data:  python ReWeighting.py -s signalsGF -o def_cmva/
+
 
 # good old python modules
 import json
@@ -14,16 +15,15 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import  ReWeightingOperator
+#from ROOT import  ReWeightingOperator
 # ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator,
+
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
 from Analysis.alp_analysis.workingpoints import wps
-
-from HHStatAnalysis.AnalyticalModels.NonResonantModel import NonResonantModel
 
 TH1F.AddDirectory(0)
 
@@ -47,11 +47,11 @@ trgList   = 'def_2016'
 intLumi_fb = 36.26
 
 
-
 #iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir
 #oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir
-iDir = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/" + args.iDir
-oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/' + args.oDir
+iDir = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/" + args.iDir
+oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/' + args.oDir
+
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 
@@ -92,20 +92,23 @@ snames = []
 for s in samList:
     snames.extend(samlists[s])
 
+
 print args.samList
 #create tChain to  process each files
-if args.samList == 'signalsGF' :
+if args.samList == 'signals' :
       treename = "pair/tree"
       tchain = TChain(treename)    
 
 btagAlgo = "pfCombinedMVAV2BJetTags"
 
+
 # process samples
 ns = 0
 for sname in snames:
-    #loop on all samples needed.... or just the one to apply rew?
+
+ #loop on all samples needed.... or just the one to apply rew?
     #get file names in all sub-folders:
-    reg_exp = iDir+"/"+sname+".root"
+    reg_exp = iDir+sname+".root"
     print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -140,13 +143,13 @@ for sname in snames:
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     #create tChain and process each files
-    if args.samList != 'signalsGF' :
+    if args.samList != 'signals' :
       treename = "pair/tree"
       tchain = TChain(treename)    
     for File in files:                     
         tchain.Add(File)
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
-    if args.samList != 'signalsGF' :
+    if args.samList != 'signals' :
         procOpt = "ofile=./"+sname+"_W.root" if not oDir else "ofile="+oDir+sname+"_W.root"
         print "max numEv {}".format(nev)
         tchain.Process(selector, procOpt, nev)
@@ -154,8 +157,8 @@ for sname in snames:
    
     #some cleaning
 
-if args.samList == 'signalsGF' :
-  procOpt = "ofile=./"+"signalsGF_W.root" if not oDir else "ofile="+oDir+"signalsGF_W.root"
+if args.samList == 'signals' :
+  procOpt = "ofile=./"+"signalsGF_HH4b.root" if not oDir else "ofile="+oDir+"signalsGF_HH4b.root"
   print "max numEv {}".format(nev)
   tchain.Process(selector, procOpt, nev)
 
