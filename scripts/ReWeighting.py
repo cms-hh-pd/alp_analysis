@@ -42,8 +42,17 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 36.26
 
-iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir
-oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir
+rw_fname_SM = '../../../Support/NonResonant/Distros_5p_SM3M_sumBenchJHEP_13TeV.root'
+rw_fname_BM =            '../../../Support/NonResonant/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root'
+rw_fname_HH =             '../../../Support/NonResonant/Hist2DSum_V0_SM_box.root'
+
+#fname_v = vector("string")()
+#for f in fname_v: fname_v.push_back(f)
+
+iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir + "/"
+oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir + "/"
+#iDir = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/" + args.iDir
+#oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/' + args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 
@@ -53,6 +62,9 @@ weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 print oDir
+
+btagAlgo = "pfCombinedMVAV2BJetTags"
+btag_wp = wps['CMVAv2_moriond']
 
 # to convert weights 
 weights_v = vector("string")()
@@ -84,16 +96,18 @@ snames = []
 for s in samList:
     snames.extend(samlists[s])
 
-# process samples
 ns = 0
-for sname in snames:
+print args.samList
+#create tChain with all files in list
+treename = "pair/tree"
+tchain = TChain(treename)    
 
- #loop on all samples needed.... or just the one to apply rew?
+for sname in snames:
     #get file names in all sub-folders:
     reg_exp = iDir+sname+".root"
-    print "reg_exp: {}".format(reg_exp) 
+    print "\n reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
-    print "\n ### processing {}".format(sname)        
+    print " ### adding {}".format(sname)        
  
     #preliminary checks
     if not files: 
@@ -107,35 +121,30 @@ for sname in snames:
     config["matcheff"] = samples[sname]["matcheff"]
     config["kfactor"]  = samples[sname]["kfactor"]
 
-    json_str = json.dumps(config)
-
-    #define selectors list
-    selector = ComposableSelector(alp.Event)(0, json_str)
-    selector.addOperator(BaseOperator(alp.Event)())
-
-    selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
-
-    selector.addOperator(ReWeightingOperator(alp.Event)())
-
-    selector.addOperator(FolderOperator(alp.Event)("reweight"))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
-    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
-
-    #create tChain and process each files
-    treename = "pair/tree"
-    tchain = TChain(treename)    
     for File in files:                     
         tchain.Add(File)
-    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
-    procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
-    print "max numEv {}".format(nev)
-    tchain.Process(selector, procOpt, nev)
-    ns+=1
-   
-    #some cleaning
 
+json_str = json.dumps(config)
+
+#define selectors list
+selector = ComposableSelector(alp.Event)(0, json_str)
+selector.addOperator(BaseOperator(alp.Event)())
+
+selector.addOperator(FolderOperator(alp.Event)("base"))
+selector.addOperator(CounterOperator(alp.Event)(weights_v))
+
+selector.addOperator(ReWeightingOperator(alp.Event)(rw_fname_SM, rw_fname_BM, rw_fname_HH))
+
+selector.addOperator(FolderOperator(alp.Event)("pair"))
+selector.addOperator(CounterOperator(alp.Event)(weights_v))
+if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
+
+nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
+procOpt = "ofile=./"+"HH4b_pangea.root" if not oDir else "ofile="+oDir+"HH4b_pangea.root"
+print "max numEv {}".format(nev)
+tchain.Process(selector, procOpt, nev)
+ns+=1
 
 print "### processed {} samples ###".format(ns)

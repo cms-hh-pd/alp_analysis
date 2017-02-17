@@ -8,37 +8,29 @@
 #include "Event.h"
 #include "Utils.h"
 
-  template <class EventClass> class ReWeightingOperator : public BaseOperator<EventClass> {
+template <class EventClass> class ReWeightingOperator : public BaseOperator<EventClass> {
 
     public:
 
-      std::string filew_name_;
-      std::string osample_;
+      std::string w_fname_SM_;
+      std::string w_fname_BM_; 
+      std::string w_fname_HH_;
       std::vector<std::string> sam_list_;
       std::vector<std::string> hist_list_;
-      TFile filew_;
-      std::vector<TH1F> hw_;      
+      TFile wfile_SM_;
+      TFile wfile_BM_;
+      TFile wfile_HH_;
+      std::vector<TH2D> hw_;
+      TH2D normAnalitical_, normBench_;      
 
-      ReWeightingOperator(std::string filew_name, std::string osample) :
-      filew_name_(filew_name),
-      osample_(osample)
+      ReWeightingOperator(std::string rw_fname_SM, std::string rw_fname_BM, std::string rw_fname_HH) :
+      w_fname_SM_(w_fname_SM_),
+      w_fname_BM_(w_fname_BM_),
+      w_fname_HH_(w_fname_HH_)
       {           
-        sam_list_ = {"SM","BM2","BM3","BM4","BM5","BM6",
-                    "BM7","BM8","BM9","BM10","BM11","BM12","BM13","BMbox"};
+    
 
-        //DEBUG - edit with same order of same list!
-        hist_list_ = {"SM","BM2","BM3","BM4","BM5","BM6",
-                    "BM7","BM8","BM9","BM10","BM11","BM12","BM13","BMbox"}; 
-
-        //get histogram related to sample
-        std::string hanme = osample; //DEBUG
-        filew_ = TFile::Open(filew_name.c_str());
-        for (int i=0; i<hist_list_.size(); i++) {
-            TH1F h = (TH1F)filew_.Get(hist_list_.at(i).c_str());
-            hw_.push_back(h); 
-        }
       }
-
       virtual ~ReWeightingOperator() {}
 
       virtual bool process( EventClass & ev ) {
@@ -51,22 +43,26 @@
           // at(syst) would return exception when no element exists
           weight_map["ReWeighting_"+sam] = 1.0;
         }
+        weight_map["Norm_Analytical"] = 1.0;
 
+        // get variables and bins value
+        float costh = ev.tl_genhh_.at(0).costhst();
+        float mhh = ev.tl_genhh_.at(0).mass();
+        int bin   = normBench_.GetBin(mhh,costh);
+        int bin_a = normAnalitical_.GetBin(mhh,costh);
+
+        //code to get weight
         for (unsigned int i=0; i<sam_list_.size(); i++) {
-
-            //example on how to call ev variables
-            float costh = ev.tl_genhh_.at(0).costhst();
-            float mhh = ev.tl_genhh_.at(0).mass();
-
-            //code to get weight
             float weight = 1.;
             float mergecostSum = 0;
-           // for ii in range(1,11) : mergecostSum+= sumHBenchBin.GetBinContent(bmhh,ii)  DEBUG
-            if (mergecostSum >0) {
-                weight = (hw_.at(i).GetBinContent(mhh,costh) / mergecostSum);
+            for (unsigned int icost=1; icost< 11; icost++){ //debug -- SM not considered?
+              mergecostSum+= normBench_.GetBinContent(bin); }// flat in costS //DEBUG!!
+              if (mergecostSum>0) {
+                weight = (hw_.at(i).GetBinContent(bin) / mergecostSum); //debug!
             }
-            weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weight;           
+            weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weight;  //DEBUG - weight 1 for SM         
         }
+        weight_map.at("Norm_Analytical") *= normAnalitical_.GetBinContent(bin_a);
 
         // add weights to event info
         for (const auto & weight_pair : weight_map) {
