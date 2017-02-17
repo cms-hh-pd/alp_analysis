@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-histdone=0 # 0 = no
+histdone=1 # 0 = no
 histo2D="HistSum2D_4b_v01_02_2017.root"
 # option 0 is  to make the 2D histos, and a second one with 1 to make the file with events and weights to test
 
@@ -86,7 +86,7 @@ dumb = model.ReadCoefficients("../../../HHStatAnalysis/AnalyticalModels/data/coe
 if histdone==1 :
   fileHH=ROOT.TFile(outpath+histo2D)
   sumHAnalyticalBin = fileHH.Get("SumV0_AnalyticalBin")
-  sumHBenchBin = fileHH.Get("SumV0_AnalyticalBin") 
+  sumHBenchBin = fileHH.Get("SumV0_BenchBin") 
 # read histograms to check lamda scan
 # read the 2D histo referent to the sum of events
 fileL=ROOT.TFile("/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/CMSSW_9_0_0_pre1/src/Support/NonResonant/Distros_5p_SM100k_toRecursive_13TeV.root") 

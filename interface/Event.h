@@ -1,10 +1,9 @@
-
 #pragma once
 // ROOT includes
 #include <TTreeReader.h>
 #include <TTreeReaderArray.h>
 // other CMSSW modules includes
-#include "Analysis/alp_analysis/src/alp_objects.h"
+#include "Analysis/ALPHA/interface/alp_objects.h"
 // includes from this repositoty
 #include "json.hpp"
 #include "Hemisphere.h"
@@ -21,7 +20,6 @@ namespace alp {
       // objects which will be read from TTree before first operator
       alp::EventInfo eventInfo_;
       std::vector<alp::Jet> jets_;
-
       std::vector<alp::DiObject> dijets_;
       std::vector<alp::DiObject> dihiggs_;
       std::vector<alp::Lepton> muons_;
@@ -45,7 +43,7 @@ namespace alp {
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
-      std::vector<PtEtaPhiEVector> dijets_;
+     // std::vector<alp::PtEtaPhiEVector> dijets_;
       std::vector<std::size_t> free_is_;
       // to save the hemispheres (rotated and pz positive)
       std::vector<alp::Hemisphere> hems_; 
@@ -146,7 +144,6 @@ namespace alp {
         if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
         if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
 
-        dijets_.clear();
         free_is_.clear();
         hems_.clear();
         best_match_hems_.clear();
@@ -157,4 +154,3 @@ namespace alp {
   };
 
 }
-

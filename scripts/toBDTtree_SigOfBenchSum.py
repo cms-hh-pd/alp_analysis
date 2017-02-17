@@ -62,13 +62,13 @@ def PtBalanceRest(jet1,jet2,H):
 ##################
 # read the histos tree and contruct the tree of the relevant variables 
 #path = "/lustre/cmswork/hh/alp_baseSelector/"
-#path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva/" # signal
+path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva/" # signal
 #path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_mixed/" 
 #path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_JESup/" 
 
 
 #path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_moriond/"
-path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_moriond_mixed/"
+#path = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alpha_ntuples/v01_02_2017/def_cmva_moriond_mixed/"
 
 data="../../../HHStatAnalysis/AnalyticalModels/data/"
 model = NonResonantModel()
@@ -90,15 +90,15 @@ cdtof = fileout.mkdir("pair")
 tchain = TChain("pair/tree")    
 for ifile in range(0,1) : tchain.Add(path+files[ifile]+endfile)
 clone = tchain.CloneTree(0)
-
+"""
 
 Data = 0
 fileoutput = "HHTo4B_SM_tree.root"
 files = []
 endfile = ".root"
 files.append("HHTo4B_SM")
-#files.append("HHTo4B_BMbox")
-#for ifile in range(2,14) : files.append("HHTo4B_BM"+str(ifile))
+files.append("HHTo4B_BMbox")
+for ifile in range(2,14) : files.append("HHTo4B_BM"+str(ifile))
 ########## add TCheins instead of loop in events
 fileout=ROOT.TFile(path+fileoutput,"recreate")
 cdtof = fileout.mkdir("pair")
@@ -106,8 +106,8 @@ cdtof = fileout.mkdir("pair")
 tchain = TChain("pair/tree")    
 for ifile in range(0,14) : tchain.Add(path+files[ifile]+endfile)
 clone = tchain.CloneTree(0)
-"""
 
+"""
 Data = 1
 fileoutput = "BTagCSVRun2016_moriond_weight.root"
 files = []
@@ -120,7 +120,7 @@ cdtof = fileout.mkdir("pair")
 tchain = TChain("pair/tree")    
 tchain.Add(path+files[0]+endfile)
 clone = tchain.CloneTree(0)
-
+"""
 
 # balanced samples to the BDT training
 balanceSM=0.02734
@@ -132,7 +132,7 @@ balanceData=184879
 # read the 2D histo referent to the sum of events
 fileHH=ROOT.TFile("../../../Support/NonResonant/Hist2DSum_V0_SM_box.root") # outpath+histo2D ) #
 sumHAnalyticalBin = fileHH.Get("SumV0_AnalyticalBin")
-sumHBenchBin = fileHH.Get("SumV0_AnalyticalBin")
+sumHBenchBin = fileHH.Get("SumV0_BenchBin")
 
 countSig=np.zeros((15)) 
 normSig= np.ones((15)) 

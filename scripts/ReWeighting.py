@@ -16,7 +16,8 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import  ReWeightingOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator, ReWeightingOperator
+
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -31,7 +32,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
-parser.add_argument("-i", "--iDir", help="input directory", default="def_cmva")
+parser.add_argument("-i", "--iDir", help="input directory", default="def_cmva/")
 parser.add_argument("-o", "--oDir", help="output directory", default="re_weighted")
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
@@ -94,7 +95,7 @@ for s in samList:
 
 print args.samList
 #create tChain to  process each files
-if args.samList == 'signals' :
+if args.samList == 'signalsGF' :
       treename = "pair/tree"
       tchain = TChain(treename)    
 
@@ -142,13 +143,13 @@ for sname in snames:
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     #create tChain and process each files
-    if args.samList != 'signals' :
+    if args.samList != 'signalsGF' :
       treename = "pair/tree"
       tchain = TChain(treename)    
     for File in files:                     
         tchain.Add(File)
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
-    if args.samList != 'signals' :
+    if args.samList != 'signalsGF' :
         procOpt = "ofile=./"+sname+"_W.root" if not oDir else "ofile="+oDir+sname+"_W.root"
         print "max numEv {}".format(nev)
         tchain.Process(selector, procOpt, nev)
@@ -156,9 +157,10 @@ for sname in snames:
    
     #some cleaning
 
-if args.samList == 'signals' :
+if args.samList == 'signalsGF' :
   procOpt = "ofile=./"+"signalsGF_HH4b.root" if not oDir else "ofile="+oDir+"signalsGF_HH4b.root"
   print "max numEv {}".format(nev)
-  tchain.Process(selector, procOpt, nev)
+  #tchain.Process(selector, procOpt, nev)
+  print "saved","ofile="+oDir+"signalsGF_HH4b.root"
 
 print "### processed {} samples ###".format(ns)
