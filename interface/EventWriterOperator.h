@@ -18,7 +18,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     alp::EventInfo * eventInfo_ptr = nullptr;
 
     std::vector<std::string> weights_;
-    bool hasGen_;
+    bool doGenHH_;
 
     // variables to save in branches
     float_t evtWeight = 1.;
@@ -40,8 +40,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     EventWriterOperator(const std::string & config_s, const std::vector<std::string> & weights = {}) :
       config_(json::parse(config_s)), 
       weights_(weights) {
-	if(config_s.find("isSignal")) hasGen_ = true;
-      	else hasGen_ = false;
+	    if(config_s.find("isSignal") && !config_s.find("tl_genhh_branch_name")) doGenHH_ = true;
+      	else doGenHH_ = false;
       }
 
     virtual ~EventWriterOperator() {}
@@ -88,12 +88,23 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
         tree_.Branch(config_.at("tl_genhs_branch_name").template get<std::string>().c_str(),
                      "std::vector<alp::Candidate>",&tl_genhs_ptr, 64000, 2);
       }
+      if (config_.find("tl_genhh_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("tl_genhh_branch_name").template get<std::string>().c_str(),
+                     "std::vector<alp::DiObject>",&tl_genhh_ptr, 64000, 2);
+      }
+      else tree_.Branch("TL_GenHH","std::vector<alp::DiObject>", &tl_genhh_ptr, 64000, 2);
 
-      tree_.Branch("TL_GenHH","std::vector<alp::DiObject>", &tl_genhh_ptr, 64000, 2);
+      if (config_.find("dijets_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("dihiggs_branch_name").template get<std::string>().c_str(),
+                     "std::vector<alp::DiObject>",&dijets_ptr, 64000, 2);
+      }
+      else tree_.Branch("DiJets","std::vector<alp::DiObject>", &dijets_ptr, 64000, 2);
 
-      tree_.Branch("DiJets","std::vector<alp::DiObject>", &dijets_ptr, 64000, 2);
-
-      tree_.Branch("DiHiggs","std::vector<alp::DiObject>", &dihiggs_ptr, 64000, 2);
+      if (config_.find("dihiggs_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("dihiggs_branch_name").template get<std::string>().c_str(),
+                     "std::vector<alp::DiObject>",&dihiggs_ptr, 64000, 2);
+      }
+      else tree_.Branch("DiHiggs","std::vector<alp::DiObject>", &dihiggs_ptr, 64000, 2);
 
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
@@ -107,6 +118,11 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       evtWeight = 1.;
       evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
 
+      if(doGenHH_) {
+        ev.tl_genhh_.clear();
+        ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_);
+      }
+
       eventInfo_ptr = dynamic_cast<alp::EventInfo *>(&ev.eventInfo_); 
       jets_ptr = dynamic_cast<std::vector<alp::Jet> *>(&ev.jets_); 
       muons_ptr = dynamic_cast<std::vector<alp::Lepton> *>(&ev.muons_); 
@@ -114,10 +130,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       met_ptr = dynamic_cast<alp::Candidate *>(&ev.met_); 
       genbfromhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genbfromhs_); 
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
-      tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);
-
-      ev.tl_genhh_.clear();
-      //if(hasGen_) ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_); #FIXME
+      tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);     
       tl_genhh_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.tl_genhh_);
       dijets_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dijets_); 
       dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 

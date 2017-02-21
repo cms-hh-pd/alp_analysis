@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-i", "--iDir", help="input directory", default="def_cmva")
-parser.add_argument("-o", "--oDir", help="output directory", default="re_weighted")
+parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
 parser.set_defaults(doTrigger=False, doMixed=False, savePlots=True)
@@ -42,15 +42,12 @@ else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 36.26
 
-rw_fname_SM = '../../../Support/NonResonant/Distros_5p_SM3M_sumBenchJHEP_13TeV.root'
-rw_fname_BM =            '../../../Support/NonResonant/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root'
-rw_fname_HH =             '../../../Support/NonResonant/Hist2DSum_V0_SM_box.root'
+rw_fname_SM = "../Support/NonResonant/Distros_5p_SM3M_sumBenchJHEP_13TeV.root"
+rw_fname_BM = "../Support/NonResonant/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root"
+rw_fname_HH = "../Support/NonResonant/Hist2DSum_V0_SM_box.root"
 
-#fname_v = vector("string")()
-#for f in fname_v: fname_v.push_back(f)
-
-iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir + "/"
-oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir + "/"
+iDir = "/lustre/cmswork/hh/alp_baseSelector/" + args.iDir + "/"
+oDir = '/lustre/cmswork/hh/alp_baseSelector/' + args.oDir + "/"
 #iDir = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/" + args.iDir
 #oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/' + args.oDir
 
@@ -78,6 +75,7 @@ config = { "eventInfo_branch_name" : "EventInfo",
               "genbfromhs_branch_name" : "GenBFromHs",
               "genhs_branch_name" : "GenHs",
               "tl_genhs_branch_name" : "TL_GenHs",
+              "tl_genhh_branch_name" : "TL_GenHH",
             }
 #"muons_branch_name" : "",
 #"electrons_branch_name" : "",
