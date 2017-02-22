@@ -4,6 +4,21 @@
 samlists = {
 
    'SM'      : ['HHTo4B_SM'],
+
+   'pangeaSM'      : ['HH4b_pangea_SMhistos'],
+   'pangeaBM1'      : ['HH4b_pangea_BM1histos'],
+   'pangeaBM2'      : ['HH4b_pangea_BM2histos'],
+   'pangeaBM3'      : ['HH4b_pangea_BM3histos'],
+   'pangeaBM4'      : ['HH4b_pangea_BM4histos'],
+   'pangeaBM5'      : ['HH4b_pangea_BM5histos'],
+   'pangeaBM6'      : ['HH4b_pangea_BM6histos'],
+   'pangeaBM7'      : ['HH4b_pangea_BM7histos'],
+   'pangeaBM8'      : ['HH4b_pangea_BM8histos'],
+   'pangeaBM9'      : ['HH4b_pangea_BM9histos'],
+   'pangeaBM10'      : ['HH4b_pangea_BM10histos'],
+   'pangeaBM11'      : ['HH4b_pangea_BM11histos'],
+   'pangeaBM12'      : ['HH4b_pangea_BM12histos'],
+
    'signals' : ['HHTo4B_SM', 'HHTo4B_BM2','HHTo4B_BM3','HHTo4B_BM4','HHTo4B_BM5','HHTo4B_BM7','HHTo4B_BM8',
                 'HHTo4B_BM9','HHTo4B_BM10','HHTo4B_BM11','HHTo4B_BM12','HHTo4B_BM13','HHTo4B_BMbox'], #'HHTo4B_BM6',
    'sig_vbf' : ['VBF_HHTo4B_SM'],

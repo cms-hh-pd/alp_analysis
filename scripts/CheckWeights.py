@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 # to EXE: python scripts/BaselineSelector.py -s data_moriond -t -o def_cmva
-# python ReWeighting.py -s signals -o def_cmva/
+# python CheckWeights.py -o def_cmva/
 
 # good old python modules
 import json
@@ -28,7 +28,6 @@ TH1F.AddDirectory(0)
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
-parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-i", "--iDir", help="input directory", default="def_cmva/")
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva/")
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
@@ -38,8 +37,8 @@ args = parser.parse_args()
 
 # exe parameters
 numEvents  =  args.numEvts
-if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
-else: samList = [args.samList]
+#if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
+#else: samList = [args.samList]
 trgList   = 'def_2016'
 intLumi_fb = 36.26
 
@@ -56,8 +55,7 @@ oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_baseSelector/' + ar
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 
-#weights to be applied 
-weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
+
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -65,10 +63,6 @@ print oDir
 
 btagAlgo = "pfCombinedMVAV2BJetTags"
 btag_wp = wps['CMVAv2_moriond']
-
-# to convert weights 
-weights_v = vector("string")()
-for w in weights: weights_v.push_back(w)
 
 # to parse variables to the anlyzer
 config = { "eventInfo_branch_name" : "EventInfo",
@@ -93,19 +87,18 @@ config.update(
           "isMixed" : False,
          } )
 
-snames = []
-for s in samList:
-    snames.extend(samlists[s])
+#snames = []
+#snames.extend("HH4b_pangea")
 
 ns = 0
-print args.samList
+
 #create tChain with all files in list
 treename = "pair/tree"
 tchain = TChain(treename)    
 
-for sname in snames:
+for sname in range(0,1):
     #get file names in all sub-folders:
-    reg_exp = iDir+sname+".root"
+    reg_exp = iDir+"HH4b_pangea.root"
     print "\n reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print " ### adding {}".format(sname)        
@@ -118,9 +111,9 @@ for sname in snames:
         if "Run" in files[0]: config["isData"] = True
 
     #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
+    #config["xsec_br"]  = samples[sname]["xsec_br"]
+    #config["matcheff"] = samples[sname]["matcheff"]
+    #config["kfactor"]  = samples[sname]["kfactor"]
 
     for File in files:                     
         tchain.Add(File)
@@ -128,24 +121,24 @@ for sname in snames:
 json_str = json.dumps(config)
 
 #define selectors list
-selector = ComposableSelector(alp.Event)(0, json_str)
-selector.addOperator(BaseOperator(alp.Event)())
 
-selector.addOperator(FolderOperator(alp.Event)("base"))
-selector.addOperator(CounterOperator(alp.Event)(weights_v))
+sam_list_ = ["SM","BM1","BM2","BM3","BM4","BM5", "BM6","BM7","BM8","BM9","BM10","BM11","BM12"] 
+#weights to be applied 
+for samlist in sam_list_ :
+  selector = ComposableSelector(alp.Event)(0, json_str)
+  selector.addOperator(BaseOperator(alp.Event)())
+  weightsSM        = {'PUWeight', 'PdfWeight', 'BTagWeight','ReWeighting_'+samlist}
+  weights_v = vector("string")()
+  for w in weightsSM: weights_v.push_back(w)
+  selector.addOperator(FolderOperator(alp.Event)("pair"))
+  selector.addOperator(CounterOperator(alp.Event)(weights_v))
+  if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+  if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+  selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
-selector.addOperator(ReWeightingOperator(alp.Event)(rw_fname_SM, rw_fname_BM, rw_fname_HH))
-
-selector.addOperator(FolderOperator(alp.Event)("pair"))
-selector.addOperator(CounterOperator(alp.Event)(weights_v))
-if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
-selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
-
-nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
-procOpt = "ofile=./"+"HH4b_pangea.root" if not oDir else "ofile="+oDir+"HH4b_pangea.root"
-print "max numEv {}".format(nev)
-tchain.Process(selector, procOpt, nev)
+  nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
+  procOpt = "ofile=./"+"HH4b_pangea_"+samlist+"histos.root" if not oDir else "ofile="+oDir  +"HH4b_pangea_"+samlist+"histos.root"
+  print "max numEv {}".format(nev)
+  tchain.Process(selector, procOpt, nev)
 ns+=1
-
 print "### processed {} samples ###".format(ns)

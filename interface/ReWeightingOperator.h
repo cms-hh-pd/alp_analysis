@@ -16,6 +16,7 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
       std::string w_fname_BM_; 
       std::string w_fname_HH_;
       std::vector<std::string> sam_list_;
+      std::vector<double> sam_norm_;
       std::vector<std::string> hist_list_;
       TFile * wfile_SM_;
       TFile * wfile_BM_;
@@ -30,8 +31,9 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
        w_fname_BM_(w_fname_BM),
        w_fname_HH_(w_fname_HH)
       {           
-	    sam_list_ = {"SM","BM2","BM3","BM4","BM5", "BM6",
-                     "BM7","BM8","BM9","BM10","BM11","BM12","BM13"}; //"BM6", "BMbox"
+	    sam_list_ = {"SM","BM1","BM2","BM3","BM4","BM5", "BM6",
+                     "BM7","BM8","BM9","BM10","BM11","BM12"}; //"BM6", "BMbox"
+            sam_norm_ = {299803.461384, 49976.6016382, 50138.2521798, 49990.0468825, 573.0, 50041.0282539, 50038.5462286, 50001.0693263, 50000.3090638, 50045.3506862, 49992.1242267, 50024.7055638, 50006.2937198};
 
         //get histogram related to sample
         wfile_SM_ = TFile::Open(w_fname_SM_.c_str());
@@ -76,15 +78,15 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
         // get variables and bins value
         float costh, mhh;
         int bin, bin_a; 
-        std::cout << ev.tl_genhh_.size() << std::endl;
+        //std::cout << ev.tl_genhh_.size() << std::endl;
         if(ev.tl_genhh_.size()){
           mhh = ev.tl_genhh_.at(0).mass();
           costh = ev.tl_genhh_.at(0).costhst();
           bin   = normBench_->FindBin(mhh,costh);
           bin_a = normAnalitical_->FindBin(mhh,costh);
-          std::cout << "bin " << bin << std::endl;
-          std::cout << "mass " << mhh << std::endl;
-          std::cout << "costhst " << costh << std::endl;
+          //std::cout << "bin " << bin << std::endl;
+          //std::cout << "mass " << mhh << std::endl;
+          //std::cout << "costhst " << costh << std::endl;
 
         }
         else {
@@ -102,14 +104,14 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
             }
             if (mergecostSum>0) {
               float w = hw_.at(i)->GetBinContent(bin);
-              weight = (w / mergecostSum);
-              std::cout << "w " << w << std::endl;
-              std::cout << "mergecostSum " << mergecostSum << std::endl;
-              std::cout << "weight " << weight << std::endl;
+              weight = (w / mergecostSum)/sam_norm_.at(i);
+              //std::cout << "w " << w << std::endl;
+              //std::cout << "mergecostSum " << mergecostSum << std::endl;
+              //std::cout << "weight " << weight << std::endl;
             }
             weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weight;  //DEBUG - weight 1 for SM         
         }
-        std::cout << normAnalitical_->GetBinContent(bin_a) << std::endl;
+        //std::cout << normAnalitical_->GetBinContent(bin_a) << std::endl;
         weight_map.at("Norm_Analytical") *= normAnalitical_->GetBinContent(bin_a);
 
         // add weights to event info
