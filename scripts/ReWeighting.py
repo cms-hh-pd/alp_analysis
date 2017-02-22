@@ -1,6 +1,12 @@
 #!/usr/bin/env python 
 # to EXE: python scripts/BaselineSelector.py -s data_moriond -t -o def_cmva
+<<<<<<< HEAD
 # python ReWeighting.py -s signals -o def_cmva/
+=======
+# sum data:  python ReWeighting.py -s signalsGF -o def_cmva/
+
+
+>>>>>>> f42dc29eb2e08988e6b2de1c8a581f672b1689e0
 
 # good old python modules
 import json
@@ -15,6 +21,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
 from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator, ReWeightingOperator
+
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -53,6 +60,7 @@ rw_fname_HH = "../../Support/NonResonant/Hist2DSum_V0_SM_box.root"
 #oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_moriond_base/' + args.oDir
 iDir = "/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_baseSelector/" + args.iDir
 oDir = '/afs/cern.ch/work/a/acarvalh/codeCMSHHH4b/toHH4b/alp_baseSelector/' + args.oDir
+
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 

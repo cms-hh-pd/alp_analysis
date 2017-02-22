@@ -7,6 +7,10 @@
 #include "BaseOperator.h"
 #include "Event.h"
 #include "Utils.h"
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 template <class EventClass> class ReWeightingOperator : public BaseOperator<EventClass> {
 
