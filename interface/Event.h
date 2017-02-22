@@ -1,4 +1,3 @@
-
 #pragma once
 // ROOT includes
 #include <TTreeReader.h>
@@ -155,4 +154,3 @@ namespace alp {
   };
 
 }
-

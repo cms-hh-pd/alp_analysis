@@ -95,7 +95,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       else tree_.Branch("TL_GenHH","std::vector<alp::DiObject>", &tl_genhh_ptr, 64000, 2);
 
       if (config_.find("dijets_branch_name") != config_.end()) {
-        tree_.Branch(config_.at("dihiggs_branch_name").template get<std::string>().c_str(),
+        tree_.Branch(config_.at("dijets_branch_name").template get<std::string>().c_str(),
                      "std::vector<alp::DiObject>",&dijets_ptr, 64000, 2);
       }
       else tree_.Branch("DiJets","std::vector<alp::DiObject>", &dijets_ptr, 64000, 2);
