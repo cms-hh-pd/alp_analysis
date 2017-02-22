@@ -164,10 +164,10 @@ for sname in snames:
         selector.addOperator(JEShifterOperator(alp.Event)(-1))
     elif args.jetCorr == 2:
         print "- applying JER Up -"
-        selector.addOperator(JERShifterOperator(alp.Event)(True))
+        selector.addOperator(JERShifterOperator(alp.Event)(+1))
     elif args.jetCorr == 3:
         print "- applying JER Down -"
-        selector.addOperator(JERShifterOperator(alp.Event)(False))
+        selector.addOperator(JERShifterOperator(alp.Event)(-1))
     else:
         print "- default JEC-JER applied -"
 
