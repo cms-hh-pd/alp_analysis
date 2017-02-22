@@ -127,7 +127,7 @@ for sname in snames:
         continue
     else:
         if "Run" in files[0]: config["isData"] = True
-        if "GluGluToHH" in files[0] or "HH4B" in files[0]: config["isSignal"] = True
+        if "GluGluToHH" in files[0] or "HHTo4B" in files[0]: config["isSignal"] = True
 
     #read counters to get generated eventsbj (from alpha ntuple only)
     if not args.doMixed:

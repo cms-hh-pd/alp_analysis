@@ -40,7 +40,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     EventWriterOperator(const std::string & config_s, const std::vector<std::string> & weights = {}) :
       config_(json::parse(config_s)), 
       weights_(weights) {
-	    if(config_s.find("isSignal") && !config_s.find("tl_genhh_branch_name")) doGenHH_ = true;
+	    if(config_.at("isSignal") && config_.find("tl_genhh_branch_name")== config_.end()) doGenHH_ = true;
       	else doGenHH_ = false;
       }
 
@@ -120,7 +120,11 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
       if(doGenHH_) {
         ev.tl_genhh_.clear();
-        ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_ , ev.tl_genhs_.at(1).p4_);
+        if(ev.tl_genhs_.size()==2) ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_, ev.tl_genhs_.at(1).p4_);
+        else {
+          std::cout<< "EventWriterOperator: ERROR, tl_genhs size not equal 2 for signal" << std::endl;
+          doGenHH_=false;
+        }
       }
 
       eventInfo_ptr = dynamic_cast<alp::EventInfo *>(&ev.eventInfo_); 

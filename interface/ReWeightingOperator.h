@@ -7,37 +7,35 @@
 #include "BaseOperator.h"
 #include "Event.h"
 #include "Utils.h"
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 template <class EventClass> class ReWeightingOperator : public BaseOperator<EventClass> {
 
     public:
 
-      std::string w_fname_SM_;
-      std::string w_fname_BM_; 
-      std::string w_fname_HH_;
+      std::string w_fname_SM_, w_fname_BM_, w_fname_HH_;
       std::vector<std::string> sam_list_;
       std::vector<double> sam_norm_;
-      std::vector<std::string> hist_list_;
       TFile * wfile_SM_;
       TFile * wfile_BM_;
       TFile * wfile_HH_;
       std::vector<TH2D*> hw_;
       TH2D * normAnalitical_;
       TH2D * normBench_;     
-      TH2D * h_;  
+      TH2D * h_;
 
       ReWeightingOperator(const std::string & w_fname_SM, const std::string & w_fname_BM, const std::string & w_fname_HH) : 
        w_fname_SM_(w_fname_SM),
        w_fname_BM_(w_fname_BM),
        w_fname_HH_(w_fname_HH)
-      {           
+      { 
+        //samples list as for final version of clustering           
 	    sam_list_ = {"SM","BM1","BM2","BM3","BM4","BM5", "BM6",
-                     "BM7","BM8","BM9","BM10","BM11","BM12"}; //"BM6", "BMbox"
-            sam_norm_ = {299803.461384, 49976.6016382, 50138.2521798, 49990.0468825, 573.0, 50041.0282539, 50038.5462286, 50001.0693263, 50000.3090638, 50045.3506862, 49992.1242267, 50024.7055638, 50006.2937198};
+                     "BM7","BM8","BM9","BM10","BM11","BM12"};
+        //samples norm factor (gen_nevts for new BM)
+        sam_norm_ = {299803.461384, 49976.6016382, 50138.2521798, 
+                     49990.0468825, 573.0, 50041.0282539, 50038.5462286, 
+                     50001.0693263, 50000.3090638, 50045.3506862, 
+                     49992.1242267, 50024.7055638, 50006.2937198};
 
         //get histogram related to sample
         wfile_SM_ = TFile::Open(w_fname_SM_.c_str());
@@ -50,12 +48,14 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
         h_ = (TH2D*)wfile_SM_->Get("H0bin1");
         if(!h_) std::cout << "ERROR: H0bin1 does not exist" << std::endl;
         hw_.push_back(h_);
-        for (unsigned int i=0; i<12; i++) { //#debug
+
+        for (unsigned int i=0; i<12; i++) { //#debug - fixed number
           std::string st = std::to_string(i)+"_bin1";
 	      h_ = (TH2D*)wfile_BM_->Get(st.c_str());
           if(!h_) std::cout << "ERROR: bm h does not exist" << std::endl;
           hw_.push_back(h_); 
     	}
+
 	    normBench_ = (TH2D*)wfile_HH_->Get("SumV0_BenchBin");
         if(!normBench_) std::cout << "ERROR: SumV0_BenchBin does not exist" << std::endl;
     	normAnalitical_ = (TH2D*)wfile_HH_->Get("SumV0_AnalyticalBin");
@@ -82,16 +82,11 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
         // get variables and bins value
         float costh, mhh;
         int bin, bin_a; 
-        //std::cout << ev.tl_genhh_.size() << std::endl;
         if(ev.tl_genhh_.size()){
           mhh = ev.tl_genhh_.at(0).mass();
           costh = ev.tl_genhh_.at(0).costhst();
           bin   = normBench_->FindBin(mhh,costh);
           bin_a = normAnalitical_->FindBin(mhh,costh);
-          //std::cout << "bin " << bin << std::endl;
-          //std::cout << "mass " << mhh << std::endl;
-          //std::cout << "costhst " << costh << std::endl;
-
         }
         else {
           std::cout << "ERROR: null size of ev.tl_genhh_" << std::endl;
@@ -109,13 +104,9 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
             if (mergecostSum>0) {
               float w = hw_.at(i)->GetBinContent(bin);
               weight = (w / mergecostSum)/sam_norm_.at(i);
-              //std::cout << "w " << w << std::endl;
-              //std::cout << "mergecostSum " << mergecostSum << std::endl;
-              //std::cout << "weight " << weight << std::endl;
             }
-            weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weight;  //DEBUG - weight 1 for SM         
+            weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weight;
         }
-        //std::cout << normAnalitical_->GetBinContent(bin_a) << std::endl;
         weight_map.at("Norm_Analytical") *= normAnalitical_->GetBinContent(bin_a);
 
         // add weights to event info
