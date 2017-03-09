@@ -30,6 +30,7 @@ parser.add_argument("-e", "--numEvts", help="number of events", type=int, defaul
 parser.add_argument("-s", "--samList", help="sample list", default="signals")
 parser.add_argument("-i", "--iDir", help="input directory", default="def_cmva")
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
+parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
 parser.set_defaults(doTrigger=False, doMixed=False, savePlots=True)
@@ -40,14 +41,28 @@ numEvents  =  args.numEvts
 if not args.samList: samList = ['signals']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
 trgList   = 'def_2016'
-intLumi_fb = 36.26
+intLumi_fb = 35.9
 
 rw_fname_SM = "../Support/NonResonant/Distros_5p_SM3M_sumBenchJHEP_13TeV.root"
 rw_fname_BM = "../Support/NonResonant/Distros_5p_500000ev_12sam_13TeV_JHEP_500K.root"
 rw_fname_HH = "../Support/NonResonant/Hist2DSum_V0_SM_box.root"
 
-iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir + "/"
-oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir + "/"
+iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir
+oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir
+if args.jetCorr   == 0: 
+    iDir += "_JESup"
+    oDir += "_JESup"
+elif args.jetCorr == 1: 
+    iDir += "_JESdown"
+    oDir += "_JESdown"
+elif args.jetCorr == 2:
+    iDir += "_JERup"
+    oDir += "_JERup"
+elif args.jetCorr == 3:
+    iDir += "_JERdown"
+    oDir += "_JERdown"
+iDir += "/"
+oDir += "/"
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 
@@ -99,6 +114,8 @@ print args.samList
 treename = "pair/tree"
 tchain = TChain(treename)    
 
+ngenev = 0
+nerr = 0
 for sname in snames:
     #get file names in all sub-folders:
     reg_exp = iDir+sname+".root"
@@ -114,13 +131,25 @@ for sname in snames:
         if "Run" in files[0]: config["isData"] = True
         if "GluGluToHH" in files[0] or "HHTo4B" in files[0]: config["isSignal"] = True
 
-    #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
+    hcount = TH1F('hcount', 'num of genrated events',1,0,1)
+    for f in files:
+        tf = TFile(f)
+        if tf.Get('h_genEvts'):
+            hcount.Add(tf.Get('h_genEvts'))
+        else:
+            nerr+=1        
+        tf.Close()
+	ngenev += hcount.GetBinContent(1)
+        tchain.Add(f)
 
-    for File in files:                     
-        tchain.Add(File)
+#read weights from alpSamples -- DEBUG - unused
+config["xsec_br"]  = -1.
+config["matcheff"] = -1.
+config["kfactor"]  = -1.
+
+config["n_gen_events"] = ngenev
+print  "gen numEv {}".format(ngenev)
+print  "empty files {}".format(nerr)
 
 json_str = json.dumps(config)
 

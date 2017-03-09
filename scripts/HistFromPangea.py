@@ -85,8 +85,27 @@ if not files:
 else:
    if "Run" in files[0]: config["isData"] = True
    if "GluGluToHH" in files[0] or "HHTo4B" in files[0]: config["isSignal"] = True
+
+ngenev = 0
+nerr = 0
+hcount = TH1F('hcount', 'num of genrated events',1,0,1)
 for File in files:                     
     tchain.Add(File)
+    tf = TFile(File)
+    if tf.Get('h_genEvts'):
+         hcount.Add(tf.Get('h_genEvts'))
+    else:
+         nerr+=1
+    tf.Close()
+    ngenev += hcount.GetBinContent(1)
+
+#read weights from alpSamples -- DEBUG - unused
+config["xsec_br"]  = -1.
+config["matcheff"] = -1.
+config["kfactor"]  = -1.
+config["n_gen_events"] = ngenev
+print  "gen numEv {}".format(ngenev)
+print  "empty files {}".format(nerr)
 
 json_str = json.dumps(config)
 
@@ -95,7 +114,7 @@ for sam in sam_list_ :
   ns+=1
   selector = ComposableSelector(alp.Event)(0, json_str)
   selector.addOperator(BaseOperator(alp.Event)())
-  weightsSM = {'PUWeight', 'PdfWeight', 'BTagWeight','ReWeighting_'+sam}
+  weightsSM = {'PUWeight', 'PdfWeight', 'BTagWeight','ReWeightingNoN_'+sam}
   weightsSM_v = vector("string")()
   for w in weightsSM: weightsSM_v.push_back(w)
   selector.addOperator(FolderOperator(alp.Event)("pair"))

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <algorithm>
@@ -12,6 +11,7 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
 
     public:
 
+      bool doNorm_;
       std::string w_fname_SM_, w_fname_BM_, w_fname_HH_;
       std::vector<std::string> sam_list_;
       std::vector<double> sam_norm_;
@@ -23,13 +23,15 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
       TH2D * normBench_;     
       TH2D * h_;
 
-      ReWeightingOperator(const std::string & w_fname_SM, const std::string & w_fname_BM, const std::string & w_fname_HH) : 
+      ReWeightingOperator(const std::string & w_fname_SM, const std::string & w_fname_BM, 
+		      const std::string & w_fname_HH, bool doNorm = true) : 
        w_fname_SM_(w_fname_SM),
        w_fname_BM_(w_fname_BM),
-       w_fname_HH_(w_fname_HH)
+       w_fname_HH_(w_fname_HH),
+       doNorm_(doNorm)
       { 
         //samples list as for final version of clustering           
-	    sam_list_ = {"SM","BM1","BM2","BM3","BM4","BM5", "BM6",
+        sam_list_ = {"SM","BM1","BM2","BM3","BM4","BM5", "BM6",
                      "BM7","BM8","BM9","BM10","BM11","BM12"};
         //samples norm factor (gen_nevts for new BM)
         sam_norm_ = {299803.461384, 49976.6016382, 50138.2521798, 
@@ -76,6 +78,7 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
         for (const auto & sam : sam_list_) {
           // at(syst) would return exception when no element exists
           weight_map["ReWeighting_"+sam] = 1.0;
+          weight_map["ReWeightingNoN_"+sam] = 1.0;
         }
         weight_map["Norm_Analytical"] = 1.0;
 
@@ -95,7 +98,8 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
 
         //code to get weight
         for (unsigned int i=0; i<sam_list_.size(); i++) {
-            float weight = 1.;
+            float weight  = 1.;
+            float weightN = 1.;
             float mergecostSum = 0;
             for (unsigned int icost=1; icost< 11; icost++){
  	          int binx_c = normBench_->GetXaxis()->FindBin(mhh);
@@ -103,9 +107,11 @@ template <class EventClass> class ReWeightingOperator : public BaseOperator<Even
             }
             if (mergecostSum>0) {
               float w = hw_.at(i)->GetBinContent(bin);
-              weight = (w / mergecostSum)/sam_norm_.at(i);
+              weight  = (w / mergecostSum);
+              weightN = weight/sam_norm_.at(i);
             }
-            weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weight;
+            weight_map.at("ReWeighting_"+sam_list_.at(i)) *= weightN;
+	    weight_map.at("ReWeightingNoN_"+sam_list_.at(i)) *= weight;
         }
         weight_map.at("Norm_Analytical") *= normAnalitical_->GetBinContent(bin_a);
 
