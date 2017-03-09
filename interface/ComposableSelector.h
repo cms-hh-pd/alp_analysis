@@ -131,12 +131,15 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
 
    //hist with number of generated events
     if (config_.find("n_gen_events") != config_.end()) n_genev_ = config_.at("n_gen_events");
+    //std::cout << n_genev_ << std::endl;
     if (!config_.at("isMixed")) h_genev.SetBinContent(1,n_genev_);
+    //std::cout <<  h_genev.GetBinContent(1) << std::endl;
 
     //hist with event weight = xsec*BR*genEff
     if (config_.find("xsec_br") != config_.end()) w_xsecbr_ = config_.at("xsec_br");
     if (config_.find("matcheff") != config_.end()) w_eff_ = config_.at("matcheff");
     if (config_.find("kfactor") != config_.end()) w_kfact_ = config_.at("kfactor");
+    //std::cout << w_xsecbr_ << std::endl;
     if (!config_.at("isMixed")) h_w_XsBrEff.SetBinContent(1,w_xsecbr_*w_eff_*w_kfact_);
 
     //hist with event weight to 1 fb-1
@@ -174,8 +177,9 @@ template <class EventClass> bool  ComposableSelector<EventClass>::Process(Long64
 
   n_entries++;
   if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl;  
+  //if (n_entries>10000) std::cout << "processing " << n_entries << " entry" << std::endl;
 
- // set TTreeReader entry
+// set TTreeReader entry
   reader_.SetLocalEntry(entry);
   // update event objects
   ev_.update();

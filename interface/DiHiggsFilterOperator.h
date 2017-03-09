@@ -7,11 +7,11 @@ template <class EventClass> class DiHiggsFilterOperator : public BaseOperator<Ev
   public:
 
     bool do_blind_;
-    double min_dihiggs_mass_; 
+    std::vector<double> c_dijets_mass_; 
 
-    DiHiggsFilterOperator(bool do_blind = false, double min_dihiggs_mass = 0.):
+    DiHiggsFilterOperator(const std::vector<double> & c_dijets_mass = {}, bool do_blind = false):
       do_blind_(do_blind),
-      min_dihiggs_mass_(min_dihiggs_mass) {}
+      c_dijets_mass_(c_dijets_mass) {}
     virtual ~DiHiggsFilterOperator() {}
 
     virtual bool process( EventClass & ev ) {
@@ -23,9 +23,13 @@ template <class EventClass> class DiHiggsFilterOperator : public BaseOperator<Ev
         }
       }
       
-      if(min_dihiggs_mass_) {
-        if(ev.dihiggs_.at(0).mass()< min_dihiggs_mass_) return false;
+      if(c_dijets_mass_.size()==4) {
+        if( (ev.dijets_.at(0).mass()< c_dijets_mass_.at(0) || ev.dijets_.at(0).mass()> c_dijets_mass_.at(1)) &&
+            (ev.dijets_.at(1).mass()< c_dijets_mass_.at(2) || ev.dijets_.at(1).mass()> c_dijets_mass_.at(3))  ){
+           return false;
+        }
       }
+      else return false; //DEBUG
 
       return true;
     }

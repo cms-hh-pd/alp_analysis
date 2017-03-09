@@ -12,8 +12,8 @@ triggerlists = {
    'prescaled_2016' : [ "HLT_DoubleJet90_Double30_DoubleBTagCSV_p087_v",
                         "HLT_QuadJet45_DoubleBTagCSV_p087_v" ],
 
-   'singleMu_2016'  : [ "HLT_IsoMu18_v",
-                        "HLT_IsoTkMu18_v",
+   'singleMu_2016'  : [ #"HLT_IsoMu18_v",
+                        #"HLT_IsoTkMu18_v",
                         "HLT_IsoMu22_v",
                         "HLT_IsoTkMu22_v",
                         "HLT_IsoMu24_v",

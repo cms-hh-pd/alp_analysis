@@ -13,7 +13,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator, WeightSumOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -171,7 +171,9 @@ for sname in snames:
     else:
         print "- default JEC-JER applied -"
 
+
     selector.addOperator(FolderOperator(alp.Event)("base"))
+    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
 
     #trigger
@@ -198,8 +200,8 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("pair")) # final tree always in pair folder for simplicity
-    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
     if not args.doMixed:
         selector.addOperator(ThrustFinderOperator(alp.Event)())

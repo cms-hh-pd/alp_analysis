@@ -33,6 +33,13 @@ samples = {
         'kfactor' : 1.,
     },
 
+    'SingleMuonRun2016H-PromptReco-v1' : {
+        'sam_name': 'SingleMuonRun2016H-PromptReco-v1',
+        'nevents' : 29162,
+        'xsec_br'    : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'SingleMuonRun2016H-PromptReco-v2' : {
         'sam_name': 'SingleMuonRun2016H-PromptReco-v2',
         'nevents' : 171134793,
@@ -215,6 +222,13 @@ samples = {
 
     ########## MC ##########
     ### Signals
+    'HHTo4B_pangea' :{
+        'sam_name': 'HHTo4B_pangea',
+        'nevents' : 4172400,
+        'xsec_br' : 1.*0.577*0.577,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'HHTo4B_SM' :{
         'sam_name': 'GluGluToHHTo4B_node_SM_13TeV-madgraph-v1',
         'nevents' : 299800,
@@ -763,90 +777,132 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-    'WJetsToLNu_HT-100To200_ext' :{    
-        'sam_name': 'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
-        'nevents' : 35244500,#27546978,
-        'xsec_br' : 1292.,
+    'ST_t-channel_top_4f_incl' :{
+        'sam_name': 'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1-v1',
+        'nevents' : 67240808,
+        'xsec_br' : 136.02,
         'matcheff': 1.,
-        'kfactor' : 1.459,#1721.83/1292., #1.459
+        'kfactor' : 1.,
+    },
+    'ST_t-channel_antitop_4f_incl' :{
+        'sam_name': 'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1-v1',
+        'nevents' : 38811017,
+        'xsec_br' : 80.95,
+        'matcheff': 1.,
+        'kfactor' : 1.,
     },
     'WJetsToLNu_HT-100To200' :{    
         'sam_name': 'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 3524450,#27546978,#cerca
+        'nevents' : 10235198,
         'xsec_br' : 1292.,
         'matcheff': 1.,
-        'kfactor' : 1.459,#1721.83/1292., #1.459
+        'kfactor' : 1.459,
+    },
+    'WJetsToLNu_HT-100To200_ext1' :{    
+        'sam_name': 'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
+        'nevents' : 29503700,
+        'xsec_br' : 1292.,
+        'matcheff': 1.,
+        'kfactor' : 1.459,
+    },
+    'WJetsToLNu_HT-100To200_ext2' :{    
+        'sam_name': 'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext2-v1',
+        'nevents' : 39617787,
+        'xsec_br' : 1292.,
+        'matcheff': 1.,
+        'kfactor' : 1.459,
     },
     'WJetsToLNu_HT-200To400' :{    
         'sam_name':'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 4963240,
+        'nevents' : 4950373,
         'xsec_br' : 385.9,
         'matcheff': 1.,
-        'kfactor' : 1.434,#392.68/385.9, #1.434
+        'kfactor' : 1.434,
     },
-    'WJetsToLNu_HT-200To400_ext' :{    
+    'WJetsToLNu_HT-200To400_ext1' :{    
         'sam_name':'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
-        'nevents' : 19851624,#14888384,
+        'nevents' : 14888384,
         'xsec_br' : 385.9,
         'matcheff': 1.,
-        'kfactor' : 1.434,#392.68/385.9, #1.434
+        'kfactor' : 1.434,
+    },
+    'WJetsToLNu_HT-200To400_ext2' :{  
+        'sam_name': 'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext2-v1',
+        'nevents' : 19914590,
+        'xsec_br' : 385.9,
+        'matcheff': 1.,
+        'kfactor' : 1.434,
     },
     'WJetsToLNu_HT-400To600' :{    
         'sam_name':'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 7432746,#1963464,
+        'nevents' : 1963464,
         'xsec_br' : 47.9,
         'matcheff': 1.,
-        'kfactor' : 1.532,#42.89/47.9, #1.532
+        'kfactor' : 1.532,
     },
     'WJetsToLNu_HT-400To600_ext' :{    
         'sam_name':'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
-        'nevents' : 5469282,
+        'nevents' : 5796237,
         'xsec_br' : 47.9,
         'matcheff': 1.,
-        'kfactor' : 1.532,#42.89/47.9, #1.532
+        'kfactor' : 1.532,
     },
     'WJetsToLNu_HT-600To800' :{    
         'sam_name':'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
         'nevents' : 3722395,
         'xsec_br' : 12.8,
         'matcheff': 1.,
-        'kfactor' : 1.004,#8.74/12.8,
+        'kfactor' : 1.004,
+    },
+    'WJetsToLNu_HT-600To800_ext' :{    
+        'sam_name':'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
+        'nevents' : 14908339,
+        'xsec_br' : 12.8,
+        'matcheff': 1.,
+        'kfactor' : 1.004,
     },
     'WJetsToLNu_HT-800To1200' :{    
         'sam_name':'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v2',
-        'nevents' : 1540477,
+        'nevents' : 1544513,
         'xsec_br' : 5.261,
         'matcheff': 1.,
-        'kfactor' : 1.004,#3.2684/5.261,
+        'kfactor' : 1.004,
     },
     'WJetsToLNu_HT-800To1200_ext' :{    
         'sam_name':'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
-        'nevents' : 7854734,#6314257,
+        'nevents' : 6200954,
         'xsec_br' : 5.261,
         'matcheff': 1.,
-        'kfactor' : 1.004,#3.2684/5.261,
+        'kfactor' : 1.004,
     },
     'WJetsToLNu_HT-1200To2500' :{    
         'sam_name':'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 246737*10,
+        'nevents' : 244532,
         'xsec_br' : 1.334,
         'matcheff': 1.,
-        'kfactor' : 1.004,#0.7082/1.334,
+        'kfactor' : 1.004,
     },
     'WJetsToLNu_HT-1200To2500_ext' :{    
         'sam_name':'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
-        'nevents' : 7063909,#6817172,
+        'nevents' : 6627909,
         'xsec_br' : 1.334,
         'matcheff': 1.,
-        'kfactor' : 1.004,#0.7082/1.334,
+        'kfactor' : 1.004,
     },
     'WJetsToLNu_HT-2500ToInf' :{    
         'sam_name':'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 2507809,#253561,
+        'nevents' : 253561,
         'xsec_br' : 0.03089,
         'matcheff': 1.,
-        'kfactor' : 1.004,#0.01816/0.03089,
-    },   
+        'kfactor' : 1.004,
+    },  
+    'WJetsToLNu_HT-2500ToInf_ext' :{    
+        'sam_name':'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1-v1',
+        'nevents' : 2384260,
+        'xsec_br' : 0.03089,
+        'matcheff': 1.,
+        'kfactor' : 1.004,
+    },    
 
     #additional samples (for second level filters)
     'QCD_HT200toInf' :{
