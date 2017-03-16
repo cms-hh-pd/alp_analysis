@@ -23,7 +23,7 @@ samlists = {
                 'HHTo4B_BM8', 'HHTo4B_BM9','HHTo4B_BM10','HHTo4B_BM11','HHTo4B_BM12','HHTo4B_BM13','HHTo4B_BMbox'],
    'sig_vbf' : ['VBF_HHTo4B_SM'],
 
-   'data'  : ['BTagCSVRun2016'],
+   'Data'  : ['BTagCSVRun2016'],
    'dataBE'  : ['BTagCSVRun2016_BE'],
    'dataFH'  : ['BTagCSVRun2016_FH'],
    'data_ichep'    : ['BTagCSVRun2016B-v1','BTagCSVRun2016B-v2','BTagCSVRun2016C-v2','BTagCSVRun2016D-v2'], #12.6 fb-1
@@ -67,14 +67,17 @@ samlists = {
 
    'trigger' : ['TT',
                 'ST_s-channel_4f_lept', 'ST_t-channel_top_4f_incl', 'ST_t-channel_antitop_4f_incl',
-                'WJetsToLNu_HT-100To200','WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
-                'WJetsToLNu_HT-200To400','WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
-                'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
-                'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-600To800_ext',
+                'WJetsToLNu_HT-100To200_m', 'WJetsToLNu_HT-200To400_m', 'WJetsToLNu_HT-400To600_m', 
+                'WJetsToLNu_HT-600To800_m', 'WJetsToLNu_HT-800To1200_m',
+                'WJetsToLNu_HT-1200To2500_m', 'WJetsToLNu_HT-2500ToInf_m'
+ #               'WJetsToLNu_HT-100To200','WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
+#                'WJetsToLNu_HT-200To400','WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
+#                'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
+#                'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-600To800_ext',
                 #'WJetsToLNu_HT-800To1200', 
-                 'WJetsToLNu_HT-800To1200_ext',
-                'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-1200To2500_ext', 
-                'WJetsToLNu_HT-2500ToInf', 'WJetsToLNu_HT-2500ToInf_ext'
+ #                'WJetsToLNu_HT-800To1200_ext',
+  #              'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-1200To2500_ext', 
+   #             'WJetsToLNu_HT-2500ToInf', 'WJetsToLNu_HT-2500ToInf_ext'
                ],
 
    'trigger_small' : [
@@ -90,13 +93,15 @@ samlists = {
              'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
              'QCD_HT2000toInf', 'QCD_HT2000toInf_ext' ],
 
+   'qcd_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m', 'QCD_HT500to700_m', 'QCD_HT700to1000_m',
+               'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
+
+
    'qcd_500toInf' : [ 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
                       'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
                       'QCD_HT2000toInf', 'QCD_HT2000toInf_ext' ],
    'qcd_200to500' : [ 'QCD_HT200to300', 'QCD_HT200to300_ext', 'QCD_HT300to500', 'QCD_HT300to500_ext' ],
 
-   'qcd_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m', 'QCD_HT500to700_m', 'QCD_HT700to1000_m',
-               'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
 
    'qcd_500toInf_m' : [ 'QCD_HT500to700_m', 'QCD_HT700to1000_m', 'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
    'qcd_200to500_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m' ],

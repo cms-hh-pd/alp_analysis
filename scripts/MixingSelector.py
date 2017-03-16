@@ -36,7 +36,7 @@ args = parser.parse_args()
 numEvents  =  args.numEvts
 if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
-intLumi_fb = 36.26
+intLumi_fb = 35.9
 
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples

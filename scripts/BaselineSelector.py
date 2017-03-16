@@ -200,6 +200,7 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("pair")) # final tree always in pair folder for simplicity
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
     selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
