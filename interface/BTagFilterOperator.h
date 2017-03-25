@@ -16,6 +16,7 @@
       std::string disc_;
       double d_value_;
       std::size_t min_number_;
+      std::size_t antitag_pos_;
       bool isdata_;
       bool per_jet_sf_;
 
@@ -31,13 +32,14 @@
       // BTagSF options
       std::map<std::string, BTagCalibrationReader> cr_map;
       std::string sf_mode = "iterativefit";
-         
+
       BTagFilterOperator( std::string disc, double d_value,
-                          std::size_t min_number , bool isdata,
+                          std::size_t min_number , std::size_t antitag_pos, bool isdata,
                           std::string data_path, bool per_jet_sf = true ) :
        disc_(disc),
        d_value_(d_value),
        min_number_(min_number),
+       antitag_pos_(antitag_pos),
        isdata_(isdata),
        per_jet_sf_(per_jet_sf)
        {
@@ -95,8 +97,11 @@
 
         // btag check
         for (std::size_t i=0; i < min_number_; i++) {
-            if(ev.jets_.at(i).disc(disc_) < d_value_) return false;
-        }
+            if (i != antitag_pos_) {
+                if(ev.jets_.at(i).disc(disc_) < d_value_) return false; }
+            else {
+                if(ev.jets_.at(i).disc(disc_) >= d_value_) return false; }
+        }       
 
         // weight_map to save event weights BTagSF on
         std::map<std::string, float> weight_map;

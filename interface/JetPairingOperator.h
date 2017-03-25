@@ -79,7 +79,7 @@ template <class EventClass> class JetPairingOperator : public BaseOperator<Event
 
     virtual bool process( EventClass & ev ) {
 
-      dijet_pairing_simple(ev.jets_, n_fix_jets_);        
+      dijet_pairing_simple(ev.jets_, n_fix_jets_);
 
       // fill dijet objects
       ev.dijets_.clear();
