@@ -15,11 +15,11 @@
 
       std::string disc_;
       double d_value_;
+      double antd_min_value_;
       std::size_t min_number_;
       std::size_t antitag_pos_;
       bool isdata_;
       bool per_jet_sf_;
-
 
       // get short disc name
       std::map < std::string, std::string> s_name_map; 
@@ -43,6 +43,7 @@
        isdata_(isdata),
        per_jet_sf_(per_jet_sf)
        {
+         antd_min_value_ = -0.4,
 
          s_name_map = {{"pfCombinedInclusiveSecondaryVertexV2BJetTags", "CSVv2"},
                        {"pfCombinedMVAV2BJetTags", "cMVAv2"}};
@@ -100,7 +101,7 @@
             if (i != antitag_pos_) {
                 if(ev.jets_.at(i).disc(disc_) < d_value_) return false; }
             else {
-                if(ev.jets_.at(i).disc(disc_) >= d_value_) return false; }
+                if(ev.jets_.at(i).disc(disc_) <= antd_min_value_ || ev.jets_.at(i).disc(disc_) >= d_value_) return false; }
         }       
 
         // weight_map to save event weights BTagSF on

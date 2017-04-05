@@ -115,11 +115,11 @@ ns = 0
 for sname in snames:
 
     #get file names in all sub-folders:
-    if args.doMixed: reg_exp = iDir+"/mixed_ntuples/"+sname+".root"
+    if args.doMixed: reg_exp = iDir+"/mixed_sep/"+sname+".root"
     else:       reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
-    print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
+    print "reg_exp: {}".format(reg_exp) 
  
     #preliminary checks
     if not files: 
@@ -172,9 +172,9 @@ for sname in snames:
         print "- default JEC-JER applied -"
 
 
-   # selector.addOperator(FolderOperator(alp.Event)("base"))
-   # selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
-   # selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(FolderOperator(alp.Event)("base"))
+    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
 
     #trigger
     if args.doTrigger:
@@ -185,24 +185,33 @@ for sname in snames:
  	else: 
 		print "WARNING: is Mixed sample - trigger filter applied already"
 
-  #  selector.addOperator(FolderOperator(alp.Event)("acc"))
+    selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
-    #selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
-    #if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
+    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
 
-    #selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 3, config["isData"], data_path))
-#    selector.addOperator(CounterOperator(alp.Event)(weights_v))
-    #if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    selector.addOperator(FolderOperator(alp.Event)("btag"))
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path))
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
-    #selector.addOperator(FolderOperator(alp.Event)("pair_"))
+    #trigger
+    #if args.doTrigger:
+     #   if not args.doMixed:
+      #          selector.addOperator(FolderOperator(alp.Event)("trigger"))
+       #         selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
+        #        selector.addOperator(CounterOperator(alp.Event)(weights_v))
+        #else:
+         #       print "WARNING: is Mixed sample - trigger filter applied already"
+
+    selector.addOperator(FolderOperator(alp.Event)("pair_"))
     selector.addOperator(JetPairingOperator(alp.Event)(4))
- #   selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("pair")) # final tree always in pair folder for simplicity
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
-    #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    #selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
     if not args.doMixed:
         selector.addOperator(ThrustFinderOperator(alp.Event)())
