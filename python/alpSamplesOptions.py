@@ -1237,6 +1237,15 @@ sam_opt = {
         'linewidth' : 2,
         'linestyle' : 1,
         'label'     : 'data',
-    }  
-
+    },  
+    'additional' :{  #debug
+        'sam_name' :'additional',
+        'order'    : 0,
+        'fillcolor' : 430,
+        'fillstyle' : 1,
+        'linecolor' : 430,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'additional',
+    }
 }

@@ -27,7 +27,6 @@ samlists = {
    'dataBE'  : ['BTagCSVRun2016_BE'],
    'dataFH'  : ['BTagCSVRun2016_FH'],
    'data_ichep'    : ['BTagCSVRun2016B-v1','BTagCSVRun2016B-v2','BTagCSVRun2016C-v2','BTagCSVRun2016D-v2'], #12.6 fb-1
-   #'data_singleMu' : ['SingleMuonRun2016B-v1', 'SingleMuonRun2016B-v2', 'SingleMuonRun2016C-v2', 'SingleMuonRun2016D-v2'],
    'data_singleMu' : ['SingleMuonRun2016B-23Sep2016-v1','SingleMuonRun2016B-23Sep2016-v3', 'SingleMuonRun2016C-23Sep2016-v1',
                       'SingleMuonRun2016D-23Sep2016-v1', 'SingleMuonRun2016E-23Sep2016-v1', 'SingleMuonRun2016F-23Sep2016-v1',
                       'SingleMuonRun2016G-23Sep2016-v1', 'SingleMuonRun2016H-PromptReco-v1', 'SingleMuonRun2016H-PromptReco-v2', 'SingleMuonRun2016H-PromptReco-v3' ], #36.26 fb-1
@@ -47,6 +46,8 @@ samlists = {
                 'QCD_HT300to500_ext', 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
                 'TT' ],
 
+   'minorbkg' : [ 'TTTT', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'], #'ttHTobb', 'ttbb', 
+
    'minortt' : ['ttHTobb', 'TTZToQQ', 'TTWJetsToQQ', 'TTTT', 'ttbb', 'ST_tW_antitop_5f_incl', 'ST_tW_top_5f_incl'],
 
    'dibosons': ['ZH_HToBB_ZToQQ', 'WZ', 'ZZTo4Q'],
@@ -65,11 +66,12 @@ samlists = {
                   'QCD_HT300to500_ext', 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext'
                   'QCD_bEnriched_HT1000to1500', 'QCD_bEnriched_HT100to200', 'QCD_bEnriched_HT1500to2000', 'QCD_bEnriched_HT2000toInf', 'QCD_bEnriched_HT200to300', 'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000', 'QCD_HT1000to1500_BGenFilter', 'QCD_HT100to200_BGenFilter', 'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter', 'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
 
-   'trigger' : ['TT',
+   'trigger' : [
                 'ST_s-channel_4f_lept', 'ST_t-channel_top_4f_incl', 'ST_t-channel_antitop_4f_incl',
                 'WJetsToLNu_HT-100To200_m', 'WJetsToLNu_HT-200To400_m', 'WJetsToLNu_HT-400To600_m', 
                 'WJetsToLNu_HT-600To800_m', 'WJetsToLNu_HT-800To1200_m',
-                'WJetsToLNu_HT-1200To2500_m', 'WJetsToLNu_HT-2500ToInf_m'
+                'WJetsToLNu_HT-1200To2500_m', 'WJetsToLNu_HT-2500ToInf_m',
+                'TT'
  #               'WJetsToLNu_HT-100To200','WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
 #                'WJetsToLNu_HT-200To400','WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
 #                'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
@@ -96,6 +98,8 @@ samlists = {
    'qcd_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m', 'QCD_HT500to700_m', 'QCD_HT700to1000_m',
                'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
 
+   'qcd_m500' : [ 'QCD_HT500to700_m', 'QCD_HT700to1000_m',
+               'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
 
    'qcd_500toInf' : [ 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
                       'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
@@ -106,8 +110,10 @@ samlists = {
    'qcd_500toInf_m' : [ 'QCD_HT500to700_m', 'QCD_HT700to1000_m', 'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
    'qcd_200to500_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m' ],
 
-#   'qcd_b' : ['QCD_bEnriched_HT1000to1500', 'QCD_bEnriched_HT100to200', 'QCD_bEnriched_HT1500to2000', 'QCD_bEnriched_HT2000toInf', 'QCD_bEnriched_HT200to300', 'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000', 'QCD_HT1000to1500_BGenFilter', 'QCD_HT100to200_BGenFilter', 'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter', 'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
-   'qcd_b' : ['QCD_bEnriched_HT1000to1500',  'QCD_bEnriched_HT1500to2000', 'QCD_bEnriched_HT2000toInf',  'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000', 'QCD_HT1000to1500_BGenFilter',  'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter',  'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
+   'qcd_b' : ['QCD_bEnriched_HT1000to1500',  'QCD_bEnriched_HT1500to2000', 'QCD_bEnriched_HT2000toInf',  
+              'QCD_bEnriched_HT200to300', 'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000', 
+              'QCD_HT1000to1500_BGenFilter',  'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter', 
+              'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
 
    'tt' : ['TT'], #reHLT
 

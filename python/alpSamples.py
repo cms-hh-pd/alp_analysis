@@ -499,7 +499,6 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },   
-
     
     # Background QCD bEnriched
     'QCD_b' :{
@@ -509,8 +508,6 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-
-
     'QCD_bEnriched_HT1000to1500' :{
         'sam_name': 'QCD_bEnriched_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
         'nevents' : 221429,
@@ -518,16 +515,9 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-    'QCD_bEnriched_HT100to200' :{
-        'sam_name': 'QCD_bEnriched_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 5341805,
-        'xsec_br' : 1321000.,
-        'matcheff': 1.,
-        'kfactor' : 1.,
-    },
     'QCD_bEnriched_HT1500to2000' :{
         'sam_name': 'QCD_bEnriched_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 50978,
+        'nevents' : 51779,
         'xsec_br' : 4.41,
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -541,46 +531,38 @@ samples = {
     },
     'QCD_bEnriched_HT200to300' :{
         'sam_name': 'QCD_bEnriched_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 4735212,
+        'nevents' : 4760269,
         'xsec_br' : 87950.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'QCD_bEnriched_HT300to500' :{
         'sam_name': 'QCD_bEnriched_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 2871164,
+        'nevents' : 2869572,
         'xsec_br' : 17570.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'QCD_bEnriched_HT500to700' :{
         'sam_name': 'QCD_bEnriched_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 2426857,
+        'nevents' : 2426719,
         'xsec_br' : 1512.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'QCD_bEnriched_HT700to1000' :{
         'sam_name': 'QCD_bEnriched_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 877400,
+        'nevents' : 879057,
         'xsec_br' : 320.,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-
-    # Background QCD BGenFilter FIXME  xsec*br
+    # Background QCD BGenFilter
     'QCD_HT1000to1500_BGenFilter' :{
         'sam_name': 'QCD_HT1000to1500_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 830868,
+        'nevents' : 834688,
         'xsec_br' : 184.4,
         'matcheff': 0.1361,
-        'kfactor' : 1.,
-    },
-    'QCD_HT100to200_BGenFilter' :{
-        'sam_name': 'QCD_HT100to200_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 7819821,
-        'xsec_br' : 1899000.,
-        'matcheff': 0.1621,
         'kfactor' : 1.,
     },
     'QCD_HT1500to2000_BGenFilter' :{
@@ -599,39 +581,32 @@ samples = {
     },
     'QCD_HT200to300_BGenFilter' :{
         'sam_name': 'QCD_HT200to300_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 8251443,
+        'nevents' : 8258754,
         'xsec_br' : 156500.,
         'matcheff': 0.1477,
         'kfactor' : 1.,
     },
     'QCD_HT300to500_BGenFilter' :{
         'sam_name': 'QCD_HT300to500_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 5772931,
+        'nevents' : 6046724,
         'xsec_br' : 38970.,
         'matcheff': 0.1442,
         'kfactor' : 1.,
     },
     'QCD_HT500to700_BGenFilter' :{
         'sam_name': 'QCD_HT500to700_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 7083503,
+        'nevents' : 7076024,
         'xsec_br' : 4150.,
         'matcheff': 0.1358,
         'kfactor' : 1.,
     },
     'QCD_HT700to1000_BGenFilter' :{
         'sam_name': 'QCD_HT700to1000_BGenFilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
-        'nevents' : 2893038,
+        'nevents' : 2869662,
         'xsec_br' : 1000.,
         'matcheff': 0.1442,
         'kfactor' : 1.,
     },
-    #'TT' :{
-    #    'sam_name': 'TT_TuneCUETP8M1_13TeV-powheg-pythia8_ext3-v1',
-    #    'nevents' : 92925926,
-    #    'xsec_br' : 831.76, 
-    #    'matcheff': 1.,
-    #    'kfactor' : 1.,
-    #},
     'TT' :{
         'sam_name': 'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8-v1',
         'nevents' : 77229341,
@@ -640,8 +615,8 @@ samples = {
         'kfactor' : 1.,
     },
     'ttHTobb' :{
-        'sam_name': 'ttHTobb_M125_13TeV_powheg_pythia8_v14-v1',
-        'nevents' : 3912212.,
+        'sam_name': 'ttHTobb_M125_13TeV_powheg_pythia8-v1',
+        'nevents' : 3936004.,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -661,15 +636,15 @@ samples = {
         'kfactor' : 1.,
     },
     'TTTT' :{
-        'sam_name': 'TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext1-v1',
-        'nevents' : 989025.,
+        'sam_name': 'TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8-v1',
+        'nevents' : 250000.,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'ttbb' :{
         'sam_name': 'ttbb_4FS_ckm_amcatnlo_madspin_pythia8_ext1-v1',
-        'nevents' : 3955742.,
+        'nevents' : 3971944.,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -691,8 +666,8 @@ samples = {
     },
 
     'ZH_HToBB_ZToQQ' :{
-        'sam_name': 'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8_v14-v1',
-        'nevents' : 493590,
+        'sam_name': 'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8-v1',
+        'nevents' : 499200,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
@@ -719,7 +694,7 @@ samples = {
         'kfactor' : 1.,
     },
     'ZJetsToQQ_HT-600ToInf' :{
-        'sam_name': 'ZJetsToQQ_HT600toInf_13TeV-madgraph_v14-v1',
+        'sam_name': 'ZJetsToQQ_HT600toInf_13TeV-madgraph-v1',
         'nevents' : 992590.,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
@@ -734,29 +709,29 @@ samples = {
     },   
 
     'VBFHToBB' :{
-        'sam_name': 'VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix-v14-v1',
-        'nevents' : 931614,
+        'sam_name': 'VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix-v1',
+        'nevents' : 997371,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'VBFHToBB_ext' :{
-        'sam_name': 'VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix_v14_ext1-v1',
-        'nevents' : 3645385,
+        'sam_name': 'VBFHToBB_M-125_13TeV_powheg_pythia8_weightfix_ext1-v1',
+        'nevents' : 3774811,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'GluGluHToBB' :{
-        'sam_name': 'GluGluHToBB_M125_13TeV_powheg_pythia8_v14-v1',
-        'nevents' : 4825748,
+        'sam_name': 'GluGluHToBB_M125_13TeV_powheg_pythia8-v1',
+        'nevents' : 4856192,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'GluGluHToBB_ext' :{
-        'sam_name': 'GluGluHToBB_M125_13TeV_powheg_pythia8_v14_ext1-v1',
-        'nevents' : 4867387,
+        'sam_name': 'GluGluHToBB_M125_13TeV_powheg_pythia8_ext1-v1',
+        'nevents' : 4971200,
         'xsec_br' : 1., #FIXME
         'matcheff': 1.,
         'kfactor' : 1.,
