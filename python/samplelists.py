@@ -46,7 +46,7 @@ samlists = {
                 'QCD_HT300to500_ext', 'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
                 'TT' ],
 
-   'minorbkg' : [ 'TTTT', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'], #'ttHTobb', 'ttbb', 
+   'minorbkg' : [ 'TTTT', 'ttHTobb', 'ttbb', 'VBFHToBB', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'],
 
    'minortt' : ['ttHTobb', 'TTZToQQ', 'TTWJetsToQQ', 'TTTT', 'ttbb', 'ST_tW_antitop_5f_incl', 'ST_tW_top_5f_incl'],
 
