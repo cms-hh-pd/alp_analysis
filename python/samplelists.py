@@ -71,15 +71,14 @@ samlists = {
                 'WJetsToLNu_HT-100To200_m', 'WJetsToLNu_HT-200To400_m', 'WJetsToLNu_HT-400To600_m', 
                 'WJetsToLNu_HT-600To800_m', 'WJetsToLNu_HT-800To1200_m',
                 'WJetsToLNu_HT-1200To2500_m', 'WJetsToLNu_HT-2500ToInf_m',
-                'TT'
- #               'WJetsToLNu_HT-100To200','WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
-#                'WJetsToLNu_HT-200To400','WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
-#                'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
-#                'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-600To800_ext',
-                #'WJetsToLNu_HT-800To1200', 
- #                'WJetsToLNu_HT-800To1200_ext',
-  #              'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-1200To2500_ext', 
-   #             'WJetsToLNu_HT-2500ToInf', 'WJetsToLNu_HT-2500ToInf_ext'
+                'TT',
+                #'WJetsToLNu_HT-100To200','WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
+                #'WJetsToLNu_HT-200To400','WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
+                #'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
+                #'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-600To800_ext',
+                #'WJetsToLNu_HT-800To1200', 'WJetsToLNu_HT-800To1200_ext',
+                #'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-1200To2500_ext', 
+                #'WJetsToLNu_HT-2500ToInf', 'WJetsToLNu_HT-2500ToInf_ext'
                ],
 
    'trigger_small' : [
@@ -111,7 +110,7 @@ samlists = {
    'qcd_200to500_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m' ],
 
    'qcd_b' : ['QCD_bEnriched_HT1000to1500',  'QCD_bEnriched_HT1500to2000', 'QCD_bEnriched_HT2000toInf',  
-              'QCD_bEnriched_HT200to300', 'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000', 
+              'QCD_bEnriched_HT200to300', 'QCD_bEnriched_HT300to500', 'QCD_bEnriched_HT500to700', 'QCD_bEnriched_HT700to1000',
               'QCD_HT1000to1500_BGenFilter',  'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter', 
               'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
 

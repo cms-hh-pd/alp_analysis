@@ -17,4 +17,9 @@ template <class EventClass> class FolderOperator : public BaseOperator<EventClas
       return name;
     }
 
+    virtual bool output ( std::ostream & os ) {    
+      os << "--- " << folder_name_ << std::endl;
+      return true;
+    }
+
 };

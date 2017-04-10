@@ -35,9 +35,7 @@ template <class EventClass> class WeightSumOperator : public BaseOperator<EventC
     }
 
     virtual bool output ( std::ostream & os ) {
-      os << "  " << dirname_ << std::endl;
-      os << "  w_sum:" << w_sum_ << std::endl ;
-      os << "  w_sum_h:" << h_wsum.GetBinContent(1);        
+      os << "w_sum: " << h_wsum.GetBinContent(1) << std::endl;
       return true;
     }
 

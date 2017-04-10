@@ -149,9 +149,9 @@ sam_opt = {
    'BTagCSVRun2016' : {
         'sam_name'  : 'BTagCSVRun2016',
         'order'     : 0,
-        'fillcolor' : 1,
+        'fillcolor' : 430,
         'fillstyle' : 1,
-        'linecolor' : 1,
+        'linecolor' : 430,
         'linewidth' : 2,
         'linestyle' : 1,
         'label'     : 'Data',

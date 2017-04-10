@@ -149,33 +149,35 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
+    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 2)) #debug 4
     selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
-    selector.addOperator(JetPlotterOperator(alp.Event)("pt",w_nobTag_v))
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
+#    selector.addOperator(JetPlotterOperator(alp.Event)("pt",w_nobTag_v))
+#    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path))
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 2, 99, config["isData"], data_path)) #debug 4
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
-    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 2))
+    selector.addOperator(FolderOperator(alp.Event)("isomu"))
+    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 2))  #debug
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
+    selector.addOperator(FolderOperator(alp.Event)("met"))
     selector.addOperator(MetFilterOperator(alp.Event)(40.))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v)) 
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
+#    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v)) 
+#    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
-    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
+#    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))
-    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
+#    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))
+#    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(CounterOperator(alp.Event)(weights_v))
-    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
+ #  selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")    
