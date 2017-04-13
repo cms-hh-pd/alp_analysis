@@ -31,7 +31,7 @@ parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("--btag", help="which btag algo", default='cmva')
-parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170222") 
+parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170210") 
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
 parser.add_argument("-m", "--doMixed", help="to process mixed samples", action='store_true') 
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
@@ -87,9 +87,9 @@ for w in weights_nobTag: w_nobTag_v.push_back(w)
 # to parse variables to the anlyzer
 if args.doMixed: config = { "jets_branch_name": "Jets", }
 else: config = { "eventInfo_branch_name" : "EventInfo",
-              "jets_branch_name": "Jets",
-              "genbfromhs_branch_name" : "GenBFromHs",
-              "genhs_branch_name" : "GenHs",
+            #  "jets_branch_name": "Jets",
+             # "genbfromhs_branch_name" : "GenBFromHs",
+            #  "genhs_branch_name" : "GenHs",
               "tl_genhs_branch_name" : "TL_GenHs",
             }
 #"muons_branch_name" : "",
@@ -172,28 +172,19 @@ for sname in snames:
         print "- default JEC-JER applied -"
 
 
-    selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
-    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
+    #selector.addOperator(FolderOperator(alp.Event)("base"))
+  #  selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
+    #selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
 
-    #trigger
-    if args.doTrigger:
-        if not args.doMixed:
-	        selector.addOperator(FolderOperator(alp.Event)("trigger"))
-        	selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-        	selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-        else: 
-		    print "WARNING: is Mixed sample - trigger filter applied already"
+   #selector.addOperator(FolderOperator(alp.Event)("acc"))
+ #   selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
+   #selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
+    # selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
 
-    selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
-    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-    #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
-
-    selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 3, 99, config["isData"], data_path)) #99  3
-    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-    #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+   #selector.addOperator(FolderOperator(alp.Event)("btag"))
+#    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 3, config["isData"], data_path)) #99  3
+   #selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
+    # selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
     #trigger
     #if args.doTrigger:
@@ -204,17 +195,13 @@ for sname in snames:
         #else:
          #       print "WARNING: is Mixed sample - trigger filter applied already"
 
-    selector.addOperator(FolderOperator(alp.Event)("pair"))
-    selector.addOperator(JetPairingOperator(alp.Event)(4))
-    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+  #  selector.addOperator(FolderOperator(alp.Event)("pair"))
+  #  selector.addOperator(JetPairingOperator(alp.Event)(4))
+ #   selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
+ #   if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+ #   if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
-    if not args.doMixed:
-        selector.addOperator(ThrustFinderOperator(alp.Event)())
-        selector.addOperator(HemisphereProducerOperator(alp.Event)())
-        selector.addOperator(HemisphereWriterOperator(alp.Event)())
-
+ 
     #create tChain and process each files
     if args.doMixed: treename = "mix_tree"
     else: treename = "ntuple/tree"

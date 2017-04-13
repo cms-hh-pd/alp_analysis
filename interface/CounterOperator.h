@@ -9,6 +9,7 @@ template <class EventClass> class CounterOperator : public BaseOperator<EventCla
 
     TH1D h_nevts {"h_nevts", "number of events - weighted", 1, 0., 1.};
     TH1D h_eff {"h_eff", "efficiency", 1, 0., 1.};
+    TH1D h_njets {"h_njets", "number of jets", 25, 0., 25.};
 
     std::vector<std::string> weights_;
     long n_sel_ev_ = 0; 
@@ -25,6 +26,7 @@ template <class EventClass> class CounterOperator : public BaseOperator<EventCla
       h_nevts.Sumw2();
       h_eff.SetDirectory(tdir);
       h_eff.Sumw2();
+      h_njets.SetDirectory(tdir);
       dirname_ = tdir->GetPath(); //debug - improve
     }
 
@@ -33,6 +35,7 @@ template <class EventClass> class CounterOperator : public BaseOperator<EventCla
       w*=ev.eventInfo_.eventWeight(weights_);
      
       h_nevts.Fill(0.5, w);
+      h_njets.Fill(ev.jets_.size(), w);
       
       n_sel_ev_++;
       return true;

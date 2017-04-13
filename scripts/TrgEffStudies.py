@@ -112,7 +112,18 @@ for sname in snames:
         print "WARNING: files do not exist"
         continue
     else:
-        if "Run" in files[0]: config["isData"] = True
+        if "Run" in files[0]: 
+            config["isData"] = True
+            if "B-" or "C-" or "D-" or "E-" or "F-" in files[0]:
+                trgsf_f = (data_path+'/EfficienciesAndSF_RunBtoF.json').encode('utf8')
+#               fsf = open(data_path+'/EfficienciesAndSF_RunBtoF.json', 'r')
+#               trgsf_f = json.load(fsf)
+               #print trgsf_f
+            elif "G-" or "H-" in files[0]:
+               trgsf_f = (data_path+'/theJSONfile_Period4.json').encode('utf8')
+#               fsf = open(data_path+'/theJSONfile_Period4.json', 'r')
+ #              trgsf = json.load(fsf)
+               #print trgsf_f
         if "GluGluToHH" in files[0] or "HHTo4B" in files[0]: config["isSignal"] = True
    
     #read counters to get generated events
@@ -142,41 +153,41 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trigger"))
-    selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v))
-    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v, trgsf_f))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 2)) #debug 4
-    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 #    selector.addOperator(JetPlotterOperator(alp.Event)("pt",w_nobTag_v))
 #    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
     selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 2, 99, config["isData"], data_path)) #debug 4
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("isomu"))
     selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 2))  #debug
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("met"))
     selector.addOperator(MetFilterOperator(alp.Event)(40.))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
 #    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v)) 
 #    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 #    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
 #    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))
 #    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
  #  selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     #create tChain and process each files
