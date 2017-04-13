@@ -191,7 +191,7 @@ for sname in snames:
     #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 3, 99, config["isData"], data_path)) #99  3
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path)) #99=noAntitag  3
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
     #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
