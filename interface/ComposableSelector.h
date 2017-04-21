@@ -121,8 +121,8 @@ template <class EventClass> void ComposableSelector<EventClass>::SlaveBegin(TTre
      pName_ = option.substr(option.find("=", i_pName)+1 , length );
    } 
 
-
-   tfile_ = new TFile(o_filename.c_str(), "RECREATE");
+   if (config_.at("ofile_update")) tfile_ = new TFile(o_filename.c_str(), "UPDATE");
+   else tfile_ = new TFile(o_filename.c_str(), "RECREATE");  
 
    //write histos with weights and generated events
    TH1D h_genev {"h_genvts", "num of genrated events", 1, 0., 1.};
