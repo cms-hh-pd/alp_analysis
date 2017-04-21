@@ -8,7 +8,7 @@ from glob import glob
 from ROOT import TChain, TH1F, TFile, vector
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
-from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
+from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator, WeightSumOperator
 
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
@@ -25,6 +25,8 @@ parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170222-trg") 
 parser.add_argument("-o", "--oDir", help="output directory", default="trgEff_draft")
+parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', )
+parser.set_defaults(savePlots=True)
 args = parser.parse_args()
 
 # exe parameters
@@ -99,14 +101,15 @@ for s in samList:
 
 # process samples
 ns = 0
+trgsf_f = ''
 for sname in snames:
     
     #get file names in all sub-folders:
     reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root"
-    print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
- 
+    print "reg_exp: {}".format(reg_exp)
+
     #preliminary checks
     if not files: 
         print "WARNING: files do not exist"
@@ -114,13 +117,13 @@ for sname in snames:
     else:
         if "Run" in files[0]: 
             config["isData"] = True
-            if "B-" or "C-" or "D-" or "E-" or "F-" in files[0]:
-                trgsf_f = (data_path+'/EfficienciesAndSF_RunBtoF.json').encode('utf8')
+           # if "B-" or "C-" or "D-" or "E-" or "F-" in files[0]:
+           #     trgsf_f = (data_path+'/EfficienciesAndSF_RunBtoF.json').encode('utf8')
 #               fsf = open(data_path+'/EfficienciesAndSF_RunBtoF.json', 'r')
 #               trgsf_f = json.load(fsf)
                #print trgsf_f
-            elif "G-" or "H-" in files[0]:
-               trgsf_f = (data_path+'/theJSONfile_Period4.json').encode('utf8')
+            #elif "G-" or "H-" in files[0]:
+            #   trgsf_f = (data_path+'/theJSONfile_Period4.json').encode('utf8')
 #               fsf = open(data_path+'/theJSONfile_Period4.json', 'r')
  #              trgsf = json.load(fsf)
                #print trgsf_f
@@ -139,8 +142,8 @@ for sname in snames:
         tf.Close()
     ngenev = hcount.GetBinContent(1)
     config["n_gen_events"]=ngenev
-    print  "gen numEv {}".format(ngenev)
     print  "empty files {}".format(nerr)
+    print  "genevts {}".format(ngenev)
 
     #read weights from alpSamples 
     config["xsec_br"]  = samples[sname]["xsec_br"]
@@ -153,6 +156,7 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("base"))
+    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trigger"))
@@ -160,17 +164,17 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 2)) #debug 4
+    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4)) 
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 #    selector.addOperator(JetPlotterOperator(alp.Event)("pt",w_nobTag_v))
 #    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 2, 99, config["isData"], data_path)) #debug 4
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 3, 99, config["isData"], data_path)) #debug 4
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("isomu"))
-    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 2))  #debug
+    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))  #debug
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("met"))
@@ -178,17 +182,17 @@ for sname in snames:
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
-#    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v)) 
-#    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v)) 
+    if args.savePlots: selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
-#    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
     selector.addOperator(TriggerOperator(alp.Event)(trg_namesN_v))
-#    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))
-#    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo,weights_v))
+    if args.savePlots: selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
- #  selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
+    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
 
     #create tChain and process each files
     tchain = TChain("ntuple/tree")    
@@ -196,11 +200,12 @@ for sname in snames:
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
-    print "max numEv {}".format(nev)
+    print "maxevts {}".format(nev)
     tchain.Process(selector, procOpt, nev)
     ns+=1
    
     #some cleaning
     hcount.Reset()
+    print "{}".format(procOpt)
 
 print "### processed {} samples ###".format(ns) 
