@@ -205,9 +205,6 @@ template <class EventClass> class SetJetPairingOperator : public BaseOperator<Ev
                                  std::find(min_is.begin(), min_is.end(), i)));
       }
       
-
-
-
       // use same order for jet collection (copy overhead as it is now)
       auto ordered_jets = std::vector<alp::Jet>{}; 
       for (std::size_t i = 0; i < ev.jets_.size(); i++ ) {

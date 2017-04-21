@@ -72,13 +72,20 @@ samlists = {
                 'WJetsToLNu_HT-600To800_m', 'WJetsToLNu_HT-800To1200_m',
                 'WJetsToLNu_HT-1200To2500_m', 'WJetsToLNu_HT-2500ToInf_m',
                 'TT',
-                #'WJetsToLNu_HT-100To200','WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
-                #'WJetsToLNu_HT-200To400','WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
-                #'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-400To600_ext',
-                #'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-600To800_ext',
-                #'WJetsToLNu_HT-800To1200', 'WJetsToLNu_HT-800To1200_ext',
-                #'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-1200To2500_ext', 
-                #'WJetsToLNu_HT-2500ToInf', 'WJetsToLNu_HT-2500ToInf_ext'
+                #'WJetsToLNu_HT-100To200',
+                #'WJetsToLNu_HT-100To200_ext1','WJetsToLNu_HT-100To200_ext2',                
+                #'WJetsToLNu_HT-200To400',
+                #'WJetsToLNu_HT-200To400_ext1','WJetsToLNu_HT-200To400_ext2',
+                #'WJetsToLNu_HT-400To600',
+                # 'WJetsToLNu_HT-400To600_ext',
+                #'WJetsToLNu_HT-600To800', 
+                # 'WJetsToLNu_HT-600To800_ext',
+                #'WJetsToLNu_HT-800To1200', 
+                #  'WJetsToLNu_HT-800To1200_ext',
+                #'WJetsToLNu_HT-1200To2500',
+                #     'WJetsToLNu_HT-1200To2500_ext', 
+                #'WJetsToLNu_HT-2500ToInf', 
+                # 'WJetsToLNu_HT-2500ToInf_ext'
                ],
 
    'trigger_small' : [
@@ -88,11 +95,17 @@ samlists = {
                 'WJetsToLNu_HT-600To800', 'WJetsToLNu_HT-800To1200', 'WJetsToLNu_HT-800To1200_ext',
                 'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-1200To2500_ext', 'WJetsToLNu_HT-2500ToInf'],
 
+   'wjets_noExt' : [ 'WJetsToLNu_HT-100To200', 'WJetsToLNu_HT-200To400', 'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-600To800',
+                   'WJetsToLNu_HT-800To1200', 'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-2500ToInf' ],
+
    ## single bkg
    'qcd' : [ 'QCD_HT200to300', 'QCD_HT200to300_ext', 'QCD_HT300to500', 'QCD_HT300to500_ext',
              'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
              'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
              'QCD_HT2000toInf', 'QCD_HT2000toInf_ext' ],
+
+   'qcd_noExt' : [ 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700', 'QCD_HT700to1000',
+                   'QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf' ],
 
    'qcd_m' : [ 'QCD_HT200to300_m', 'QCD_HT300to500_m', 'QCD_HT500to700_m', 'QCD_HT700to1000_m',
                'QCD_HT1000to1500_m', 'QCD_HT1500to2000_m', 'QCD_HT2000toInf_m' ],
@@ -120,6 +133,6 @@ samlists = {
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['BTagCSVRun2016_'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['ST_s-channel_4f_lept'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
