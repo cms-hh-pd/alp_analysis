@@ -101,7 +101,7 @@
             if (i != antitag_pos_) {
                 if(ev.jets_.at(i).disc(disc_) < d_value_) return false; }
             else {
-                if(ev.jets_.at(i).disc(disc_) <= antd_min_value_ || ev.jets_.at(i).disc(disc_) >= d_value_) return false; }
+                if(ev.jets_.at(i).disc(disc_) <= antd_min_value_ || ev.jets_.at(i).disc(disc_) >= d_value_) return false;  }
         }       
 
         // weight_map to save event weights BTagSF on

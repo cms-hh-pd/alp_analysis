@@ -22,6 +22,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
     // variables to save in branches
     float_t evtWeight = 1.;
+//    std::vector<alp::EventInfo> * eventinfo_ptr = nullptr;
     std::vector<alp::Jet> * jets_ptr = nullptr;
     std::vector<alp::Lepton> * muons_ptr = nullptr;
     std::vector<alp::Lepton> * electrons_ptr = nullptr;
@@ -116,7 +117,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
       // to fill tree redirect pointers that where read
       evtWeight = 1.;
-      evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
+      if(weights_.size()>0) evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
+      else evtWeight *= ev.evtWeight_;
 
       if(doGenHH_) {
         ev.tl_genhh_.clear();

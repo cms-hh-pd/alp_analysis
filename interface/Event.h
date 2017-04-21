@@ -29,6 +29,7 @@ namespace alp {
       std::vector<alp::Candidate> genhs_;
       std::vector<alp::Candidate> tl_genhs_;
       std::vector<alp::DiObject>  tl_genhh_;
+      float_t evtWeight_;
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
@@ -41,6 +42,7 @@ namespace alp {
       TTreeReaderValue<std::vector<alp::Candidate>> * tl_genhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::DiObject>> * tl_genhh_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
+      TTreeReaderValue<float_t> * evtWeight_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
      // std::vector<alp::PtEtaPhiEVector> dijets_;
@@ -112,7 +114,11 @@ namespace alp {
         if (config.find("tl_genhh_branch_name") != config.end()) {
             tl_genhh_reader_ = new TTreeReaderValue<std::vector<alp::DiObject>>(reader,
                 config.at("tl_genhh_branch_name").get_ref<const std::string &>().c_str());
-        }      
+        }
+        if (config.find("evt_weight_name") != config.end()) {
+            evtWeight_reader_ = new TTreeReaderValue<float_t>(reader,
+                config.at("evt_weight_name").get_ref<const std::string &>().c_str());
+        }
         
       }
       virtual ~Event() {
@@ -127,6 +133,7 @@ namespace alp {
         delete genhs_reader_;
         delete tl_genhs_reader_;
         delete tl_genhh_reader_;
+        delete evtWeight_reader_;
       }
 
       virtual void update() {
@@ -143,6 +150,7 @@ namespace alp {
         if (genhs_reader_) genhs_ = **genhs_reader_;
         if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
         if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
+        if (evtWeight_reader_) evtWeight_ = **evtWeight_reader_;
 
         free_is_.clear();
         hems_.clear();

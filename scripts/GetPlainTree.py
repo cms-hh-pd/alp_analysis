@@ -32,22 +32,20 @@ args = parser.parse_args()
 numEvents  =  args.numEvts
 if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
-intLumi_fb = 12.6
+intLumi_fb = 35.9
 
 ## WARNING -- input must be ntuples after four jets selection and pairing
-iDir       = "/lustre/cmswork/hh/alp_baseSelector/"
-ntuplesVer = "MC_def"        
+iDir       = "/lustre/cmswork/hh/alp_moriond_base/"
+ntuplesVer = "def_cmva"        
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-weights = {'PUWeight', 'GenWeight', 'BTagWeight'}  #weights to be applied - EventWeight, PUWeight, GenWeight
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 
 # to convert weights 
 weights_v = vector("string")()
-for w in weights: weights_v.push_back(w)
 
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
@@ -58,12 +56,16 @@ config = {"eventInfo_branch_name" : "EventInfo",
           #"met_branch_name" : "",
           "genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
+          "tl_genhs_branch_name" : "TL_GenHs",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
           "kfactor" : 0,
           "isData" : False,
           "lumiFb" : intLumi_fb,
+          "isMixed" : False,
+          "ofile_update" : False,
+          "evt_weight_name" : "evtWeight",
          }
 
 snames = []
@@ -98,8 +100,8 @@ for sname in snames:
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
-    selector.addOperator(CounterOperator(alp.Event)())
-    selector.addOperator(TreeConverterOperator(alp.Event)())
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
+    selector.addOperator(TreeConverterOperator(alp.Event)(json_str,weights_v))
 
     #create tChain and process each files
     tchain = TChain("pair/tree")    

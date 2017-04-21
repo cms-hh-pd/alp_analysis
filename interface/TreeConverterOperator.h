@@ -41,6 +41,11 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
     std::vector<float_t> genBfromH_phi;
     std::vector<float_t> genBfromH_mass;
 
+    std::vector<float_t> genhs_pt;
+    std::vector<float_t> genhs_eta;
+    std::vector<float_t> genhs_phi;
+    std::vector<float_t> genhs_mass;
+
     float_t met_pt;
     float_t met_phi;
 
@@ -85,6 +90,13 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         tree_.Branch("genBfromH_mass","std::vector<float>",&genBfromH_mass, 64000, 2);
      }
 
+      if (config_.find("genhs_branch_name") != config_.end()) {
+        tree_.Branch("genHs_pt","std::vector<float>",&genhs_pt, 64000, 2);
+        tree_.Branch("genHs_eta","std::vector<float>",&genhs_eta, 64000, 2);
+        tree_.Branch("genHs_phi","std::vector<float>",&genhs_phi, 64000, 2);
+        tree_.Branch("genHs_mass","std::vector<float>",&genhs_mass, 64000, 2);
+     }
+
       if (config_.find("met_branch_name") != config_.end()) {
         tree_.Branch("met_pt", &met_pt, "met_pt/F");
         tree_.Branch("met_phi", &met_phi, "met_phi/F");
@@ -123,6 +135,10 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       genBfromH_phi.clear();
       genBfromH_mass.clear();
 
+      genhs_pt.clear();
+      genhs_eta.clear();
+      genhs_phi.clear();
+      genhs_mass.clear();
 
       float w = 1.0;
       w*=ev.eventInfo_.eventWeight(weights_);
@@ -151,6 +167,13 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         genBfromH_eta.push_back(ev.genbfromhs_.at(i).eta());
         genBfromH_phi.push_back(ev.genbfromhs_.at(i).phi());
         genBfromH_mass.push_back(ev.genbfromhs_.at(i).mass());
+     }
+
+      for (std::size_t i = 0; i < ev.genhs_.size(); i++ ) {
+        genhs_pt.push_back(ev.genhs_.at(i).pt());
+        genhs_eta.push_back(ev.genhs_.at(i).eta());
+        genhs_phi.push_back(ev.genhs_.at(i).phi());
+        genhs_mass.push_back(ev.genhs_.at(i).mass());
      }
 
       for (std::size_t i = 0; i < ev.muons_.size(); i++ ) {

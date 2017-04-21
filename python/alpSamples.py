@@ -837,7 +837,7 @@ samples = {
         'kfactor' : 1.004,
     },
     'WJetsToLNu_HT-800To1200' :{    
-        'sam_name':'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v2',
+        'sam_name':'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
         'nevents' : 1544513,
         'xsec_br' : 5.261,
         'matcheff': 1.,

@@ -128,7 +128,8 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
     virtual bool process( EventClass & ev ) {
 
       float w = 1.0;
-      w*=ev.eventInfo_.eventWeight(weights_);
+      if(weights_.size()>0) w*=ev.eventInfo_.eventWeight(weights_);
+      else w*=ev.evtWeight_;
 
      // debug - jets already sorted accordingly to pairing
       h_H0_mass.Fill(ev.dijets_.at(0).mass(), w);

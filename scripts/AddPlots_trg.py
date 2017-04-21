@@ -1,5 +1,7 @@
 #!/usr/bin/env python 
-# to EXE: python scripts/BaselineSelector.py -s SM -o output/bSel_sig_def
+# to EXE: 
+# once with trgIso
+# once with trgIsoandJet plus update
 
 # good old python modules
 import json
@@ -55,10 +57,16 @@ elif args.btag == 'csv':
 if not os.path.exists(oDir): os.mkdir(oDir)
 print oDir
 
+# to convert weights 
+weights_v = vector("string")()
+
 # to parse variables to the anlyzer
 config = {"jets_branch_name": "Jets",
           "dijets_branch_name": "DiJets",
           "dihiggs_branch_name": "DiHiggs",
+          "muons_branch_name" : "Muons",
+          "electrons_branch_name" : "Electrons",
+          "met_branch_name" : "MET",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -67,16 +75,13 @@ config = {"jets_branch_name": "Jets",
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : False,
-          "ofile_update" : False,
+          "ofile_update" : True, #True, #False,
           "evt_weight_name" : "evtWeight",
          }
 
 snames = []
 for s in samList:
     snames.extend(samlists[s])
-
-# to convert weights 
-weights_v = vector("string")()
 
 # process samples
 ns = 0
@@ -106,14 +111,16 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
 
-    selector.addOperator(FolderOperator(alp.Event)("pair"))
+#    selector.addOperator(FolderOperator(alp.Event)("trg_Iso"))
+    selector.addOperator(FolderOperator(alp.Event)("trg_IsoAndJet"))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))
+    selector.addOperator(MiscellPlotterOperator(alp.Event)(weights_v))        
     selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
 
     #create tChain and process each files
-    tchain = TChain("pair/tree")    
+#    tchain = TChain("trg_Iso/tree")    
+    tchain = TChain("trg_IsoAndJet/tree")    
     for File in files:                     
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
@@ -123,3 +130,6 @@ for sname in snames:
     ns+=1
 
 print "### processed {} samples ###".format(ns)
+
+
+
