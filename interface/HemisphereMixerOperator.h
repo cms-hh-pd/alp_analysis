@@ -106,7 +106,7 @@ enum class Scaling {none, subset, set};
 template <class EventClass> class HemisphereMixerOperator : public BaseOperator<EventClass> {
 
   public:
- 
+
     typedef std::function<int(const alp::Hemisphere &, std::string , double )> FuncI;
     typedef std::vector<std::function<int(const alp::Hemisphere &, std::string , double)>> FuncIVec;
     typedef std::function<double(const alp::Hemisphere &)> FuncD;
@@ -139,9 +139,9 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
     HemisphereMixerOperator( TChain * tc_hm,
       std::string btagAlgo, double btagCut,
       std::vector<std::string> nn_vars = { "thrustMayor","thrustMinor",
-                                           "sumPz","invMass"},   
-      Scaling scaling = Scaling::set,
-      std::size_t knn = 10) :
+                                           "sumPz","invMass"},  
+      std::size_t knn = 10,
+      Scaling scaling = Scaling::set) :
       btagAlgo_(btagAlgo),
       btagCut_(btagCut),
       scaling_(scaling),
@@ -285,8 +285,10 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
         index_m_.at(h_cat)->knnSearch(&h_vars[0], knn_, &index_nns[0], &dist_nns[0]);
         // vector of hemispheres corresponding to category 
         const auto & hem_v = hem_m_.at(h_cat); 
+
         for (std::size_t h_f = 0; h_f < knn_; h_f++) { 
           b_hs.emplace_back(hem_v.at(index_nns.at(h_f)));
+
           auto & sel_hem_jets = b_hs.back().jets_;
           for (auto & j : sel_hem_jets) { 
             if (h.d_phi_inv_)  j.p4_.SetPhi(-j.p4_.Phi()); 

@@ -43,7 +43,7 @@
        isdata_(isdata),
        per_jet_sf_(per_jet_sf)
        {
-         antd_min_value_ = -0.4,
+         antd_min_value_ = -99.,
 
          s_name_map = {{"pfCombinedInclusiveSecondaryVertexV2BJetTags", "CSVv2"},
                        {"pfCombinedMVAV2BJetTags", "cMVAv2"}};
