@@ -174,7 +174,7 @@ for sname in snames:
 
 
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
+#    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
 
     #trigger
