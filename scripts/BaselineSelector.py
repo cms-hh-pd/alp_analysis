@@ -104,6 +104,7 @@ config.update(
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
+          "ofile_update" : False
          } )
 
 snames = []
@@ -115,7 +116,7 @@ ns = 0
 for sname in snames:
 
     #get file names in all sub-folders:
-    if args.doMixed: reg_exp = iDir+"/mixed_ntuples/"+sname+".root"
+    if args.doMixed: reg_exp = iDir+"/mixed_test/"+sname+".root"
     else:       reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        

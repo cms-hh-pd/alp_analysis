@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 # to EXE: python scripts/MixingSelector.py -s data_moriond -i def_cmva
 
-# good old python modules
+#good old python modules
 import json
 import os
 import importlib
@@ -22,6 +22,23 @@ from Analysis.alp_analysis.workingpoints import wps
 
 TH1F.AddDirectory(0)
 
+comb_dict = {"train" : [[1,1],[1,2],[2,1],[2,2]],
+              "test" : [[3,4],[5,6],[7,8],[9,10]],
+              "appl" : [[4,3],[6,5],[8,7],[10,9]] }
+
+comb_dict_vec = {}
+# ugly vector of vector transformation
+for k,v in comb_dict.items():
+    t_vec = vector("std::vector<std::size_t>")()
+    for pair in v:
+        p_vec = vector("std::size_t")()
+        for e in pair:
+            p_vec.push_back(e)
+        t_vec.push_back(p_vec)
+    # assign given that is a reference    
+    comb_dict_vec[k] = t_vec    
+
+
 # parsing parameters
 import argparse
 parser = argparse.ArgumentParser()
@@ -30,6 +47,7 @@ parser.add_argument("-s", "--samList", help="sample list"     , default="")
 parser.add_argument("-o", "--oDir"   , help="output directory (added to iDir)", default="mixed_ntuples")
 parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="def_cmva")
 parser.add_argument("--btag", help="which btag algo", default='cmva')
+parser.add_argument("--comb", help="set of combinations to use", choices=comb_dict.keys() )
 args = parser.parse_args()
 
 # exe parameters
@@ -37,6 +55,8 @@ numEvents  =  args.numEvts
 if not args.samList: samList = ['SM']  # list of samples to be processed - append multiple lists
 else: samList = [args.samList]
 intLumi_fb = 35.9
+mixing_comb = comb_dict_vec[args.comb]
+print mixing_comb
 
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
@@ -110,8 +130,8 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 21))
-    selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, 4, 20)) ## 5nn
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 11))
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb))
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
@@ -119,6 +139,7 @@ for sname in snames:
         tchain.Add(File)      
     entr = tchain.GetEntries() 
     nev = numEvents if (numEvents > 0 and numEvents < entr) else entr
+    sname = sname+"_{}".format(args.comb)
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)
