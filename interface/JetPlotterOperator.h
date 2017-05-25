@@ -125,7 +125,7 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
 
       float w = 1.0;
       if(weights_.size()>0) w*=ev.eventInfo_.eventWeight(weights_);
-      else w*=ev.evtWeight_;
+      //else w*=ev.evtWeight_;
 
       // get pt sorting
       std::string d_ = "pt";

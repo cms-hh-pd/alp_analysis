@@ -22,13 +22,14 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
 
     // variables to save in branches
     float_t evtWeight = 1.;
-//    std::vector<alp::EventInfo> * eventinfo_ptr = nullptr;
+    //std::vector<alp::EventInfo> * eventinfo_ptr = nullptr;
     std::vector<alp::Jet> * jets_ptr = nullptr;
     std::vector<alp::Lepton> * muons_ptr = nullptr;
     std::vector<alp::Lepton> * electrons_ptr = nullptr;
     alp::Candidate * met_ptr = nullptr;
     std::vector<alp::Candidate> * genbfromhs_ptr = nullptr;
     std::vector<alp::Candidate> * genhs_ptr = nullptr;
+    std::vector<alp::Candidate> * tl_genbfromhs_ptr = nullptr;
     std::vector<alp::Candidate> * tl_genhs_ptr = nullptr;
     std::vector<alp::DiObject> * tl_genhh_ptr = nullptr;
     std::vector<alp::DiObject> * dijets_ptr = nullptr;
@@ -48,7 +49,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     virtual ~EventWriterOperator() {}
 
     virtual void init(TDirectory * tdir) {
-
+   
       tree_.Branch("evtWeight", &evtWeight, "evtWeight/F");
 
       if (config_.find("eventInfo_branch_name") != config_.end()) {
@@ -84,6 +85,11 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
         tree_.Branch(config_.at("genhs_branch_name").template get<std::string>().c_str(),
                      "std::vector<alp::Candidate>",&genhs_ptr, 64000, 2);
       }                                                         
+      // load GenHs for re-weigthing
+      if (config_.find("tl_genbfromhs_branch_name") != config_.end()) {
+         tree_.Branch(config_.at("tl_genbfromhs_branch_name").template get<std::string>().c_str(),
+                    "std::vector<alp::Candidate>",&tl_genbfromhs_ptr, 64000, 2);
+      }                                   
       // load GenHs for re-weigthing
       if (config_.find("tl_genhs_branch_name") != config_.end()) {
         tree_.Branch(config_.at("tl_genhs_branch_name").template get<std::string>().c_str(),
@@ -136,13 +142,14 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       met_ptr = dynamic_cast<alp::Candidate *>(&ev.met_); 
       genbfromhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genbfromhs_); 
       genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.genhs_); 
+      tl_genbfromhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genbfromhs_);
       tl_genhs_ptr = dynamic_cast<std::vector<alp::Candidate> *>(&ev.tl_genhs_);     
       tl_genhh_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.tl_genhh_);
       dijets_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dijets_); 
       dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 
 
       tree_.Fill();
-
+    
       return true;
     }
 
@@ -151,5 +158,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       return true;
 
     }
+
+      virtual std::string get_name() {
+        auto name = "eventWeight";
+        return name;
+      }
 
 };

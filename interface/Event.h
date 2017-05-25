@@ -27,6 +27,7 @@ namespace alp {
       alp::Candidate met_;
       std::vector<alp::Candidate> genbfromhs_;
       std::vector<alp::Candidate> genhs_;
+      std::vector<alp::Candidate> tl_genbfromhs_;
       std::vector<alp::Candidate> tl_genhs_;
       std::vector<alp::DiObject>  tl_genhh_;
       float_t evtWeight_;
@@ -39,6 +40,7 @@ namespace alp {
       TTreeReaderValue<std::vector<alp::Lepton>> * electrons_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * genbfromhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * genhs_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Candidate>> * tl_genbfromhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * tl_genhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::DiObject>> * tl_genhh_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
@@ -105,6 +107,11 @@ namespace alp {
             genhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader, 
                 config.at("genhs_branch_name").get_ref<const std::string &>().c_str());      
         }
+        // load GenBFromHs
+        if (config.find("tl_genbfromhs_branch_name") != config.end()) {
+            tl_genbfromhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader,
+                config.at("tl_genbfromhs_branch_name").get_ref<const std::string &>().c_str());
+        }      
         // load GenHs for re-weighting
         if (config.find("tl_genhs_branch_name") != config.end()) {
             tl_genhs_reader_ = new TTreeReaderValue<std::vector<alp::Candidate>>(reader,
@@ -131,6 +138,7 @@ namespace alp {
         delete met_reader_;
         delete genbfromhs_reader_;
         delete genhs_reader_;
+        delete tl_genbfromhs_reader_;
         delete tl_genhs_reader_;
         delete tl_genhh_reader_;
         delete evtWeight_reader_;
@@ -148,6 +156,7 @@ namespace alp {
         if (met_reader_) met_ = **met_reader_;
         if (genbfromhs_reader_) genbfromhs_ = **genbfromhs_reader_;
         if (genhs_reader_) genhs_ = **genhs_reader_;
+        if (tl_genbfromhs_reader_) tl_genbfromhs_ = **tl_genbfromhs_reader_;
         if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
         if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
         if (evtWeight_reader_) evtWeight_ = **evtWeight_reader_;

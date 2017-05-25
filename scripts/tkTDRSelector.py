@@ -26,11 +26,12 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("--pu", help="pileup scenario", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("--btag", help="which btag algo", default='cmva')
-parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170222") 
-parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
+parser.add_argument("-i", "--iDir", help="input directory", default="tkTDR") 
+parser.add_argument("-o", "--oDir", help="output directory", default="tkTDR")
 parser.add_argument("-m", "--doMixed", help="to process mixed samples", action='store_true') 
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
@@ -41,9 +42,10 @@ args = parser.parse_args()
 numEvents  =  args.numEvts
 trgList   = 'def_2016'
 intLumi_fb = 1.
+pu = args.pu
 
-iDir = "../../../../" + args.iDir
-oDir = '../../../../' + args.oDir
+iDir = "/lustre/cmswork/hh/" + args.iDir
+oDir = '/lustre/cmswork/hh/' + args.oDir
 if args.jetCorr   == 0: oDir += "_JESup"
 elif args.jetCorr == 1: oDir += "_JESdown"
 elif args.jetCorr == 2: oDir += "_JERup"
@@ -99,6 +101,7 @@ config.update(
           "isSignal" : True,
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
+          "ofile_update" : False,
          } )
 
 snames = [args.samList]
@@ -175,12 +178,12 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-    #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
     selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path)) #99=noAntitag  3
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-    #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
     #trigger
     #if args.doTrigger:
@@ -209,7 +212,7 @@ for sname in snames:
     for File in files:                     
         tchain.Add(File)
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
-    procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
+    procOpt = "ofile=./HHTo4B_SM_"+pu+".root" if not oDir else "ofile="+oDir+"/HHTo4B_SM_"+pu+".root"
     print "maxevts {}".format(nev)
     tchain.Process(selector, procOpt, nev)
     ns+=1
