@@ -16,6 +16,7 @@
   <class pattern="SetJetPairingOperator<*>"/>   
   <class pattern="MiscellPlotterOperator<*>"/>     
   <class pattern="JetPlotterOperator<*>"/>     
+  <class pattern="GenJetPlotterOperator<*>"/>
   <class pattern="DiJetPlotterOperator<*>"/>    
   <class pattern="EventWriterOperator<*>"/> 
   <class pattern="TreeConverterOperator<*>"/> 

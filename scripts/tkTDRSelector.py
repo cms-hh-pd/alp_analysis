@@ -13,7 +13,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator, WeightSumOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, JEShifterOperator, JERShifterOperator, WeightSumOperator, MCTruthOperator, GenJetPlotterOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.triggerlists import triggerlists
@@ -25,8 +25,11 @@ TH1F.AddDirectory(0)
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
-parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("-s", "--samList", help="sample list", default="SM")
 parser.add_argument("--pu", help="pileup scenario", default="")
+parser.add_argument("--pt", help="jets pt cut",  type=float, default='30.')
+parser.add_argument("--eta", help="jets eta cut",  type=float, default='2.4')
+
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("--btag", help="which btag algo", default='cmva')
@@ -85,9 +88,9 @@ for w in weights_nobTag: w_nobTag_v.push_back(w)
 if args.doMixed: config = { "jets_branch_name": "Jets", }
 else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
-             # "genbfromhs_branch_name" : "GenBFromHs",
-             # "genhs_branch_name" : "GenHs",
-             # "tl_genhs_branch_name" : "TL_GenHs",
+              "genbfromhs_branch_name" : "GenBFromHs",
+              "genhs_branch_name" : "GenHs",
+              "tl_genhs_branch_name" : "TL_GenHs",
             }
 #"muons_branch_name" : "",
 #"electrons_branch_name" : "",
@@ -111,7 +114,7 @@ ns = 0
 for sname in snames:
 
     #get file names in all sub-folders:
-    reg_exp = iDir+"/"+sname+".root" 
+    reg_exp = iDir+"/alpha_HHTo4B_SM_"+pu+".root" 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
     print "reg_exp: {}".format(reg_exp) 
@@ -165,45 +168,35 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("base"))
     selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-
-    #trigger
-    if args.doTrigger:
-        if not args.doMixed:
-	        selector.addOperator(FolderOperator(alp.Event)("trigger"))
-        	selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-        	selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-        else: 
-		    print "WARNING: is Mixed sample - trigger filter applied already"
+    selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
+    selector.addOperator(JetFilterOperator(alp.Event)(args.eta, args.pt, 4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
+    selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
     selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path)) #99=noAntitag  3
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-
-    #trigger
-    #if args.doTrigger:
-     #   if not args.doMixed:
-      #          selector.addOperator(FolderOperator(alp.Event)("trigger"))
-       #         selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-        #        selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-        #else:
-         #       print "WARNING: is Mixed sample - trigger filter applied already"
+    selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
 
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(JetPairingOperator(alp.Event)(4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
     if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
     if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+
+    selector.addOperator(FolderOperator(alp.Event)("alljets"))
+    selector.addOperator(MCTruthOperator(alp.Event)(0.4, -1, False))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
+
+    selector.addOperator(FolderOperator(alp.Event)("fourjets"))
+    selector.addOperator(MCTruthOperator(alp.Event)(0.4, 4, False))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
+
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
-    if not args.doMixed:
-        selector.addOperator(ThrustFinderOperator(alp.Event)())
-        selector.addOperator(HemisphereProducerOperator(alp.Event)())
-        selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     if args.doMixed: treename = "mix_tree"
@@ -211,8 +204,9 @@ for sname in snames:
     tchain = TChain(treename)    
     for File in files:                     
         tchain.Add(File)
-    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
-    procOpt = "ofile=./HHTo4B_SM_"+pu+".root" if not oDir else "ofile="+oDir+"/HHTo4B_SM_"+pu+".root"
+    ev = tchain.GetEntries()
+    nev = numEvents if (numEvents > 0 and numEvents < ev) else ev
+    procOpt = "ofile=./HHTo4B_SM_"+pu+".root" if not oDir else "ofile="+oDir+"/HHTo4B_SM_g_"+pu+"_"+str(args.pt).rstrip('.')+"_"+str(args.eta).rstrip('.')+"_"+args.btag+".root"
     print "maxevts {}".format(nev)
     tchain.Process(selector, procOpt, nev)
     ns+=1

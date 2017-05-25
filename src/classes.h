@@ -16,6 +16,7 @@
 
 #include "Analysis/alp_analysis/interface/MiscellPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/JetPlotterOperator.h"
+#include "Analysis/alp_analysis/interface/GenJetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/DiJetPlotterOperator.h"
 #include "Analysis/alp_analysis/interface/EventWriterOperator.h"
 #include "Analysis/alp_analysis/interface/TreeConverterOperator.h"
@@ -54,6 +55,7 @@ namespace {
     SetJetPairingOperator<EventBase> set_jet_pairing_operator; 
     MiscellPlotterOperator<EventBase> miscell_plotter_operator; 
     JetPlotterOperator<EventBase> jet_plotter_operator; 
+    GenJetPlotterOperator<EventBase> gen_jet_plotter_operator;
     DiJetPlotterOperator<EventBase> di_jet_plotter_operator; 
     EventWriterOperator<EventBase> event_writer_operator; 
     TreeConverterOperator<EventBase> tree_converter_operator; 
