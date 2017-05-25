@@ -72,6 +72,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "isData" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : False,
+          "ofile_update" : False,
          }
 
 snames = []
@@ -109,14 +110,15 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v))
-    selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, 4))
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 21))
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, 4, 20)) ## 5nn
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
     for File in files:                     
-        tchain.Add(File)       
-    nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
+        tchain.Add(File)      
+    entr = tchain.GetEntries() 
+    nev = numEvents if (numEvents > 0 and numEvents < entr) else entr
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)
     tchain.Process(selector, procOpt, nev)

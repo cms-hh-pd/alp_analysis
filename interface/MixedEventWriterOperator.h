@@ -65,6 +65,9 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
         // for each hemisphere j
         for (std::size_t h_j=n_h_skip_; h_j<(n_h_skip_+n_h_mix_); h_j++) {
 
+          //DEBUG
+          if(h_i==n_h_skip_+n_h_mix_-1 || h_i==h_j){
+
           // clear jet collection
           mix_jets_.clear();
 
@@ -74,14 +77,9 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
           mix_jets_.insert(mix_jets_.end(), jets_i.begin(), jets_i.end());
           mix_jets_.insert(mix_jets_.end(), jets_j.begin(), jets_j.end());
 
-
-          // order by b-tagging disc
-          order_jets_by_disc(mix_jets_, disc_);
-          // pair with min mass
-          dijet_pairing_simple(mix_jets_, n_fix_jets_);        
-
           // fill tree with combination
           tree_.Fill();
+          }
         }
       }
 
