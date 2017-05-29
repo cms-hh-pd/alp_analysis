@@ -118,7 +118,7 @@ ns = 0
 for sname in snames:
 
     #get file names in all sub-folders:
-    if args.doMixed: reg_exp = iDir+"/mixed_ntuples/"+sname+".root"
+    if args.doMixed: reg_exp = iDir+"/mixed_test/"+sname+".root"
     else:       reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -176,7 +176,6 @@ for sname in snames:
 
 
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    #selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
     #selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
 

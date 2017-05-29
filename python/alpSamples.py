@@ -205,6 +205,27 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+    'BTagCSVRun2016_train' : {
+        'sam_name': 'BTagCSVRun2016_train',
+        'nevents' : 1,
+        'xsec_br' : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016_test' : {
+        'sam_name': 'BTagCSVRun2016_test',
+        'nevents' : 1,
+        'xsec_br' : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'BTagCSVRun2016_appl' : {
+        'sam_name': 'BTagCSVRun2016_appl',
+        'nevents' : 1,
+        'xsec_br' : 1.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'BTagCSVRun2016_BE' : {
         'sam_name': 'BTagCSVRun2016BE',
         'nevents' : 1,
