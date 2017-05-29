@@ -39,4 +39,9 @@ template <class EventClass> class WeightSumOperator : public BaseOperator<EventC
       return true;
     }
 
+      virtual std::string get_name() {
+        auto name = "weightSum";
+        return name;
+      }
+
 };

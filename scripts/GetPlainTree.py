@@ -36,7 +36,7 @@ intLumi_fb = 35.9
 
 ## WARNING -- input must be ntuples after four jets selection and pairing
 iDir       = "/lustre/cmswork/hh/alp_moriond_base/"
-ntuplesVer = "def_cmva"        
+ntuplesVer = "def_cmva_withtlb"        
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -50,13 +50,16 @@ weights_v = vector("string")()
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
-          "dijets_branch_name": "DiJets",
+         # "dijets_branch_name": "DiJets",
+          #"dihiggs_branch_name": "DiHiggs",
           #"muons_branch_name" : "",
           #"electrons_branch_name" : "",
           #"met_branch_name" : "",
           "genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
+          "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
           "tl_genhs_branch_name" : "TL_GenHs",
+         # "tl_genhh_branch_name" : "TL_GenHH",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
