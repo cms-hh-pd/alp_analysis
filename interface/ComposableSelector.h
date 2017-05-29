@@ -17,6 +17,11 @@
 
 #include "BaseOperator.h"
 
+#include <time.h>
+#include <chrono>
+
+//using namespace std::chrono;
+
 template <class EventClass> class ComposableSelector : public TSelector {
 
   public:
@@ -28,6 +33,12 @@ template <class EventClass> class ComposableSelector : public TSelector {
   double w_eff_{1.};
   double w_kfact_{1.};
   double lumiFb_{1.};
+
+  //to debug operators
+  vector<float> times_; 
+  time_t t_;
+  double deltat;
+  bool debug_;
 
   // associated with a TTree
   TTreeReader reader_;
@@ -46,7 +57,8 @@ template <class EventClass> class ComposableSelector : public TSelector {
   // human readable event origin
   std::string pName_ = "";
 
-  ComposableSelector(TTree * /*tree*/ =0, const std::string & config_s = {}) :
+  ComposableSelector(TTree * /*tree*/ =0, const std::string & config_s = {}, bool do_debug = false) :
+    debug_(do_debug),
     config_(json::parse(config_s)),
     ev_(reader_, config_)
     {
@@ -176,16 +188,53 @@ template <class EventClass> bool  ComposableSelector<EventClass>::Process(Long64
 {
 
   n_entries++;
-  if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl;  
-  //if (n_entries>10000) std::cout << "processing " << n_entries << " entry" << std::endl;
+  deltat=0;
+  std::chrono::high_resolution_clock::time_point t = std::chrono::high_resolution_clock::now();
 
-// set TTreeReader entry
+
+  if (n_entries>300000 && (n_entries%((int)tot_entries/5)) == 0) std::cout << "processing " << n_entries << " entry" << std::endl;  
+  if(debug_ && n_entries%10000==0) {
+    times_.clear();
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+    t = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = now - t;
+    std::cout << time_span.count() << "  " << n_entries << std::endl;
+  }
+
+  // set TTreeReader entry
   reader_.SetLocalEntry(entry);
+
+  if(debug_ && n_entries%10000==0) {
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = now - t;
+    std::cout << "SetLocalEntry " <<  time_span.count() << std::endl;
+    t = std::chrono::high_resolution_clock::now();
+  }
+
   // update event objects
   ev_.update();
 
+  if(debug_ && n_entries%10000==0) {
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = now - t;
+    std::cout << "ev.update "   << time_span.count() << std::endl;
+    t = std::chrono::high_resolution_clock::now();
+  }
+
   for (auto & op : ops_) {
+    if(debug_ && n_entries%10000==0) {
+      std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double> time_span = now - t;
+      std::cout << op->get_name() << "  " << time_span.count() << std::endl;
+      t = std::chrono::high_resolution_clock::now();
+    }
+
     if (!op->process(ev_)) return false; 
+  }
+
+  if(debug_ && n_entries%10000==0) {
+    std::time_t now = std::time(0);
+    std::cout << now << "  " << std::endl;
   }
 
   return true;

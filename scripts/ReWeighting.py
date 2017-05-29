@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="signals")
 parser.add_argument("-i", "--iDir", help="input directory", default="def_cmva")
-parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
+parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva_rew")
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
 parser.add_argument("-f", "--no_savePlots", help="to save histos already in output file", action='store_false', dest='savePlots', ) #to get faster execution
 # NOTICE: do not use trigger, jesUp, jesDown with '-m'
@@ -66,10 +66,6 @@ oDir += "/"
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 
-#weights to be applied 
-weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
-# ---------------
-
 if not os.path.exists(oDir): os.mkdir(oDir)
 print oDir
 
@@ -78,15 +74,14 @@ btag_wp = wps['CMVAv2_moriond']
 
 # to convert weights 
 weights_v = vector("string")()
-for w in weights: weights_v.push_back(w)
 
 # to parse variables to the anlyzer
 config = { "eventInfo_branch_name" : "EventInfo",
-              "jets_branch_name": "Jets",
-              "dijets_branch_name": "DiJets",
-              "dihiggs_branch_name": "DiHiggs",
-              "genbfromhs_branch_name" : "GenBFromHs",
-              "genhs_branch_name" : "GenHs",
+             #"jets_branch_name": "Jets",
+          #    "dijets_branch_name": "DiJets",
+          #    "dihiggs_branch_name": "DiHiggs",
+          #    "genbfromhs_branch_name" : "GenBFromHs",
+          #    "genhs_branch_name" : "GenHs",
               "tl_genhs_branch_name" : "TL_GenHs",
               "tl_genhh_branch_name" : "TL_GenHH",
             }
@@ -102,6 +97,8 @@ config.update(
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : False,
+          "ofile_update" : False,
+          "evt_weight_name" : "evtWeight",
          } )
 
 snames = []
@@ -111,7 +108,7 @@ for s in samList:
 ns = 0
 print args.samList
 #create tChain with all files in list
-treename = "pair/tree"
+treename = "tree"
 tchain = TChain(treename)    
 
 ngenev = 0
@@ -157,13 +154,13 @@ json_str = json.dumps(config)
 selector = ComposableSelector(alp.Event)(0, json_str)
 selector.addOperator(BaseOperator(alp.Event)())
 
-selector.addOperator(FolderOperator(alp.Event)("base"))
-selector.addOperator(CounterOperator(alp.Event)(weights_v))
+#selector.addOperator(FolderOperator(alp.Event)("base"))
+#selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
 selector.addOperator(ReWeightingOperator(alp.Event)(rw_fname_SM, rw_fname_BM, rw_fname_HH))
 
-selector.addOperator(FolderOperator(alp.Event)("pair"))
-selector.addOperator(CounterOperator(alp.Event)(weights_v))
+#selector.addOperator(FolderOperator(alp.Event)("pair"))
+#selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
 selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
