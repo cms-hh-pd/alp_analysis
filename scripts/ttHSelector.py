@@ -93,6 +93,8 @@ else: config = { "eventInfo_branch_name" : "EventInfo",
           "met_branch_name" : "MET",
           "genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
+          "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
+          "tl_genhs_branch_name" : "TL_GenHs",
             }
 config.update(        
         { "n_gen_events":0,
@@ -103,6 +105,7 @@ config.update(
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
+          "ofile_update" : False,
          } )
 
 snames = []
@@ -172,26 +175,26 @@ for sname in snames:
 
 
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
-    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    #selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     #trigger
     if args.doTrigger:
         if not args.doMixed:
            selector.addOperator(FolderOperator(alp.Event)("trigger"))
            selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-           selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+           selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
         else: 
   	    print "WARNING: is Mixed sample - trigger filter applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
-    selector.addOperator(CounterOperator(alp.Event)(w_nobTag_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
     if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
     selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 2, 99, config["isData"], data_path))
-    selector.addOperator(CounterOperator(alp.Event)(weights_v))
+    selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
 
     #selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
