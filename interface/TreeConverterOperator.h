@@ -25,6 +25,16 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
     std::vector<float_t> jets_phi;
     std::vector<float_t> jets_mass;
 
+    std::vector<float_t> dijets_pt;
+    std::vector<float_t> dijets_eta;
+    std::vector<float_t> dijets_phi;
+    std::vector<float_t> dijets_mass;
+
+    std::vector<float_t>   dihiggs_pt;
+    std::vector<float_t> dihiggs_eta;
+    std::vector<float_t> dihiggs_phi;
+    std::vector<float_t> dihiggs_mass;
+
     std::vector<float_t> muons_pt;
     std::vector<float_t> muons_eta;
     std::vector<float_t> muons_phi;
@@ -45,6 +55,21 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
     std::vector<float_t> genhs_eta;
     std::vector<float_t> genhs_phi;
     std::vector<float_t> genhs_mass;
+
+    std::vector<float_t> tl_genbfromhs_pt;
+    std::vector<float_t> tl_genbfromhs_eta;
+    std::vector<float_t> tl_genbfromhs_phi;
+    std::vector<float_t> tl_genbfromhs_mass;
+
+    std::vector<float_t> tl_genhs_pt;
+    std::vector<float_t> tl_genhs_eta;
+    std::vector<float_t> tl_genhs_phi;
+    std::vector<float_t> tl_genhs_mass;
+
+    std::vector<float_t> tl_genhh_pt;
+    std::vector<float_t> tl_genhh_eta;
+    std::vector<float_t> tl_genhh_phi;
+    std::vector<float_t> tl_genhh_mass;
 
     float_t met_pt;
     float_t met_phi;
@@ -67,6 +92,19 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         tree_.Branch("jets_csv","std::vector<float>",&jets_csv, 64000, 2);
         tree_.Branch("jets_cmva","std::vector<float>",&jets_cmva, 64000, 2);
       }
+      if (config_.find("dijets_branch_name") != config_.end()) {
+        tree_.Branch("dijets_pt","std::vector<float>",&dijets_pt, 64000, 2);
+        tree_.Branch("dijets_eta","std::vector<float>",&dijets_eta, 64000, 2);
+        tree_.Branch("dijets_phi","std::vector<float>",&dijets_phi, 64000, 2);
+        tree_.Branch("dijets_mass","std::vector<float>",&dijets_mass, 64000, 2);
+     }
+
+      if (config_.find("dihiggs_branch_name") != config_.end()) {
+        tree_.Branch("dihiggs_pt","std::vector<float>",&dihiggs_pt, 64000, 2);
+        tree_.Branch("dihiggs_eta","std::vector<float>",&dihiggs_eta, 64000, 2);
+        tree_.Branch("dihiggs_phi","std::vector<float>",&dihiggs_phi, 64000, 2);
+        tree_.Branch("dihiggs_mass","std::vector<float>",&dihiggs_mass, 64000, 2);
+     }
 
       if (config_.find("muons_branch_name") != config_.end()) {
         tree_.Branch("muons_pt","std::vector<float>",&muons_pt, 64000, 2);
@@ -97,6 +135,27 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         tree_.Branch("genHs_mass","std::vector<float>",&genhs_mass, 64000, 2);
      }
 
+      if (config_.find("tl_genbfromhs_branch_name") != config_.end()) {
+        tree_.Branch("TL_GenBfromH_pt","std::vector<float>",&tl_genbfromhs_pt, 64000, 2);
+        tree_.Branch("TL_GenBfromH_eta","std::vector<float>",&tl_genbfromhs_eta, 64000, 2);
+        tree_.Branch("TL_GenBfromH_phi","std::vector<float>",&tl_genbfromhs_phi, 64000, 2);
+        tree_.Branch("TL_GenBfromH_mass","std::vector<float>",&tl_genbfromhs_mass, 64000, 2);
+     }
+
+      if (config_.find("tl_genhs_branch_name") != config_.end()) {
+        tree_.Branch("TL_GenHs_pt","std::vector<float>",&tl_genhs_pt, 64000, 2);
+        tree_.Branch("TL_GenHs_eta","std::vector<float>",&tl_genhs_eta, 64000, 2);
+        tree_.Branch("TL_GenHs_phi","std::vector<float>",&tl_genhs_phi, 64000, 2);
+        tree_.Branch("TL_GenHs_mass","std::vector<float>",&tl_genhs_mass, 64000, 2);
+     }
+
+      if (config_.find("tl_genhh_branch_name") != config_.end()) {
+        tree_.Branch("TL_GenHH_pt","std::vector<float>",&tl_genhh_pt, 64000, 2);
+        tree_.Branch("TL_GenHH_eta","std::vector<float>",&tl_genhh_eta, 64000, 2);
+        tree_.Branch("TL_GenHH_phi","std::vector<float>",&tl_genhh_phi, 64000, 2);
+        tree_.Branch("TL_GenHH_mass","std::vector<float>",&tl_genhh_mass, 64000, 2);
+     }
+
       if (config_.find("met_branch_name") != config_.end()) {
         tree_.Branch("met_pt", &met_pt, "met_pt/F");
         tree_.Branch("met_phi", &met_phi, "met_phi/F");
@@ -119,6 +178,16 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       jets_phi.clear();
       jets_mass.clear();
 
+      dijets_pt.clear();
+      dijets_eta.clear();
+      dijets_phi.clear();
+      dijets_mass.clear();
+
+      dihiggs_pt.clear();
+      dihiggs_eta.clear();
+      dihiggs_phi.clear();
+      dihiggs_mass.clear();
+
       muons_pt.clear();
       muons_eta.clear();
       muons_phi.clear();
@@ -140,6 +209,21 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       genhs_phi.clear();
       genhs_mass.clear();
 
+      tl_genbfromhs_pt.clear();
+      tl_genbfromhs_eta.clear();
+      tl_genbfromhs_phi.clear();
+      tl_genbfromhs_mass.clear();
+
+      tl_genhs_pt.clear();
+      tl_genhs_eta.clear();
+      tl_genhs_phi.clear();
+      tl_genhs_mass.clear();
+
+      tl_genhh_pt.clear();
+      tl_genhh_eta.clear();
+      tl_genhh_phi.clear();
+      tl_genhh_mass.clear();
+
       float w = 1.0;
       w*=ev.eventInfo_.eventWeight(weights_);
       weight = w;
@@ -152,6 +236,20 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         jets_csv.push_back(ev.jets_.at(i).disc("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
         jets_cmva.push_back(ev.jets_.at(i).disc("pfCombinedMVAV2BJetTags"));
      }
+
+      for (std::size_t i = 0; i < ev.dijets_.size(); i++ ) {
+        dijets_pt.push_back(ev.dijets_.at(i).pt());
+        dijets_eta.push_back(ev.dijets_.at(i).eta());
+        dijets_phi.push_back(ev.dijets_.at(i).phi());
+        dijets_mass.push_back(ev.dijets_.at(i).mass());
+    }
+
+      for (std::size_t i = 0; i < ev.dihiggs_.size(); i++ ) {
+        dihiggs_pt.push_back(ev.dihiggs_.at(i).pt());
+        dihiggs_eta.push_back(ev.dihiggs_.at(i).eta());
+        dihiggs_phi.push_back(ev.dihiggs_.at(i).phi());
+        dihiggs_mass.push_back(ev.dihiggs_.at(i).mass());
+    }
 
 /*      for (std::size_t i = 0; i < ev.elecs_.size(); i++ ) {
         elecs_pt.push_back(ev.elecs_.at(i).pt());
@@ -174,6 +272,27 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         genhs_eta.push_back(ev.genhs_.at(i).eta());
         genhs_phi.push_back(ev.genhs_.at(i).phi());
         genhs_mass.push_back(ev.genhs_.at(i).mass());
+     }
+
+      for (std::size_t i = 0; i < ev.tl_genbfromhs_.size(); i++ ) {
+        tl_genbfromhs_pt.push_back(ev.tl_genbfromhs_.at(i).pt());
+        tl_genbfromhs_eta.push_back(ev.tl_genbfromhs_.at(i).eta());
+        tl_genbfromhs_phi.push_back(ev.tl_genbfromhs_.at(i).phi());
+        tl_genbfromhs_mass.push_back(ev.tl_genbfromhs_.at(i).mass());
+     }
+
+      for (std::size_t i = 0; i < ev.tl_genhs_.size(); i++ ) {
+        tl_genhs_pt.push_back(ev.tl_genhs_.at(i).pt());
+        tl_genhs_eta.push_back(ev.tl_genhs_.at(i).eta());
+        tl_genhs_phi.push_back(ev.tl_genhs_.at(i).phi());
+        tl_genhs_mass.push_back(ev.tl_genhs_.at(i).mass());
+     }
+
+      for (std::size_t i = 0; i < ev.tl_genhh_.size(); i++ ) {
+        tl_genhh_pt.push_back(ev.tl_genhh_.at(i).pt());
+        tl_genhh_eta.push_back(ev.tl_genhh_.at(i).eta());
+        tl_genhh_phi.push_back(ev.tl_genhh_.at(i).phi());
+        tl_genhh_mass.push_back(ev.tl_genhh_.at(i).mass());
      }
 
       for (std::size_t i = 0; i < ev.muons_.size(); i++ ) {
