@@ -22,9 +22,10 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
     TH1D h_mu_n   {"h_mu_n", "# muons", 20,  0., 20.};
     TH1D h_mu_pt  {"h_mu_pt", "muons pt", 250,  0., 500.};
     TH1D h_mu_iso03 {"h_mu_iso03", "muons iso03", 50,  0., 0.3};
+    TH1D h_mu_iso04 {"h_mu_iso04", "muons iso04", 50,  0., 0.3};
     TH1D h_mu0_pt {"h_mu0_pt", "muon0 pt", 250,  0., 500.};
     TH1D h_mu0_iso03 {"h_mu0_iso03", "muon0 iso03", 50,  0., 0.3};
-
+    TH1D h_mu0_iso04 {"h_mu0_iso04", "muon0 iso04", 50,  0., 0.3};
 
      MiscellPlotterOperator(const std::vector<std::string> & weights = {}) :
       weights_(weights) {}
@@ -37,16 +38,20 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
       h_mu_n.SetDirectory(tdir);
       h_mu_pt.SetDirectory(tdir);
       h_mu_iso03.SetDirectory(tdir);
+      h_mu_iso04.SetDirectory(tdir);
       h_mu0_pt.SetDirectory(tdir);
       h_mu0_iso03.SetDirectory(tdir);
+      h_mu0_iso04.SetDirectory(tdir);
 
       h_all_ht.Sumw2();
       h_met_pt.Sumw2();
       h_mu_n.Sumw2();
       h_mu_pt.Sumw2();
       h_mu_iso03.Sumw2();
+      h_mu_iso04.Sumw2();
       h_mu0_pt.Sumw2();
       h_mu0_iso03.Sumw2();
+      h_mu0_iso04.Sumw2();
 
    }
 
@@ -64,9 +69,11 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
         if (i==0) { 
           h_mu0_pt.Fill(ev.muons_.at(i).pt(), w);
           h_mu0_iso03.Fill(ev.muons_.at(i).iso03(), w);
+          h_mu0_iso04.Fill(ev.muons_.at(i).iso04(), w);
         }
         h_mu_pt.Fill(ev.muons_.at(i).pt(), w);
         h_mu_iso03.Fill(ev.muons_.at(i).iso03(), w);
+        h_mu_iso04.Fill(ev.muons_.at(i).iso04(), w);
         mpt += ev.muons_.at(i).pt();
       }
       auto jpt = get_jets_ht(ev.jets_);
