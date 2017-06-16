@@ -126,7 +126,7 @@ for sname in snames:
 
     print tch_hem.GetEntries()
 
-    #define selectors list
+    # define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())

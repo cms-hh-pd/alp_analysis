@@ -20,6 +20,8 @@ from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.triggerlists import triggerlists
 from Analysis.alp_analysis.workingpoints import wps
+from tqdm import tqdm
+from os.path import basename, splitext
 
 TH1F.AddDirectory(0)
 
@@ -30,6 +32,7 @@ parser.add_argument("-e", "--numEvts", help="number of events", type=int, defaul
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger filter", action='store_true')
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
+parser.add_argument("--reg_exp", help="process all samples in iDir which pass reg expression", default=None)
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170222") 
 parser.add_argument("-o", "--oDir", help="output directory", default="def_cmva")
@@ -109,16 +112,23 @@ config.update(
 #          "evt_weight_name" : "evtWeight",
          } )
 
+
+        
 snames = []
 for s in samList:
     snames.extend(samlists[s])
+if args.reg_exp:
+    snames = glob("{}/{}.root".format(iDir, args.reg_exp))    
+    snames = [splitext(basename(sname))[0] for sname in snames]        
+
 
 # process samples
 ns = 0
-for sname in snames:
+for sname in tqdm(snames):
 
     #get file names in all sub-folders:
-    if args.doMixed: reg_exp = iDir+"/mixed_test/"+sname+".root"
+    if args.reg_exp: reg_exp = "{}/{}.root".format(iDir,sname)
+    elif args.doMixed: reg_exp = iDir+"/mixed_test/"+sname+".root"
     else:       reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -150,9 +160,10 @@ for sname in snames:
         print  "genevts {}".format(ngenev)
 
     #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
+    if not args.reg_exp:
+        config["xsec_br"]  = samples[sname]["xsec_br"]
+        config["matcheff"] = samples[sname]["matcheff"]
+        config["kfactor"]  = samples[sname]["kfactor"]
 
     json_str = json.dumps(config)
 
@@ -189,13 +200,15 @@ for sname in snames:
 		    print "WARNING: is Mixed sample - trigger filter applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
+    jet_filter_op = JetFilterOperator(alp.Event)(2.4, 30., 4)
+    selector.addOperator(jet_filter_op)
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
     #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
     #selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path)) #99=noAntitag  3 99
+    btag_filter_op = BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 99, config["isData"], data_path)
+    selector.addOperator(btag_filter_op) #99=noAntitag  3 99
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
     #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
     #selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
@@ -210,11 +223,13 @@ for sname in snames:
     #            print "WARNING: is Mixed sample - trigger filter applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("pair"))
-    selector.addOperator(JetPairingOperator(alp.Event)(4))
+    jet_pairing_op = JetPairingOperator(alp.Event)(4)
+    selector.addOperator(jet_pairing_op)
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
     if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
     if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
-    selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
+    ev_writer_op = EventWriterOperator(alp.Event)(json_str, weights_v)
+    selector.addOperator(ev_writer_op)
     if not args.doMixed:
         selector.addOperator(ThrustFinderOperator(alp.Event)())
         selector.addOperator(HemisphereProducerOperator(alp.Event)())
@@ -236,5 +251,11 @@ for sname in snames:
     #some cleaning
     if not args.doMixed: hcount.Reset()
     print "{}".format(procOpt)
+
+    del selector
+    del jet_filter_op
+    del btag_filter_op
+    del jet_pairing_op
+    del ev_writer_op
 
 print "### processed {} samples ###".format(ns)
