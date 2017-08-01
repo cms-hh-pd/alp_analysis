@@ -23,8 +23,13 @@ from Analysis.alp_analysis.workingpoints import wps
 TH1F.AddDirectory(0)
 
 comb_dict = {"train" : [[1,1],[1,2],[2,1],[2,2]],
-              "test" : [[3,4],[5,6],[7,8],[9,10]],
-              "appl" : [[4,3],[6,5],[8,7],[10,9]] }
+             "test"  : [[3,4],[5,6],[7,8],[9,10]],
+             "appl"  : [[4,3],[6,5],[8,7],[10,9]],
+             "extreme"  : [[20,21],[22,23],[24,25],[26,27]],
+             "extreme2"  : [[40,45],[50,55],[60,65],[70,75]],
+             "11":[[1,1]], "22":[[2,2]], "33":[[3,3]], "44":[[4,4]], "55":[[5,5]], 
+             "66":[[6,6]], "77":[[7,7]], "88":[[8,8]], "99":[[9,9]], "1010":[[10,10]],
+             "1616":[[16,16]], "3232":[[32,32]], "6464":[[64,64]], "128128":[[128,128]] }
 
 comb_dict_vec = {}
 # ugly vector of vector transformation
@@ -56,7 +61,6 @@ if not args.samList: samList = ['SM']  # list of samples to be processed - appen
 else: samList = [args.samList]
 intLumi_fb = 35.9
 mixing_comb = comb_dict_vec[args.comb]
-print mixing_comb
 
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
@@ -78,7 +82,7 @@ nn_vars_v = vector("string")()
 for v in nn_vars: nn_vars_v.push_back(v)
 
 # to parse variables to the anlyzer
-config = {"eventInfo_branch_name" : "EventInfo",
+config = {#"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
           "dijets_branch_name": "DiJets",
           #"dihiggs_branch_name": "DiHiggs",
@@ -96,8 +100,12 @@ config = {"eventInfo_branch_name" : "EventInfo",
          }
 
 snames = []
+print samList
 for s in samList:
-    snames.extend(samlists[s])
+    if not s in samlists: 
+        snames.append(s)
+    else: 
+        snames.extend(samlists[s])
 
 # process samples
 ns = 0
@@ -130,8 +138,8 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 11))
-    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb))
+    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 11)) #WARNING!! 
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, btag_wp[1], mixing_comb))
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    

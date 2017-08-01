@@ -33,8 +33,7 @@ template <class EventClass> class CounterOperator : public BaseOperator<EventCla
     virtual bool process( EventClass & ev ) {
 
       float w = 1.0;
-     if(weights_.size()>0) w*=ev.eventInfo_.eventWeight(weights_);
-     //else w*=ev.evtWeight_;
+     if(weights_.size()>0) w*=ev.eventInfo_.eventWeight(weights_);     
      
       h_nevts.Fill(0.5, w);
       h_njets.Fill(ev.jets_.size(), w);

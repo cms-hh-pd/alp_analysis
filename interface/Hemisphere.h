@@ -16,16 +16,15 @@ namespace alp {
       double p_phi_ = 0.;
       bool sumPz_inv_ = false;
       bool d_phi_inv_ = false;
+      double dist_ = -99.;
   
       Hemisphere() {}
-      Hemisphere(double p_phi, bool d_phi_inv ) : 
+      Hemisphere(double p_phi, bool d_phi_inv, double dist = -99. ) : 
         p_phi_(p_phi),
-        d_phi_inv_(d_phi_inv) {}
-  
-      virtual ~Hemisphere() {}                   
-  
-  
-      static double sumPz(const Hemisphere & hem) {
+        d_phi_inv_(d_phi_inv),
+        dist_(dist) {}      
+    
+      static double SumPz(const Hemisphere & hem) {
         double sumPz = 0.0;
         for (const auto & j : hem.jets_) {
           sumPz += j.p4_.Pz();
@@ -33,7 +32,7 @@ namespace alp {
         return sumPz;
       }
   
-      static double thrustMayor(const Hemisphere & hem) {
+      static double ThrustMayor(const Hemisphere & hem) {
         double thrustMayor = 0.0;
         for (const auto & j : hem.jets_) {
           double d_phi = ROOT::Math::VectorUtil::Phi_mpi_pi(j.p4_.Phi()-M_PI/2.);
@@ -42,7 +41,7 @@ namespace alp {
         return thrustMayor;
       }
   
-      static double thrustMinor(const Hemisphere & hem) {
+      static double ThrustMinor(const Hemisphere & hem) {
         double thrustMinor = 0.0;
         for (const auto & j : hem.jets_) {
           double d_phi = ROOT::Math::VectorUtil::Phi_mpi_pi(j.p4_.Phi()-M_PI/2.);
@@ -51,7 +50,7 @@ namespace alp {
         return thrustMinor;
       }
   
-      static double invMass(const Hemisphere & hem) {
+      static double InvMass(const Hemisphere & hem) {
         alp::PtEtaPhiEVector sum_v; // init null?
         for (const auto & j : hem.jets_) {
           sum_v += j.p4_;
@@ -59,11 +58,11 @@ namespace alp {
         return sum_v.M();
       }
   
-      static int nJets(const Hemisphere & hem) {
+      static int NJets(const Hemisphere & hem) {
         return int(hem.jets_.size());
       }
   
-      static int nTags(const Hemisphere & hem,
+      static int NTags(const Hemisphere & hem,
                        std::string disc,
                        float wp) {
         int nTags = 0;
@@ -72,31 +71,38 @@ namespace alp {
         }
         return nTags;
       }
+
+      double dist() const {
+        return dist_;
+      }  
   
-  
-      double getSumPz() {
-        return sumPz(*this);
+      double sumPz() const {
+        return SumPz(*this);
       }
   
-      double getThrustMayor() {
-        return thrustMayor(*this);
+      double thrustMayor() const {
+        return ThrustMayor(*this);
       }
      
-      double getThrustMinor() {
-        return thrustMinor(*this);
+      double thrustMinor() const {
+        return ThrustMinor(*this);
       }
   
-      double getInvMass() {
-        return invMass(*this);
+      double invMass() const {
+        return InvMass(*this);
       }
   
-      int getNJets() {
-        return nJets(*this);
+      int nJets() const {
+        return NJets(*this);
       }
-  
-      int getNTags(std::string disc, float wp) {
-        return nTags(*this,disc,wp);
+
+      //default values to call function directly in branches -- WARNING
+      int nTags(std::string disc = "pfCombinedMVAV2BJetTags", float wp = 0.4432) const {
+        return NTags(*this,disc,wp);
       }
+
+
+      virtual ~Hemisphere() {}      
   
   };
 

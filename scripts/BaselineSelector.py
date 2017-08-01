@@ -66,8 +66,8 @@ elif args.btag == 'csv':
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
-    weights_nobTag = {'PUWeight', 'PdfWeight'} 
+    weights        = {'PUWeight', 'BTagWeight''PdfWeight'}
+    weights_nobTag = {'PUWeight','PdfWeight'}
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -85,7 +85,10 @@ w_nobTag_v = vector("string")()
 for w in weights_nobTag: w_nobTag_v.push_back(w)
 
 # to parse variables to the anlyzer
-if args.doMixed: config = { "jets_branch_name": "Jets", }
+if args.doMixed: config = { "jets_branch_name": "Jets",
+                            "fhems_branch_name": "Hems",
+                            "orhems_branch_name": "OrHems",
+                          }
 else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
               "genbfromhs_branch_name" : "GenBFromHs",
@@ -110,15 +113,19 @@ config.update(
          } )
 
 snames = []
+print samList
 for s in samList:
-    snames.extend(samlists[s])
+    if not s in samlists: 
+        snames.append(s)
+    else: 
+        snames.extend(samlists[s])
 
 # process samples
 ns = 0
 for sname in snames:
 
     #get file names in all sub-folders:
-    if args.doMixed: reg_exp = iDir+"/mixed_test/"+sname+".root"
+    if args.doMixed: reg_exp = iDir+"/mixed_ntuples/"+sname+".root"
     else:       reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -150,9 +157,10 @@ for sname in snames:
         print  "genevts {}".format(ngenev)
 
     #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
+    if not args.doMixed:
+      config["xsec_br"]  = samples[sname]["xsec_br"]
+      config["matcheff"] = samples[sname]["matcheff"]
+      config["kfactor"]  = samples[sname]["kfactor"]
 
     json_str = json.dumps(config)
 

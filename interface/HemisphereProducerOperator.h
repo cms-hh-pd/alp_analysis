@@ -44,7 +44,7 @@ template <class EventClass> class HemisphereProducerOperator : public BaseOperat
       
       // invert eta if sumPz < 0 (symmetry)
       for (auto & hem : hems) {
-        if (hem.getSumPz() < 0) {
+        if (hem.sumPz() < 0) {
           hem.sumPz_inv_ = true; // so can be reverted 
           for (auto & j : hem.jets_) {
             j.p4_.SetEta(-j.p4_.Eta());

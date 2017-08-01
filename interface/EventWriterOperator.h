@@ -34,6 +34,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     std::vector<alp::DiObject> * tl_genhh_ptr = nullptr;
     std::vector<alp::DiObject> * dijets_ptr = nullptr;
     std::vector<alp::DiObject> * dihiggs_ptr = nullptr;
+    std::vector<alp::Hemisphere> * fhems_ptr = nullptr;
+    std::vector<alp::Hemisphere> * orhems_ptr = nullptr;
 
     TTree tree_{"tree","Tree using simplified alp dataformats"};
 
@@ -113,11 +115,19 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       }
       else tree_.Branch("DiHiggs","std::vector<alp::DiObject>", &dihiggs_ptr, 64000, 2);
 
+      if (config_.find("fhems_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("fhems_branch_name").template get<std::string>().c_str(),
+                     "std::vector<alp::Hemisphere>",&fhems_ptr, 64000, 2);
+      }
+      if (config_.find("orhems_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("orhems_branch_name").template get<std::string>().c_str(),
+                     "std::vector<alp::Hemisphere>",&orhems_ptr, 64000, 2);
+      }
+
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
 
    }
-
 
     virtual bool process( EventClass & ev ) {
 
@@ -147,6 +157,8 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       tl_genhh_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.tl_genhh_);
       dijets_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dijets_); 
       dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 
+      fhems_ptr = dynamic_cast<std::vector<alp::Hemisphere> *>(&ev.fhems_); 
+      orhems_ptr = dynamic_cast<std::vector<alp::Hemisphere> *>(&ev.orhems_); 
 
       tree_.Fill();
     

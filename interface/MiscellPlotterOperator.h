@@ -59,8 +59,8 @@ template <class EventClass> class MiscellPlotterOperator : public BaseOperator<E
     virtual bool process( EventClass & ev ) {
 
       float w = 1.0;
-      w *= ev.eventInfo_.eventWeight(weights_); 
-
+      w *= ev.eventInfo_.eventWeight(weights_);
+ 
       h_mu_n.Fill(ev.muons_.size(), w);
       h_met_pt.Fill(ev.met_.pt(), w);
 
