@@ -30,6 +30,8 @@ namespace alp {
       std::vector<alp::Candidate> tl_genbfromhs_;
       std::vector<alp::Candidate> tl_genhs_;
       std::vector<alp::DiObject>  tl_genhh_;
+      std::vector<alp::Hemisphere>  fhems_;
+      std::vector<alp::Hemisphere>  orhems_;
       float_t evtWeight_;
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
@@ -43,15 +45,16 @@ namespace alp {
       TTreeReaderValue<std::vector<alp::Candidate>> * tl_genbfromhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Candidate>> * tl_genhs_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::DiObject>> * tl_genhh_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Hemisphere>> * fhems_reader_ = nullptr;
+      TTreeReaderValue<std::vector<alp::Hemisphere>> * orhems_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
       TTreeReaderValue<float_t> * evtWeight_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
      // std::vector<alp::PtEtaPhiEVector> dijets_;
       std::vector<std::size_t> free_is_;
-      // to save the hemispheres (rotated and pz positive)
-      std::vector<alp::Hemisphere> hems_; 
       // best matching hemispheres ( [first/second][proximity])
+      std::vector<alp::Hemisphere>  hems_;     
       std::vector<std::vector<alp::Hemisphere>> best_match_hems_; 
       // to keep the tranverse thrust axis phi
       double thrust_phi_ = -10.;
@@ -126,6 +129,14 @@ namespace alp {
             evtWeight_reader_ = new TTreeReaderValue<float_t>(reader,
                 config.at("evt_weight_name").get_ref<const std::string &>().c_str());
         }
+        if (config.find("fhems_branch_name") != config.end()) {
+            fhems_reader_ = new TTreeReaderValue<std::vector<alp::Hemisphere>>(reader,
+                config.at("fhems_branch_name").get_ref<const std::string &>().c_str());
+        }
+        if (config.find("orhems_branch_name") != config.end()) {
+            orhems_reader_ = new TTreeReaderValue<std::vector<alp::Hemisphere>>(reader,
+                config.at("orhems_branch_name").get_ref<const std::string &>().c_str());
+        }
         
       }
       virtual ~Event() {
@@ -142,6 +153,8 @@ namespace alp {
         delete tl_genhs_reader_;
         delete tl_genhh_reader_;
         delete evtWeight_reader_;
+        delete fhems_reader_;
+        delete orhems_reader_;
       }
 
       virtual void update() {
@@ -160,6 +173,8 @@ namespace alp {
         if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
         if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
         if (evtWeight_reader_) evtWeight_ = **evtWeight_reader_;
+        if (fhems_reader_) fhems_ = **fhems_reader_;
+        if (orhems_reader_) orhems_ = **orhems_reader_;
 
         free_is_.clear();
         hems_.clear();

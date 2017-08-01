@@ -22,6 +22,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
+parser.add_argument("--nbtag", help="min btag jets", type=int, default='4',  )
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("-i", "--iDir", help="input directory", default="v2_20170222-trg") 
 parser.add_argument("-o", "--oDir", help="output directory", default="trgEff_draft")
@@ -51,8 +52,8 @@ elif args.btag == 'csv':
 
 
 #weights to be applied 
-weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
-weights_nobTag = {'PUWeight', 'PdfWeight'}
+weights        = {'PUWeight', 'LeptonWeight', 'BTagWeight'} #'lhe_weight_10',
+weights_nobTag = {'PUWeight', 'LeptonWeight'} #'lhe_weight_10'
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -81,7 +82,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           "muons_branch_name" : "Muons",
           "electrons_branch_name" : "Electrons",
           "met_branch_name" : "MET",
-          "genbfromhs_branch_name" : "GenBFromHs",
+          #"genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
          }
 config.update(        
@@ -93,6 +94,7 @@ config.update(
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : False,
+          "ofile_update" : False,
          } )        
 
 snames = []
@@ -101,7 +103,6 @@ for s in samList:
 
 # process samples
 ns = 0
-trgsf_f = ''
 for sname in snames:
     
     #get file names in all sub-folders:
@@ -117,16 +118,6 @@ for sname in snames:
     else:
         if "Run" in files[0]: 
             config["isData"] = True
-           # if "B-" or "C-" or "D-" or "E-" or "F-" in files[0]:
-           #     trgsf_f = (data_path+'/EfficienciesAndSF_RunBtoF.json').encode('utf8')
-#               fsf = open(data_path+'/EfficienciesAndSF_RunBtoF.json', 'r')
-#               trgsf_f = json.load(fsf)
-               #print trgsf_f
-            #elif "G-" or "H-" in files[0]:
-            #   trgsf_f = (data_path+'/theJSONfile_Period4.json').encode('utf8')
-#               fsf = open(data_path+'/theJSONfile_Period4.json', 'r')
- #              trgsf = json.load(fsf)
-               #print trgsf_f
         if "GluGluToHH" in files[0] or "HHTo4B" in files[0]: config["isSignal"] = True
    
     #read counters to get generated events
@@ -156,11 +147,10 @@ for sname in snames:
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(BaseOperator(alp.Event)())
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("trigger"))
-    selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v, trgsf_f))
+    selector.addOperator(TriggerOperator(alp.Event)(trg_namesD_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
@@ -170,11 +160,11 @@ for sname in snames:
 #    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 3, 99, config["isData"], data_path)) #debug 4
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], args.nbtag, 99, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("isomu"))
-    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.05, 30., 1))  #debug
+    selector.addOperator(IsoMuFilterOperator(alp.Event)(0.15, 30., 1))  #debug 0.05
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("met"))
