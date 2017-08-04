@@ -77,7 +77,7 @@ elif args.btag == 'csv':
     btag_wp = wps['CSVv2_moriond']
 
 # variables to check nearest-neightbour
-nn_vars = ["thrustMayor","thrustMinor", "sumPz","invMass"]
+nn_vars = ["thrustMayor","thrustMinor","invMass","sumPz","ht"] #"pt1Btag","pt2Btag","pt3Btag","pt4Btag",
 nn_vars_v = vector("string")()
 for v in nn_vars: nn_vars_v.push_back(v)
 
