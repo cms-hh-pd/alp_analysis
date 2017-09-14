@@ -250,6 +250,13 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+    'HHTo4B_all' :{
+        'sam_name': 'GluGluToHHTo4B_node_*_13TeV-madgraph-v1',
+        'nevents' : 299800,
+        'xsec_br' : 0.03345*0.577*0.577,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'HHTo4B_SM' :{
         'sam_name': 'GluGluToHHTo4B_node_SM_13TeV-madgraph-v1',
         'nevents' : 299800,

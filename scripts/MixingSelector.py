@@ -19,12 +19,18 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMix
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.workingpoints import wps
+import itertools as it
 
 TH1F.AddDirectory(0)
 
-comb_dict = {"train" : [[1,1],[1,2],[2,1],[2,2]],
-              "test" : [[3,4],[5,6],[7,8],[9,10]],
-              "appl" : [[4,3],[6,5],[8,7],[10,9]] }
+
+all_list = [i for i in it.product(range(1,11),range(1,11))]
+
+comb_dict = {"train" : [(1,1),(1,2),(2,1),(2,2)],
+              "test" : [(3,4),(5,6),(7,8),(9,10)],
+              "appl" : [(4,3),(6,5),(8,7),(10,9)] }
+
+comb_dict["large"] = list(set(all_list)-set(comb_dict["train"]))
 
 comb_dict_vec = {}
 # ugly vector of vector transformation

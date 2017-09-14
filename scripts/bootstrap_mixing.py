@@ -1,5 +1,7 @@
 #!/usr/bin/env python 
 
+from __future__ import print_function
+
 # good old python modules
 import json
 import os
@@ -18,6 +20,7 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMix
 
 import pandas as pd
 from tqdm import trange
+import itertools as it
 
 # imports from ../python 
 from Analysis.alp_analysis.workingpoints import wps
@@ -30,9 +33,13 @@ def array_to_list(index_array, ev_list):
 
 TH1F.AddDirectory(0)
 
-comb_dict = {"train" : [[1,1],[1,2],[2,1],[2,2]],
-              "test" : [[3,4],[5,6],[7,8],[9,10]],
-              "appl" : [[4,3],[6,5],[8,7],[10,9]] }
+all_list = [i for i in it.product(range(1,11),range(1,11))]
+
+comb_dict = {"train" : [(1,1),(1,2),(2,1),(2,2)],
+              "test" : [(3,4),(5,6),(7,8),(9,10)],
+              "appl" : [(4,3),(6,5),(8,7),(10,9)] }
+
+comb_dict["large"] = list(set(all_list)-set(comb_dict["train"]))
 
 comb_dict_vec = {}
 # ugly vector of vector transformation
@@ -57,31 +64,38 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("--sig", help="signal cross section", type=int, default=0)
+parser.add_argument("--ttH", help="ttH times SM", type=int, default=0)
 parser.add_argument("--comb", help="set of combinations to use", choices=comb_dict.keys() )
+parser.add_argument("--n_b", help="number of bootstrap replicas", type=int, default=200 )
+parser.add_argument("--fix_hem_lib", help="use the original lib for all replicas", action="store_true") 
 args = parser.parse_args()
 
 
-n_samples = 100
+n_samples = args.n_b 
 # sample with replacement
 replace = False
 # numpy random states for reproducibility
 sig_rs = np.random.RandomState(2020)
 bkg_rs = np.random.RandomState(1010)
+ttH_rs = np.random.RandomState(3030)
 
 sig_xs_per_fb = 0.670
 n_sam_sig_ev = int(sig_xs_per_fb*args.sig) 
-print n_sam_sig_ev
+
+ttH_ev_per_times = 8*35.9 
+n_sam_ttH_ev = int(ttH_ev_per_times*args.ttH) 
 
 # exe parameters
 numEvents  =  args.numEvts
 intLumi_fb = 35.9
 mixing_comb = comb_dict_vec[args.comb]
 
-bkg_parent_files = ["/lustre/cmswork/hh/alp_moriond_base/bootstrap_parent/BTagCSVRun2016_test.root",
-                    "/lustre/cmswork/hh/alp_moriond_base/bootstrap_parent/BTagCSVRun2016_appl.root"]
-sig_parent_files = ["/lustre/cmswork/hh/alp_moriond_base/bootstrap_parent/HHTo4B_SM_all.root"]
+ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
+bkg_parent_files = ["/lustre/cmswork/hh/alp_moriond_base/def_cmva_large_mix/BTagCSVRun2016_large.root"]
+sig_parent_files = ["/lustre/cmswork/hh/alp_moriond_base/def_cmva/HHTo4B_pangea.root"]
+ttH_parent_files = ["/lustre/cmswork/hh/alp_moriond_base/def_cmva/ttHTobb.root"]
 sig_index_h5 = "/lustre/cmswork/hh/alp_moriond_base/bootstrap_parent/indexes.h5"
-sample_path = "/lustre/cmswork/hh/alp_moriond_base/bootstrap_mixing_sig_{}_fb".format(args.sig)
+sample_path = "/lustre/cmswork/hh/alp_moriond_base/bootstrap_mixing_fixed_sig_{}_fb_ttH_{}_times".format(args.sig,args.ttH)
 
 # load h5 index (avoid using training events)
 with pd.HDFStore(sig_index_h5) as store:
@@ -92,15 +106,23 @@ with pd.HDFStore(sig_index_h5) as store:
 tch_hem = TChain("pair/hem_tree")
 tchain = TChain("pair/tree")
 
+if args.fix_hem_lib:
+    tch_hem.Add(ori_file)
+    sample_path+="_fix_hem_lib"
+
 for bkg_parent_file in bkg_parent_files:
-    tch_hem.Add(bkg_parent_file)
+    if not args.fix_hem_lib:
+        tch_hem.Add(bkg_parent_file)
     tchain.Add(bkg_parent_file)
 
 n_tot_bkg_ev = tchain.GetEntries()
 bkg_all_arr = np.arange(n_tot_bkg_ev)
+print("all bkg events {} & array len/min/max {} {} {}".format(
+    n_tot_bkg_ev, len(bkg_all_arr), bkg_all_arr.min(), bkg_all_arr.max()))
 
 for sig_parent_file in sig_parent_files:
-    tch_hem.Add(sig_parent_file)
+    if not args.fix_hem_lib:
+        tch_hem.Add(sig_parent_file)
     tchain.Add(sig_parent_file)
 
 n_tot_sig_ev = tchain.GetEntries() - n_tot_bkg_ev
@@ -108,10 +130,26 @@ sm_index_not_train = raw_index_not_train - sig_tot_index + n_tot_sig_ev
 sm_index_not_train = sm_index_not_train[sm_index_not_train > -1] 
 sig_all_arr = sm_index_not_train + n_tot_bkg_ev 
 
-n_mix_combs = 8 
-n_sam_bkg_ev = n_tot_bkg_ev/n_mix_combs
-print n_sam_bkg_ev
+print("all sig events {} & array len/min/max {} {} {}".format(
+    n_tot_sig_ev, len(sig_all_arr), sig_all_arr.min(), sig_all_arr.max()))
 
+for ttH_parent_file in ttH_parent_files:
+    if not args.fix_hem_lib:
+        tch_hem.Add(ttH_parent_file)
+    tchain.Add(ttH_parent_file)
+
+n_tot_ttH_ev = tchain.GetEntries() - n_tot_bkg_ev - n_tot_sig_ev
+ttH_all_arr = np.arange(n_tot_ttH_ev)+n_tot_bkg_ev+n_tot_sig_ev
+
+print("all ttH events {} & array len/min/max {} {} {}".format(
+    n_tot_ttH_ev, len(ttH_all_arr), ttH_all_arr.min(), ttH_all_arr.max()))
+
+n_mix_combs = len(comb_dict["large"])
+n_sam_bkg_ev = n_tot_bkg_ev/n_mix_combs
+
+print("sam bkg events per sample {}".format(n_sam_bkg_ev))
+print("sam sig events per sample {}".format(n_sam_sig_ev))
+print("sam ttH events per sample {}".format(n_sam_ttH_ev))
 
 if not os.path.exists(sample_path): os.mkdir(sample_path)
 
@@ -147,13 +185,33 @@ for s_n in trange(n_samples):
                                 replace=replace)
     sig_sam_arr = sig_rs.choice(sig_all_arr, n_sam_sig_ev,
                                 replace=replace)
+    ttH_sam_arr = ttH_rs.choice(ttH_all_arr, n_sam_ttH_ev,
+                                replace=replace)
+
+    if len(bkg_sam_arr) != 0:
+        print("sam bkg events arr len/min/max {}/{}/{}".format(
+        len(bkg_sam_arr), bkg_sam_arr.min(), bkg_sam_arr.max()))
+
+    if len(sig_sam_arr) != 0:
+        print("sam sig events arr len/min/max {}/{}/{}".format(
+        len(sig_sam_arr), sig_sam_arr.min(), sig_sam_arr.max()))
+
+    if len(ttH_sam_arr) != 0:
+        print("sam ttH events arr len/min/max {}/{}/{}".format(
+        len(ttH_sam_arr), ttH_sam_arr.min(), ttH_sam_arr.max()))
+
 
     ev_list = TEventList("TEventList")
     ev_list = array_to_list(bkg_sam_arr, ev_list)
     ev_list = array_to_list(sig_sam_arr, ev_list)
+    ev_list = array_to_list(ttH_sam_arr, ev_list)
 
     tchain.SetEventList(ev_list)
-    tch_hem.SetEventList(ev_list)
+    if not args.fix_hem_lib:
+        tch_hem.SetEventList(ev_list)
+
+    print("Entries in hem Tchain: {}".format(tch_hem.GetEntries()))  
+    print("Entries in ev Tchain: {}".format(tchain.GetEntries()))  
 
     config["isData"] = True 
     config["isSignal"] = False 
@@ -170,7 +228,7 @@ for s_n in trange(n_samples):
     selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb))
 
     process_options = "ofile={}/BTagCSVRun2016_bootstrap_{}_{}.root".format(sample_path, s_n, args.comb)
-    print process_options
+    print(process_options)
     tchain.Process(selector, process_options)
 
     del hem_mix_op 

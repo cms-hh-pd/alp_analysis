@@ -241,7 +241,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
                        	std::unique_ptr<my_kd_tree_t>(
 											 		new my_kd_tree_t(int(funcDVec_.size()),
                           kv.second,
-                          nanoflann::KDTreeSingleIndexAdaptorParams(10))));
+                          nanoflann::KDTreeSingleIndexAdaptorParams(100000))));
         auto it = it_bool.first; // get iterator to inserted element
         it->second->buildIndex();
 			}

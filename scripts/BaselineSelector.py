@@ -66,11 +66,11 @@ elif args.btag == 'csv':
     btag_wp = wps['CSVv2_moriond']
 
 #weights to be applied 
-weights        = {}
-weights_nobTag = {} 
+weights        = []
+weights_nobTag = [] 
 if not args.doMixed:
-    weights        = {'PUWeight', 'PdfWeight', 'BTagWeight'}
-    weights_nobTag = {'PUWeight', 'PdfWeight'} 
+    weights        = ['PUWeight', 'PdfWeight', 'BTagWeight']
+    weights_nobTag = ['PUWeight', 'PdfWeight'] 
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
