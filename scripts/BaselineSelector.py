@@ -93,7 +93,7 @@ else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
               "genbfromhs_branch_name" : "GenBFromHs",
               "genhs_branch_name" : "GenHs",
-              "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
+             # "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
               "tl_genhs_branch_name" : "TL_GenHs",
             }
 #"muons_branch_name" : "",
@@ -197,7 +197,7 @@ for sname in snames:
 		    print "WARNING: is Mixed sample - trigger filter applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
+    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 70., 4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
     #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
     #selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))
@@ -224,9 +224,9 @@ for sname in snames:
     if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
     if not args.doMixed:
-        selector.addOperator(ThrustFinderOperator(alp.Event)())
-        selector.addOperator(HemisphereProducerOperator(alp.Event)())
-        selector.addOperator(HemisphereWriterOperator(alp.Event)())
+      selector.addOperator(ThrustFinderOperator(alp.Event)())
+      selector.addOperator(HemisphereProducerOperator(alp.Event)())
+      selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     if args.doMixed: treename = "mix_tree"
