@@ -66,7 +66,7 @@ elif args.btag == 'csv':
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'BTagWeight''PdfWeight'}
+    weights        = {'PUWeight', 'BTagWeight', 'PdfWeight'}
     weights_nobTag = {'PUWeight','PdfWeight'}
 # ---------------
 
