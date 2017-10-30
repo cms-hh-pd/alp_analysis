@@ -88,6 +88,7 @@ for w in weights_nobTag: w_nobTag_v.push_back(w)
 if args.doMixed: config = { "jets_branch_name": "Jets",
                             "fhems_branch_name": "Hems",
                             "orhems_branch_name": "OrHems",
+                            "evt_weight_name" : "evtWeight",
                           }
 else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
@@ -109,7 +110,6 @@ config.update(
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
           "ofile_update" : False,
-          "evt_weight_name" : "evtWeight",
          } )
 
 snames = []
