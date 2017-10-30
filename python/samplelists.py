@@ -17,6 +17,7 @@ samlists = {
    'BM10'    : ['HHTo4B_BM10'],
    'BM11'    : ['HHTo4B_BM11'],
    'BM12'    : ['HHTo4B_BM12'],
+   'BM13'    : ['HHTo4B_BM13'],
    'BMbox'   : ['HHTo4B_BMbox'],
 
    'signals' : ['HHTo4B_SM', 'HHTo4B_BM2','HHTo4B_BM3','HHTo4B_BM4','HHTo4B_BM5','HHTo4B_BM6', 'HHTo4B_BM7',
@@ -49,12 +50,11 @@ samlists = {
 
    'minorbkg' : [ 'TTTT', 'ttHTobb', 'ttbb', 'VBFHToBB', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'],
 
-   'minortt' : ['ttHTobb', 'TTZToQQ', 'TTWJetsToQQ', 'TTTT', 'ttbb', 'ST_tW_antitop_5f_incl', 'ST_tW_top_5f_incl'],
+   'minortt' : ['ttHTobb', 'TTTT', 'ttbb'],#, 'ST_tW_antitop_5f_incl', 'ST_tW_top_5f_incl'],
 
    'dibosons': ['ZH_HToBB_ZToQQ', 'WZ', 'ZZTo4Q'],
 
-   'bosons'  : [ 'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180',
-                'VBFHToBB', 'VBFHToBB_ext', 'GluGluHToBB', 'GluGluHToBB_ext'], 
+   'bosons'  : [ 'VBFHToBB_fix_hem_lib_00', 'GluGluHToBB_fix_hem_lib_00'], #'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180','VBFHToBB_ext', , 'GluGluHToBB_ext'
 
    'def'     : ['HHTo4B_SM', 'HHTo4B_BM3', 'HHTo4B_BM13', 
                 'BTagCSVRun2016B-v1','BTagCSVRun2016B-v2','BTagCSVRun2016C-v2','BTagCSVRun2016D-v2',
@@ -100,10 +100,10 @@ samlists = {
                    'WJetsToLNu_HT-800To1200', 'WJetsToLNu_HT-1200To2500', 'WJetsToLNu_HT-2500ToInf' ],
 
    ## single bkg
-   'qcd' : [ 'QCD_HT200to300', 'QCD_HT200to300_ext', 'QCD_HT300to500', 'QCD_HT300to500_ext',
-             'QCD_HT500to700', 'QCD_HT500to700_ext', 'QCD_HT700to1000', 'QCD_HT700to1000_ext',
-             'QCD_HT1000to1500', 'QCD_HT1000to1500_ext', 'QCD_HT1500to2000', 'QCD_HT1500to2000_ext', 
-             'QCD_HT2000toInf', 'QCD_HT2000toInf_ext' ],
+   'qcd' : [ 'QCD_HT200to300_fix_hem_lib_00', 'QCD_HT200to300_ext_fix_hem_lib_00', 'QCD_HT300to500_fix_hem_lib_00', 'QCD_HT300to500_ext_fix_hem_lib_00',
+             'QCD_HT500to700_fix_hem_lib_00', 'QCD_HT500to700_ext_fix_hem_lib_00', 'QCD_HT700to1000_fix_hem_lib_00', 'QCD_HT700to1000_ext_fix_hem_lib_00',
+             'QCD_HT1000to1500_fix_hem_lib_00', 'QCD_HT1000to1500_ext_fix_hem_lib_00', 'QCD_HT1500to2000_fix_hem_lib_00', 'QCD_HT1500to2000_ext_fix_hem_lib_00', 
+             'QCD_HT2000toInf_fix_hem_lib_00', 'QCD_HT2000toInf_ext_fix_hem_lib_00' ],
 
    'qcd_noExt' : [ 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700', 'QCD_HT700to1000',
                    'QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf' ],
@@ -128,12 +128,34 @@ samlists = {
               'QCD_HT1000to1500_BGenFilter',  'QCD_HT1500to2000_BGenFilter', 'QCD_HT2000toInf_BGenFilter', 
               'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
 
-   'tt' : ['TT'], #reHLT
+   'tt' : ['TT'],
+   'tt-fix' : ['TT_fix_hem_lib_00'],
+   'tt-fix-fix' : ['TT_fix_hem_lib_00_fix_hem_lib_11'],
+   'ttH' : ['ttHTobb'],
+   'ttH-fix' : ['ttHTobb_fix_hem_lib_00'],
+   'ttH-fix-fix' : ['ttHTobb_fix_hem_lib_00_fix_hem_lib_11'],
+#   'ttbb' : ['ttbb'],
+   'ttbb-fix' : ['ttbb_fix_hem_lib_00'],
+   'tttt' : ['TTTT'],
+   'tttt-fix' : ['TTTT_fix_hem_lib_00'],
+   'ZH' : ['ZH_HToBB_ZToQQ'],
+   'ZH-fix' : ['ZH_HToBB_ZToQQ_fix_hem_lib_00'],
+   'ZH-fix-fix' : ['ZH_HToBB_ZToQQ_fix_hem_lib_00_fix_hem_lib_11'],
+   'QCD-fix' : ['QCD_HT200to300-fix-00', 'QCD_HT300to500-fix-00', 'QCD_HT500to700-fix-00', 'QCD_HT700to1000-fix-00', 'QCD_HT1000to1500-fix-00', 'QCD_HT1500to2000-fix-00', 'QCD_HT2000toInf-fix-00'],
+   'QCD-fix-fix' : ['QCD_HT200to300-fix-00-11', 'QCD_HT300to500-fix-00-11', 'QCD_HT500to700-fix-00-11', 'QCD_HT700to1000-fix-00-11', 'QCD_HT1000to1500-fix-00-11', 'QCD_HT1500to2000-fix-00-11', 'QCD_HT2000toInf-fix-00-11'],
+   'QCD' : ['QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700', 'QCD_HT700to1000','QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf'],
+   'bosons-fix-fix'  : [ 'VBFHToBB_fix_hem_lib_00_fix_hem_lib_11', 'GluGluHToBB_fix_hem_lib_00_fix_hem_lib_11'], 
+   'qcd-fix-fix' : [ 'QCD_HT200to300_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT200to300_ext_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT300to500_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT300to500_ext_fix_hem_lib_00_fix_hem_lib_11',
+             'QCD_HT500to700_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT500to700_ext_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT700to1000_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT700to1000_ext_fix_hem_lib_00_fix_hem_lib_11',
+             'QCD_HT1000to1500_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT1000to1500_ext_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT1500to2000_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT1500to2000_ext_fix_hem_lib_00_fix_hem_lib_11',
+             'QCD_HT2000toInf_fix_hem_lib_00_fix_hem_lib_11', 'QCD_HT2000toInf_ext_fix_hem_lib_00_fix_hem_lib_11' ],
+
 
    'st' : ['ST_t-channel_4f_lept'], #reHLT
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['ST_s-channel_4f_lept'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['tt_fix_hem_lib_00'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
+

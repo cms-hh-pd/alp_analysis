@@ -66,8 +66,8 @@ elif args.btag == 'csv':
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'BTagWeight', 'PdfWeight'}
-    weights_nobTag = {'PUWeight','PdfWeight'}
+    weights        = {'PUWeight', 'BTagWeight'} #,'PdfWeight' -- addded later with createH5
+    weights_nobTag = {'PUWeight'}
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -93,7 +93,7 @@ else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
               "genbfromhs_branch_name" : "GenBFromHs",
               "genhs_branch_name" : "GenHs",
-              "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
+              #"tl_genbfromhs_branch_name" : "TL_GenBFromHs",
               "tl_genhs_branch_name" : "TL_GenHs",
             }
 #"muons_branch_name" : "",
@@ -109,7 +109,7 @@ config.update(
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
           "ofile_update" : False,
-#          "evt_weight_name" : "evtWeight",
+          "evt_weight_name" : "evtWeight",
          } )
 
 snames = []
@@ -125,7 +125,7 @@ ns = 0
 for sname in snames:
 
     #get file names in all sub-folders:
-    if args.doMixed: reg_exp = iDir+"/mixed_ntuples/"+sname+".root"
+    if args.doMixed: reg_exp = iDir+"/"+sname+".root" 
     else:       reg_exp = iDir+"/"+samples[sname]["sam_name"]+"/*/output.root" #for alpha_ntuple
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -224,9 +224,9 @@ for sname in snames:
     if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
     if not args.doMixed:
-        selector.addOperator(ThrustFinderOperator(alp.Event)())
-        selector.addOperator(HemisphereProducerOperator(alp.Event)())
-        selector.addOperator(HemisphereWriterOperator(alp.Event)())
+      selector.addOperator(ThrustFinderOperator(alp.Event)())
+      selector.addOperator(HemisphereProducerOperator(alp.Event)())
+      selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     if args.doMixed: treename = "mix_tree"

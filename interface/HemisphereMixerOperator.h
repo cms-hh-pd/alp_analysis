@@ -145,6 +145,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
       var_stds_(nn_vars.size(), 0.0),
       knn_(knn)
       {
+
         funcIVec_ = { FuncI( [] (const alp::Hemisphere & hem, std::string disc, double cut) {
                        int nJets = alp::Hemisphere::NJets(hem);
                        return ( nJets > 3 ? 4 : nJets);
@@ -157,7 +158,23 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
      	FuncDMap funcDMap = {{"thrustMayor", FuncD(&alp::Hemisphere::ThrustMayor)},
                              {"thrustMinor",FuncD(&alp::Hemisphere::ThrustMinor)},
                              {"sumPz", FuncD(&alp::Hemisphere::SumPz)},
-                             {"invMass", FuncD(&alp::Hemisphere::InvMass)}};
+                             {"invMass", FuncD(&alp::Hemisphere::InvMass)},
+                             {"ptMaxBtag", FuncD( [&btagAlgo] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::PtMaxBtag(hem, btagAlgo); })},
+                             {"minPtBtag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::MinPtBtag(hem, btagAlgo, btagCut); })},
+                             {"htBtag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::HtBtag(hem, btagAlgo, btagCut); })},
+                             {"ht", FuncD(&alp::Hemisphere::Ht)},
+                             {"pt1Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt1Btag(hem, btagAlgo, btagCut); })},
+                             {"pt2Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt2Btag(hem, btagAlgo, btagCut); })},
+                             {"pt3Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt3Btag(hem, btagAlgo, btagCut); })},
+                             {"pt4Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt4Btag(hem, btagAlgo, btagCut); })},
+                            };
 
         for (const auto & nn_var : nn_vars) {
           if (funcDMap.count(nn_var) < 1) {
@@ -236,7 +253,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
                        	std::unique_ptr<my_kd_tree_t>(
                           new my_kd_tree_t(int(funcDVec_.size()),
                           kv.second,
-                          nanoflann::KDTreeSingleIndexAdaptorParams(10))));
+                          nanoflann::KDTreeSingleIndexAdaptorParams(1000000)))); //work-around to get linear search - time consuming
         auto it = it_bool.first; // get iterator to inserted element
         it->second->buildIndex();
 			}
@@ -301,6 +318,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
     }
 
     virtual bool output( TFile * tfile) {
+
       return true;
     }
 
