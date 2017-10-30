@@ -19,18 +19,23 @@ from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereMix
 from Analysis.alp_analysis.alpSamples  import samples
 from Analysis.alp_analysis.samplelists import samlists
 from Analysis.alp_analysis.workingpoints import wps
+import itertools as it
 
 TH1F.AddDirectory(0)
 
+all_list = [i for i in it.product(range(1,11),range(1,11))]
+
 comb_dict = {"00" : [[0,0]],
-             "train" : [[1,1],[1,2],[2,1],[2,2]],
+             "train" : [(1,1),(1,2),(2,1),(2,2)],
              "test"  : [[3,4],[5,6],[7,8],[9,10]],
              "appl"  : [[4,3],[6,5],[8,7],[10,9]],
              "extreme"  : [[20,21],[22,23],[24,25],[26,27]],
              "extreme2"  : [[40,45],[50,55],[60,65],[70,75]],
              "11":[[1,1]], "22":[[2,2]], "33":[[3,3]], "44":[[4,4]], "55":[[5,5]], 
              "66":[[6,6]], "77":[[7,7]], "88":[[8,8]], "99":[[9,9]], "1010":[[10,10]],
-             "1616":[[16,16]], "3232":[[32,32]], "6464":[[64,64]], "128128":[[128,128]] }
+             "1616":[[16,16]], "3232":[[32,32]], "6464":[[64,64]], "128128":[[128,128]]}
+
+comb_dict["large"] = list(set(all_list)-set(comb_dict["train"]))
 
 comb_dict_vec = {}
 # ugly vector of vector transformation
