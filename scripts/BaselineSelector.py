@@ -66,8 +66,8 @@ elif args.btag == 'csv':
 weights        = {}
 weights_nobTag = {} 
 if not args.doMixed:
-    weights        = {'PUWeight', 'BTagWeight''PdfWeight'}
-    weights_nobTag = {'PUWeight','PdfWeight'}
+    weights        = {'PUWeight', 'BTagWeight'} #,'PdfWeight' -- addded later
+    weights_nobTag = {'PUWeight'} #,'PdfWeight'
 # ---------------
 
 if not os.path.exists(oDir): os.mkdir(oDir)
@@ -93,7 +93,7 @@ else: config = { "eventInfo_branch_name" : "EventInfo",
               "jets_branch_name": "Jets",
               "genbfromhs_branch_name" : "GenBFromHs",
               "genhs_branch_name" : "GenHs",
-             # "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
+              #"tl_genbfromhs_branch_name" : "TL_GenBFromHs",
               "tl_genhs_branch_name" : "TL_GenHs",
             }
 #"muons_branch_name" : "",
@@ -109,7 +109,7 @@ config.update(
           "lumiFb" : intLumi_fb,
           "isMixed" : args.doMixed,
           "ofile_update" : False,
-#          "evt_weight_name" : "evtWeight",
+          "evt_weight_name" : "evtWeight",
          } )
 
 snames = []
@@ -197,7 +197,7 @@ for sname in snames:
 		    print "WARNING: is Mixed sample - trigger filter applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
-    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 70., 4))
+    selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
     #selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, w_nobTag_v)) #with bTag since jets are sorted
     #selector.addOperator(GenJetPlotterOperator(alp.Event)(btagAlgo))

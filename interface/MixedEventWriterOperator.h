@@ -18,8 +18,10 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
  
     std::string btagAlgo_;
     double btagCut_;
+    std::vector<std::string> weights_;
 
     // variables to save in branches
+    float_t evtWeight = 1.;
     std::vector<alp::Jet> mix_jets_;
     std::vector<alp::Hemisphere> fhems_;
     std::vector<alp::Hemisphere> orhems_;
@@ -34,17 +36,20 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
     TTree tree_{"mix_tree","Tree wth mixed events"};
 
-     MixedEventWriterOperator(std::string btagAlgo, double btagCut, std::vector<std::vector<std::size_t>> combs = {{1,1}}) :
+     MixedEventWriterOperator(std::string btagAlgo, double btagCut, std::vector<std::vector<std::size_t>> combs = {{1,1}}, const std::vector<std::string> & weights = {}) :
       mix_jets_ptr_(&mix_jets_),  
       fhems_ptr_(&fhems_),  
       orhems_ptr_(&orhems_),  
       btagAlgo_(btagAlgo),
       btagCut_(btagCut),
-      combs_(combs) {}
+      combs_(combs),
+      weights_(weights) {}
 
     virtual ~MixedEventWriterOperator() {}
 
     virtual void init(TDirectory * tdir) {
+
+      tree_.Branch("evtWeight", &evtWeight, "evtWeight/F");
 
       tree_.Branch("Jets","std::vector<alp::Jet>",
                    &mix_jets_ptr_, 64000, 1);
@@ -62,6 +67,10 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
       const auto & bm_hems = ev.best_match_hems_;
     //  const auto & dists = ev.hems_dist_;
+
+      evtWeight = 1.;
+      if(weights_.size()>0) evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
+      else evtWeight *= ev.evtWeight_;
 
       for (const auto & comb : combs_) {
  

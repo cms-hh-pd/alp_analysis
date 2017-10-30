@@ -46,6 +46,10 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
     std::vector<float_t> elecs_phi;
     std::vector<float_t> elecs_mass;
 
+    std::vector<float_t> genBfromH_px;
+    std::vector<float_t> genBfromH_py;
+    std::vector<float_t> genBfromH_pz;
+    std::vector<float_t> genBfromH_E;
     std::vector<float_t> genBfromH_pt;
     std::vector<float_t> genBfromH_eta;
     std::vector<float_t> genBfromH_phi;
@@ -122,6 +126,10 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
      }
 
       if (config_.find("genbfromhs_branch_name") != config_.end()) {
+        tree_.Branch("genBfromH_px","std::vector<float>",&genBfromH_px, 64000, 2);
+        tree_.Branch("genBfromH_py","std::vector<float>",&genBfromH_py, 64000, 2);
+        tree_.Branch("genBfromH_pz","std::vector<float>",&genBfromH_pz, 64000, 2);
+        tree_.Branch("genBfromH_E","std::vector<float>",&genBfromH_E, 64000, 2);
         tree_.Branch("genBfromH_pt","std::vector<float>",&genBfromH_pt, 64000, 2);
         tree_.Branch("genBfromH_eta","std::vector<float>",&genBfromH_eta, 64000, 2);
         tree_.Branch("genBfromH_phi","std::vector<float>",&genBfromH_phi, 64000, 2);
@@ -199,6 +207,10 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       elecs_phi.clear();
       elecs_mass.clear();
 
+      genBfromH_px.clear();
+      genBfromH_py.clear();
+      genBfromH_pz.clear();
+      genBfromH_E.clear();
       genBfromH_pt.clear();
       genBfromH_eta.clear();
       genBfromH_phi.clear();
@@ -261,6 +273,10 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       }*/
 
       for (std::size_t i = 0; i < ev.genbfromhs_.size(); i++ ) {
+        genBfromH_px.push_back(ev.genbfromhs_.at(i).p4_.Px());
+        genBfromH_py.push_back(ev.genbfromhs_.at(i).p4_.Py());
+        genBfromH_pz.push_back(ev.genbfromhs_.at(i).p4_.Pz());
+        genBfromH_E.push_back(ev.genbfromhs_.at(i).p4_.energy());
         genBfromH_pt.push_back(ev.genbfromhs_.at(i).pt());
         genBfromH_eta.push_back(ev.genbfromhs_.at(i).eta());
         genBfromH_phi.push_back(ev.genbfromhs_.at(i).phi());

@@ -19,6 +19,7 @@
       std::size_t min_number_;
       std::size_t antitag_pos_;
       bool isdata_;
+      bool fill_btag_cat_;
       bool per_jet_sf_;
 
       // get short disc name
@@ -35,12 +36,13 @@
 
       BTagFilterOperator( std::string disc, double d_value,
                           std::size_t min_number , std::size_t antitag_pos, bool isdata,
-                          std::string data_path, bool per_jet_sf = true ) :
+                          std::string data_path, bool fill_btag_cat = false, bool per_jet_sf = true ) :
        disc_(disc),
        d_value_(d_value),
        min_number_(min_number),
        antitag_pos_(antitag_pos),
        isdata_(isdata),
+       fill_btag_cat_(fill_btag_cat),
        per_jet_sf_(per_jet_sf)
        {
          antd_min_value_ = -99.,
@@ -95,6 +97,15 @@
 
         // order by discriminator
         order_jets_by_disc(ev.jets_, disc_);
+
+        if(fill_btag_cat_) {
+          for (std::size_t i=0; i < ev.jets_.size(); i++) {
+            if(ev.jets_.at(i).disc(disc_) < -0.5884) ev.eventInfo_.nNObtag_++;
+            if(d_value_ > ev.jets_.at(i).disc(disc_) && ev.jets_.at(i).disc(disc_) >= -0.5884) ev.eventInfo_.nLbtag_++;
+            else if(0.9432 > ev.jets_.at(i).disc(disc_) && ev.jets_.at(i).disc(disc_) >= d_value_) ev.eventInfo_.nMbtag_++;
+            else if(ev.jets_.at(i).disc(disc_) >= 0.9432) ev.eventInfo_.nTbtag_++;
+          }       
+        }
 
         // btag check
         for (std::size_t i=0; i < min_number_; i++) {
