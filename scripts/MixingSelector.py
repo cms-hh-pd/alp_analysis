@@ -69,7 +69,8 @@ else: samList = [args.samList]
 intLumi_fb = 35.9
 mixing_comb = comb_dict_vec[args.comb]
 
-ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
+#ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
+ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva_mixed/TT_fix_hem_lib_appl.root"
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -155,7 +156,7 @@ for sname in snames:
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
     selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 11)) #WARNING!! 11 
-    selector.addOperator(MixedEventWriterOperator(alp.Event)(btagAlgo, btag_wp[1], mixing_comb, weights_v))
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb, weights_v))
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
@@ -163,7 +164,7 @@ for sname in snames:
         tchain.Add(File)      
     entr = tchain.GetEntries() 
     nev = numEvents if (numEvents > 0 and numEvents < entr) else entr
-    if args.fix_hem_lib: sname+="_fix_hem_lib"
+    if args.fix_hem_lib: sname+="_fix_hem_lib2"
     sname = sname+"_{}".format(args.comb)
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)

@@ -16,10 +16,6 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
   public:
  
-    std::string btagAlgo_;
-    double btagCut_;
-    std::vector<std::string> weights_;
-
     // variables to save in branches
     float_t evtWeight = 1.;
     std::vector<alp::Jet> mix_jets_;
@@ -33,15 +29,14 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
     // hemisphere combinations to save
     std::vector<std::vector<std::size_t>> combs_; 
+    std::vector<std::string> weights_;
 
     TTree tree_{"mix_tree","Tree wth mixed events"};
 
-     MixedEventWriterOperator(std::string btagAlgo, double btagCut, std::vector<std::vector<std::size_t>> combs = {{1,1}}, const std::vector<std::string> & weights = {}) :
+     MixedEventWriterOperator(std::vector<std::vector<std::size_t>> combs = {{1,1}}, const std::vector<std::string> & weights = {}) :
       mix_jets_ptr_(&mix_jets_),  
       fhems_ptr_(&fhems_),  
       orhems_ptr_(&orhems_),  
-      btagAlgo_(btagAlgo),
-      btagCut_(btagCut),
       combs_(combs),
       weights_(weights) {}
 
