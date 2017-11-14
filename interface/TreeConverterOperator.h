@@ -14,10 +14,10 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
 
   public:
  
-    // variables to save in branches
-    float_t weight = 0.;
     std::vector<std::string> weights_;
 
+    // variables to save in branches
+    float_t evtWeight = 1.;
     std::vector<float_t>   jets_pt;
     std::vector<float_t> jets_eta;
     std::vector<float_t> jets_cmva;
@@ -169,7 +169,7 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         tree_.Branch("met_phi", &met_phi, "met_phi/F");
      }
   //   tree_.Branch("trigger", &trigger, "trigger/F");
-      tree_.Branch("weight", &weight, "weight/F");
+      tree_.Branch("evtWeight", &evtWeight, "evtWeight/F");
 
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
@@ -178,6 +178,11 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
 
 
     virtual bool process( EventClass & ev ) {
+
+    // to fill tree redirect pointers that where read
+      evtWeight = 1.;
+      if(weights_.size()>0) evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
+      else evtWeight *= ev.evtWeight_;
 
       jets_pt.clear();
       jets_eta.clear();
@@ -235,10 +240,6 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       tl_genhh_eta.clear();
       tl_genhh_phi.clear();
       tl_genhh_mass.clear();
-
-      float w = 1.0;
-      w*=ev.eventInfo_.eventWeight(weights_);
-      weight = w;
 
       for (std::size_t i = 0; i < ev.jets_.size(); i++ ) {
         jets_pt.push_back(ev.jets_.at(i).pt());

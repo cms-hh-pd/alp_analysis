@@ -36,7 +36,7 @@ intLumi_fb = 35.9
 
 ## WARNING -- input must be ntuples after four jets selection and pairing
 iDir       = "/lustre/cmswork/hh/alp_moriond_base/"
-ntuplesVer = "def_cmva_withtlb"        
+ntuplesVer = "test"        
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -57,7 +57,7 @@ config = {"eventInfo_branch_name" : "EventInfo",
           #"met_branch_name" : "",
           "genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
-          "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
+         # "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
           "tl_genhs_branch_name" : "TL_GenHs",
          # "tl_genhh_branch_name" : "TL_GenHH",
           "n_gen_events":0,
@@ -81,7 +81,7 @@ for sname in snames:
     isHLT = False
 
     #get file names in all sub-folders:
-    reg_exp = iDir+ntuplesVer+"/"+sname+"*.root"
+    reg_exp = iDir+ntuplesVer+"/"+sname+".root"
     print "reg_exp: {}".format(reg_exp) 
     files = glob(reg_exp)
     print "\n ### processing {}".format(sname)        
@@ -107,7 +107,7 @@ for sname in snames:
     selector.addOperator(TreeConverterOperator(alp.Event)(json_str,weights_v))
 
     #create tChain and process each files
-    tchain = TChain("pair/tree")    
+    tchain = TChain("base/tree")    
     for File in files:                     
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
