@@ -189,11 +189,11 @@ for sname in snames:
     if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("alljets"))
-    selector.addOperator(MCTruthOperator(alp.Event)(0.4, -1, False))
+    selector.addOperator(MCTruthOperator(alp.Event)(0.4, 0, False))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("fourjets"))
-    selector.addOperator(MCTruthOperator(alp.Event)(0.4, 4, False))
+    selector.addOperator(MCTruthOperator(alp.Event)(0.4, 4, True))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
 
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))

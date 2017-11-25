@@ -36,7 +36,7 @@ intLumi_fb = 35.9
 
 ## WARNING -- input must be ntuples after four jets selection and pairing
 iDir       = "/lustre/cmswork/hh/alp_moriond_base/"
-ntuplesVer = "test"        
+ntuplesVer = "tkTDR-nocut"        
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -94,9 +94,9 @@ for sname in snames:
     if "Run" in files[0]: config["isData"] = True 
 
     #read weights from alpSamples 
-    config["xsec_br"]  = samples[sname]["xsec_br"]
-    config["matcheff"] = samples[sname]["matcheff"]
-    config["kfactor"]  = samples[sname]["kfactor"]
+   # config["xsec_br"]  = samples[sname]["xsec_br"]
+   # config["matcheff"] = samples[sname]["matcheff"]
+   # config["kfactor"]  = samples[sname]["kfactor"]
 
     json_str = json.dumps(config)
 

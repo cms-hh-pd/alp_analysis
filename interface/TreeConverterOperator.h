@@ -46,6 +46,11 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
     std::vector<float_t> elecs_phi;
     std::vector<float_t> elecs_mass;
 
+    std::vector<float_t> genJets_pt;
+    std::vector<float_t> genJets_eta;
+    std::vector<float_t> genJets_phi;
+    std::vector<float_t> genJets_mass;
+
     std::vector<float_t> genBfromH_px;
     std::vector<float_t> genBfromH_py;
     std::vector<float_t> genBfromH_pz;
@@ -95,6 +100,11 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         tree_.Branch("jets_mass","std::vector<float>",&jets_mass, 64000, 2);
         tree_.Branch("jets_csv","std::vector<float>",&jets_csv, 64000, 2);
         tree_.Branch("jets_cmva","std::vector<float>",&jets_cmva, 64000, 2);
+
+        tree_.Branch("genJets_pt","std::vector<float>",&genJets_pt, 64000, 2);
+        tree_.Branch("genJets_eta","std::vector<float>",&genJets_eta, 64000, 2);
+        tree_.Branch("genJets_phi","std::vector<float>",&genJets_phi, 64000, 2);
+        tree_.Branch("genJets_mass","std::vector<float>",&genJets_mass, 64000, 2);
       }
       if (config_.find("dijets_branch_name") != config_.end()) {
         tree_.Branch("dijets_pt","std::vector<float>",&dijets_pt, 64000, 2);
@@ -212,6 +222,11 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
       elecs_phi.clear();
       elecs_mass.clear();
 
+      genJets_pt.clear();
+      genJets_eta.clear();
+      genJets_phi.clear();
+      genJets_mass.clear();
+
       genBfromH_px.clear();
       genBfromH_py.clear();
       genBfromH_pz.clear();
@@ -248,6 +263,13 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         jets_mass.push_back(ev.jets_.at(i).mass());
         jets_csv.push_back(ev.jets_.at(i).disc("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
         jets_cmva.push_back(ev.jets_.at(i).disc("pfCombinedMVAV2BJetTags"));
+        
+        if(ev.jets_.at(i).genJets_.size()>0){
+            genJets_pt.push_back(ev.jets_.at(i).genJets_.at(0).Pt());
+            genJets_eta.push_back(ev.jets_.at(i).genJets_.at(0).Eta());
+            genJets_phi.push_back(ev.jets_.at(i).genJets_.at(0).Phi());
+            genJets_mass.push_back(ev.jets_.at(i).genJets_.at(0).M());
+        }
      }
 
       for (std::size_t i = 0; i < ev.dijets_.size(); i++ ) {
@@ -269,8 +291,6 @@ template <class EventClass> class TreeConverterOperator : public BaseOperator<Ev
         elecs_eta.push_back(ev.elecs_.at(i).eta());
         elecs_phi.push_back(ev.elecs_.at(i).phi());
         elecs_mass.push_back(ev.elecs_.at(i).mass());
-        elecs_csv.push_back(ev.elecs_.at(i).csv());
-        elecs_cmva.push_back(ev.elecs_.at(i).cmva());
       }*/
 
       for (std::size_t i = 0; i < ev.genbfromhs_.size(); i++ ) {

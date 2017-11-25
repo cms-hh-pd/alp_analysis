@@ -9,10 +9,12 @@ template <class EventClass> class MCTruthOperator : public BaseOperator<EventCla
 
      std::vector<int> matchId;
      double max_DeltaR_;
+     size_t m_jets_loop_;
      bool HHMatchedOnly_;
 
-     MCTruthOperator(double max_DeltaR = 0.5, bool HHMatchedOnly = false) :
+     MCTruthOperator(double max_DeltaR = 0.5, size_t m_jets_loop = 0, bool HHMatchedOnly = false) :     
       max_DeltaR_(max_DeltaR),
+      m_jets_loop_(m_jets_loop),
       HHMatchedOnly_(HHMatchedOnly) {}
     virtual ~MCTruthOperator() {}
 
@@ -22,7 +24,10 @@ template <class EventClass> class MCTruthOperator : public BaseOperator<EventCla
       matchId.clear();
       int n_matched=0;
       double dR_min=99.;
-      for (std::size_t j=0; j < ev.jets_.size(); j++) {
+      size_t max_jets = ev.jets_.size();
+      if (m_jets_loop_ > 0) max_jets = m_jets_loop_;
+      //std::cout << max_jets << std::endl;
+      for (std::size_t j=0; j < max_jets; j++) {
         matchId.push_back(-1);
         for (std::size_t g=0; g < ev.genbfromhs_.size(); g++) {
           double dR = ROOT::Math::VectorUtil::DeltaR( ev.jets_.at(j).p4_, ev.genbfromhs_.at(g).p4_);
