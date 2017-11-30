@@ -17,14 +17,20 @@ namespace alp {
       double p_phi_ = 0.;
       bool sumPz_inv_ = false;
       bool d_phi_inv_ = false;
+      unsigned int evtnum_ = 0;
+      unsigned int run_ = 0;
+      unsigned int lumiblock_ = 0;
       double dist_ = -99.;
       static constexpr const char* disc_ = "pfCombinedMVAV2BJetTags";; 
       static constexpr float disc_wp_  = 0.4432;
   
       Hemisphere() {}
-      Hemisphere(double p_phi, bool d_phi_inv, double dist = -99. ) : 
+      Hemisphere(double p_phi, bool d_phi_inv, unsigned int evtnum = 0, unsigned int run = 0, unsigned int lumiblock = 0, double dist = -99. ) : 
         p_phi_(p_phi),
         d_phi_inv_(d_phi_inv),
+        evtnum_(evtnum),
+        run_(run),
+        lumiblock_(lumiblock),
         dist_(dist) {}      
     
       static double SumPz(const Hemisphere & hem) {
@@ -161,6 +167,18 @@ namespace alp {
       }
 
       // functions to call on branches
+      unsigned int lumiblock() const {
+        return lumiblock_;
+      }
+
+      unsigned int run() const {
+        return run_;
+      }
+      
+      unsigned int evtnum() const {
+        return evtnum_;
+      }
+
       double dist() const {
         return dist_;
       }  

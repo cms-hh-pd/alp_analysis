@@ -25,8 +25,8 @@ template <class EventClass> class HemisphereProducerOperator : public BaseOperat
       // clear old vector and add two hemispheres
       auto & hems = ev.hems_;
       hems.clear();
-      hems.emplace_back(p_phi, false);
-      hems.emplace_back(p_phi, true);
+      hems.emplace_back(p_phi, false, ev.eventInfo_.getEvent(),ev.eventInfo_.getRun(),ev.eventInfo_.getLumiBlock());
+      hems.emplace_back(p_phi, true, ev.eventInfo_.getEvent(),ev.eventInfo_.getRun(),ev.eventInfo_.getLumiBlock());
 
       // loop over all jets and push to hemispheres
       for (std::size_t i = 0; i < ev.jets_.size(); i++ ) {     

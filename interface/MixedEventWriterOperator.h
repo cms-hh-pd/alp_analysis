@@ -16,6 +16,9 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
 
   public:
  
+    unsigned int nDataReplica_;
+    unsigned int nNoEvtInfo_;
+
     // variables to save in branches
     float_t evtWeight = 1.;
     std::vector<alp::Jet> mix_jets_;
@@ -43,6 +46,9 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
     virtual ~MixedEventWriterOperator() {}
 
     virtual void init(TDirectory * tdir) {
+
+      nDataReplica_ = 0;
+      nNoEvtInfo_ = 0;
 
       tree_.Branch("evtWeight", &evtWeight, "evtWeight/F");
 
@@ -92,6 +98,13 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
         fhems_.emplace_back(hems_i);
         fhems_.emplace_back(hems_j);
 
+        if(fhems_.at(0).evtnum() == 0 || fhems_.at(1).evtnum() == 0 ||
+           fhems_.at(0).run() == 0 || fhems_.at(1).run() == 0 ||
+           fhems_.at(0).lumiblock() == 0 || fhems_.at(1).lumiblock() == 0) nNoEvtInfo_++;
+        else if(fhems_.at(0).evtnum() == fhems_.at(1).evtnum() &&
+                fhems_.at(0).run() == fhems_.at(1).run() &&
+                fhems_.at(0).lumiblock() == fhems_.at(1).lumiblock()) nDataReplica_++;
+
         const auto orhems_i = bm_hems.at(0).at(0);
         const auto orhems_j = bm_hems.at(1).at(0);
         orhems_.emplace_back(orhems_i);
@@ -105,6 +118,9 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
     }
 
     virtual bool output( TFile * tfile) {
+
+      std::cout<< "evts with null hems evt info: " << nNoEvtInfo_ << std::endl;
+      std::cout<< "data evts replica: " << nDataReplica_ << std::endl;
 
       return true;
 

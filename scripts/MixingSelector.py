@@ -59,7 +59,7 @@ parser.add_argument("-o", "--oDir"   , help="output directory (added to iDir)", 
 parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="def_cmva")
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("--comb", help="set of combinations to use", choices=comb_dict.keys() )
-parser.add_argument("--fix_hem_lib", help="use the original lib for all replicas", action="store_true") 
+parser.add_argument("--fix_hem_lib", help="not use the original lib for all replicas", default=True, action="store_false") 
 args = parser.parse_args()
 
 # exe parameters
@@ -69,8 +69,8 @@ else: samList = [args.samList]
 intLumi_fb = 35.9
 mixing_comb = comb_dict_vec[args.comb]
 
-#ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
-ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva_mixed/TT_fix_hem_lib_appl.root"
+ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
+#ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva_mixed/TT_fix_hem_lib_appl.root"
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -145,11 +145,12 @@ for sname in snames:
     #get hem_tree for mixing
     tch_hem = TChain("pair/hem_tree")
     if args.fix_hem_lib:
-        tch_hem.Add(ori_file)
+        tch_hem.Add(ori_file)      
     else: 
+        print('not fixed hems library')
         for f in files: 
-            tch_hem.Add(f)
-    print tch_hem.GetEntries()
+            tch_hem.Add(f)        
+    print "events in lib {}".format(tch_hem.GetEntries())
 
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
@@ -164,7 +165,7 @@ for sname in snames:
         tchain.Add(File)      
     entr = tchain.GetEntries() 
     nev = numEvents if (numEvents > 0 and numEvents < entr) else entr
-    if args.fix_hem_lib: sname+="_fix_hem_lib2"
+    if args.fix_hem_lib: sname+="_fix_hem_lib"
     sname = sname+"_{}".format(args.comb)
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)
