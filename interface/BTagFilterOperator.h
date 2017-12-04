@@ -98,15 +98,6 @@
         // order by discriminator
         order_jets_by_disc(ev.jets_, disc_);
 
-        if(fill_btag_cat_) {
-          for (std::size_t i=0; i < ev.jets_.size(); i++) {
-            if(ev.jets_.at(i).disc(disc_) < -0.5884) ev.eventInfo_.nNObtag_++;
-            if(d_value_ > ev.jets_.at(i).disc(disc_) && ev.jets_.at(i).disc(disc_) >= -0.5884) ev.eventInfo_.nLbtag_++;
-            else if(0.9432 > ev.jets_.at(i).disc(disc_) && ev.jets_.at(i).disc(disc_) >= d_value_) ev.eventInfo_.nMbtag_++;
-            else if(ev.jets_.at(i).disc(disc_) >= 0.9432) ev.eventInfo_.nTbtag_++;
-          }       
-        }
-
         // btag check
         for (std::size_t i=0; i < min_number_; i++) {
             if (i != antitag_pos_) {
@@ -147,18 +138,29 @@
             weight_map.at("BTagWeight") *= central_sf;            
             if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight",central_sf);
 
-            for (const auto & syst : syst_map.at(jet_flavour)) {
-              auto syst_sf = cr_map.at(syst)
-                                   .eval(jet_flavour, jet_eta,
-                                         jet_pt, jet_disc);
+            for (const auto & flav_syst_pair : syst_map) {
+              if (flav_syst_pair.first == jet_flavour) {
+                // get systematic variation if the syst applies to flavour
+                for (const auto & syst : flav_syst_pair.second) {
+                  auto syst_sf = cr_map.at(syst)
+                                       .eval(jet_flavour, jet_eta,
+                                             jet_pt, jet_disc);
 
-              // range checks to avoid sf = 0
-              if (std::abs(jet_eta) > 2.4) syst_sf = 1.0;
-              if (jet_pt < 20) syst_sf = 1.0;
-              if (jet_pt > 1000) syst_sf = 1.0;
+                  // range checks to avoid sf = 0
+                  if (std::abs(jet_eta) > 2.4) syst_sf = 1.0;
+                  if (jet_pt < 20) syst_sf = 1.0;
+                  if (jet_pt > 1000) syst_sf = 1.0;
 
-              weight_map.at("BTagWeight_"+syst) *= syst_sf;
-              if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,central_sf);
+                  weight_map.at("BTagWeight_"+syst) *= syst_sf;
+                  if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,syst_sf);
+                }
+              } else {
+                // use nominal weight if the syst applies does not apply to flavour
+                for (const auto & syst : flav_syst_pair.second) {
+                  weight_map.at("BTagWeight_"+syst) *= central_sf;
+                  if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,central_sf);
+                }
+              }
             }
           }
         }
