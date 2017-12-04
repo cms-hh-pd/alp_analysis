@@ -98,15 +98,6 @@
         // order by discriminator
         order_jets_by_disc(ev.jets_, disc_);
 
-//        if(fill_btag_cat_) {
-//          for (std::size_t i=0; i < ev.jets_.size(); i++) {
-//            if(ev.jets_.at(i).disc(disc_) < -0.5884) ev.eventInfo_.nNObtag_++;
-//            if(d_value_ > ev.jets_.at(i).disc(disc_) && ev.jets_.at(i).disc(disc_) >= -0.5884) ev.eventInfo_.nLbtag_++;
-//            else if(0.9432 > ev.jets_.at(i).disc(disc_) && ev.jets_.at(i).disc(disc_) >= d_value_) ev.eventInfo_.nMbtag_++;
-//            else if(ev.jets_.at(i).disc(disc_) >= 0.9432) ev.eventInfo_.nTbtag_++;
-//          }       
-//        }
-
         // btag check
         for (std::size_t i=0; i < min_number_; i++) {
             if (i != antitag_pos_) {
