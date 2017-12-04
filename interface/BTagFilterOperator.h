@@ -27,7 +27,9 @@
       // get flavour from hadronFlavour
       std::map < int , BTagEntry::JetFlavor > flavour_map; 
       // systematics to take into account per flavour
-      std::map< BTagEntry::JetFlavor, std::vector<std::string>> syst_map; 
+      std::map< BTagEntry::JetFlavor, std::set<std::string>> syst_map; 
+      // set with union of all flav dependent systematics
+      std::set<std::string> all_syst_set = {};
       // Load BTagSF
       BTagCalibration btcalib;
       // BTagSF options
@@ -64,6 +66,12 @@
                                             "up_hf","down_hf",
                                             "up_lfstats1", "down_lfstats1",
                                             "up_lfstats2", "down_lfstats2"}}};
+
+         for (const auto & flav_syst_pair : syst_map) {
+           const auto & syst_flav_set = flav_syst_pair.second;
+           all_syst_set.insert(syst_flav_set.begin(), syst_flav_set.end());
+         }
+
 
          btcalib = BTagCalibration(s_name_map.at(disc), data_path+s_name_map.at(disc)+"_Moriond17_B_H.csv"); //_ichep.csv
 
@@ -138,29 +146,29 @@
             weight_map.at("BTagWeight") *= central_sf;            
             if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight",central_sf);
 
-            for (const auto & flav_syst_pair : syst_map) {
-              if (flav_syst_pair.first == jet_flavour) {
-                // get systematic variation if the syst applies to flavour
-                for (const auto & syst : flav_syst_pair.second) {
-                  auto syst_sf = cr_map.at(syst)
-                                       .eval(jet_flavour, jet_eta,
-                                             jet_pt, jet_disc);
+            const auto & flav_syst_set = syst_map.at(jet_flavour);
+            // get systematic variation if the syst applies to flavour
+            for (const auto & syst : flav_syst_set) {
+              auto syst_sf = cr_map.at(syst)
+                                   .eval(jet_flavour, jet_eta,
+                                         jet_pt, jet_disc);
 
-                  // range checks to avoid sf = 0
-                  if (std::abs(jet_eta) > 2.4) syst_sf = 1.0;
-                  if (jet_pt < 20) syst_sf = 1.0;
-                  if (jet_pt > 1000) syst_sf = 1.0;
+              // range checks to avoid sf = 0
+              if (std::abs(jet_eta) > 2.4) syst_sf = 1.0;
+              if (jet_pt < 20) syst_sf = 1.0;
+              if (jet_pt > 1000) syst_sf = 1.0;
 
-                  weight_map.at("BTagWeight_"+syst) *= syst_sf;
-                  if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,syst_sf);
-                }
-              } else {
-                // use nominal weight if the syst applies does not apply to flavour
-                for (const auto & syst : flav_syst_pair.second) {
-                  weight_map.at("BTagWeight_"+syst) *= central_sf;
-                  if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,central_sf);
-                }
-              }
+              weight_map.at("BTagWeight_"+syst) *= syst_sf;
+              if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,syst_sf);
+            }
+            std::set<std::string> other_syst_set;
+            std::set_difference(all_syst_set.begin(), all_syst_set.end(), 
+                                flav_syst_set.begin(), flav_syst_set.end(), 
+                                std::inserter(other_syst_set, other_syst_set.begin()));
+            // use nominal weight if the syst applies does not apply to flavour
+            for (const auto & syst : other_syst_set) {
+              weight_map.at("BTagWeight_"+syst) *= central_sf;
+              if (per_jet_sf_) jet.discs_.emplace_back("BTagWeight_"+syst,central_sf);
             }
           }
         }
