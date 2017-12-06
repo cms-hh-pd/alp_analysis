@@ -69,7 +69,6 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
     virtual bool process( EventClass & ev ) {
 
       const auto & bm_hems = ev.best_match_hems_;
-      const auto & dists = ev.hems_dist_;
 
       evtWeight = 1.;
       if(weights_.size()>0) evtWeight *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
@@ -93,10 +92,6 @@ template <class EventClass> class MixedEventWriterOperator : public BaseOperator
      
         auto hems_i = bm_hems.at(0).at(h_i);
         auto hems_j = bm_hems.at(1).at(h_j);
-        const auto dist_i = dists.at(0).at(h_i);
-        const auto dist_j = dists.at(1).at(h_j);
-        hems_i.dist_ = dist_i;
-        hems_j.dist_ = dist_j;
         fhems_.emplace_back(hems_i);
         fhems_.emplace_back(hems_j);
 

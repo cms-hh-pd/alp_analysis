@@ -155,7 +155,7 @@ samlists = {
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['tt_fix_hem_lib_00'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['HHTo4B_SM_appl'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
 

@@ -191,7 +191,7 @@ for sname in snames:
         	selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
         	selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
         else: 
-	        print "WARNING: is Mixed sample - trigger filter applied already"
+	        print "WARNING: is Mixed sample - trigger filter skipped since applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
@@ -215,7 +215,7 @@ for sname in snames:
                 selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
                 selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
         else:
-                print "WARNING: is Mixed sample - trigger filter applied already"
+                print "WARNING: is Mixed sample - trigger filter skipped since applied already"
 
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(JetPairingOperator(alp.Event)(4))

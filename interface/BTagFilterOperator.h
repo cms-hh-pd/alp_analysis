@@ -105,7 +105,7 @@
 
         // btag check
         for (std::size_t i=0; i < min_number_; i++) {
-            if(ev.jets_.at(i).disc(disc_) >= d_minvalue_ || ev.jets_.at(i).disc(disc_) < d_maxvalue_) return false;
+            if(ev.jets_.at(i).disc(disc_) < d_minvalue_ || ev.jets_.at(i).disc(disc_) > d_maxvalue_) return false;
         }
 
         // weight_map to save event weights BTagSF on

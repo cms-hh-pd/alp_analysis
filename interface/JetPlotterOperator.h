@@ -123,8 +123,9 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
 
     virtual bool process( EventClass & ev ) {
 
-      float w = 1.0;
-      if(weights_.size()>0) w*=ev.eventInfo_.eventWeight(weights_);
+      float w = 1.;
+      if(weights_.size()>0) w *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
+      else w *= ev.evtWeight_;
 
       // get pt sorting
       std::string d_ = "pt";
