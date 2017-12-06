@@ -66,7 +66,7 @@ config = {"jets_branch_name": "Jets",
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : False,
-          "ofile_update" : False,
+          "ofile_update" : True,
           "evt_weight_name" : "evtWeight",
          }
 

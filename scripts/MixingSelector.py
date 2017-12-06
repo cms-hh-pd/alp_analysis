@@ -58,7 +58,7 @@ parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)")
 parser.add_argument("-o", "--oDir"   , help="output directory (added to iDir)", default="mixed_ntuples")
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("--comb", help="set of combinations to use", choices=comb_dict.keys() )
-parser.add_argument("--fix_hem_lib", help="not use the original lib for all replicas", default=True, action="store_false") 
+parser.add_argument("--no_fix_hem_lib", help="not use the original lib for all replicas", default=False, action="store_true") 
 parser.add_argument("-a", "--doAntitag", help="to select antitag CR", default=False, action='store_true')
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 args = parser.parse_args()
@@ -138,12 +138,12 @@ for sname in snames:
 
     #get hem_tree for mixing
     tch_hem = TChain("pair/hem_tree")
-    if args.fix_hem_lib:
-        tch_hem.Add(ori_file)      
-    else: 
+    if args.no_fix_hem_lib:
         print('not fixed hems library')
         for f in files: 
             tch_hem.Add(f)        
+    else: 
+        tch_hem.Add(ori_file)      
     print "events in lib {}".format(tch_hem.GetEntries())
 
     #define selectors list
@@ -162,7 +162,7 @@ for sname in snames:
         tchain.Add(File)      
     entr = tchain.GetEntries() 
     nev = numEvents if (numEvents > 0 and numEvents < entr) else entr
-    if args.fix_hem_lib: sname+="_fix_hem_lib"
+    if not args.no_fix_hem_lib: sname+="_fix_hem_lib"
     sname = sname+"_{}".format(args.comb)
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)

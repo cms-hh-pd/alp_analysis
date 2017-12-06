@@ -55,12 +55,6 @@ elif args.jetCorr == 2: oDir += "_JERup"
 elif args.jetCorr == 3: oDir += "_JERdown"
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-if args.btag == 'cmva':  
-    btagAlgo = "pfCombinedMVAV2BJetTags"
-    btag_wp = wps['CMVAv2_moriond']
-elif args.btag == 'csv': 
-    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-    btag_wp = wps['CSVv2_moriond']
 
 #weights to be applied 
 weights        = {}
@@ -87,14 +81,11 @@ for w in weights_nobTag: w_nobTag_v.push_back(w)
 # to parse variables to the anlyzer
 if args.doMixed: config = { "jets_branch_name": "Jets", }
 else: config = { "eventInfo_branch_name" : "EventInfo",
-            #  "jets_branch_name": "Jets",
-             # "genbfromhs_branch_name" : "GenBFromHs",
-            #  "genhs_branch_name" : "GenHs",
+              #  "jets_branch_name": "Jets",
+               # "genbfromhs_branch_name" : "GenBFromHs",
+              #  "genhs_branch_name" : "GenHs",
               "tl_genhs_branch_name" : "TL_GenHs",
             }
-#"muons_branch_name" : "",
-#"electrons_branch_name" : "",
-#"met_branch_name" : "",
 config.update(        
         { "n_gen_events":0,
           "xsec_br" : 0,
@@ -171,35 +162,6 @@ for sname in snames:
     else:
         print "- default JEC-JER applied -"
 
-
-    #selector.addOperator(FolderOperator(alp.Event)("base"))
-  #  selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
-    #selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-
-   #selector.addOperator(FolderOperator(alp.Event)("acc"))
- #   selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
-   #selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], w_nobTag_v))
-    # selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
-
-   #selector.addOperator(FolderOperator(alp.Event)("btag"))
-#    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 4, 3, config["isData"], data_path)) #99  3
-   #selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-    # selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-
-    #trigger
-    #if args.doTrigger:
-     #   if not args.doMixed:
-      #          selector.addOperator(FolderOperator(alp.Event)("trigger"))
-       #         selector.addOperator(TriggerOperator(alp.Event)(trg_names_v))
-        #        selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-        #else:
-         #       print "WARNING: is Mixed sample - trigger filter applied already"
-
-  #  selector.addOperator(FolderOperator(alp.Event)("pair"))
-  #  selector.addOperator(JetPairingOperator(alp.Event)(4))
- #   selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
- #   if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
- #   if args.savePlots: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
  
     #create tChain and process each files

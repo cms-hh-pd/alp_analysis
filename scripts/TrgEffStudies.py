@@ -156,8 +156,6 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4)) 
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
-#    selector.addOperator(JetPlotterOperator(alp.Event)("pt",w_nobTag_v))
-#    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
     selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 99., args.nbtag, config["isData"], data_path))
