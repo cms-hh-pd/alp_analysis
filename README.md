@@ -1,12 +1,12 @@
 #alp_analysis
 
-## FUNDAMENTAL IDEA
-...
+Repo to create skimmed ntuples from the output of ALPHA framework.
+Main features: trigger, kinematics, btagging selection; weights computation/handling; plot creation; higher level variables creation.
 
 ## CODE STRUCTURE
-...alp_analysis inherits classes from ALPHA framework.
-The latter has to be installed before.
-Everything inside a CMSSW environment. ...
+alp_analysis inherits classes from ALPHA framework.
+The latter has to be installed before, together with a CMSSW release.
+Execution from python scripts which call operators defined in interface folder.
 
 ## TO DEBUG:
 Look at issue on GitHub and use this chat for discuss about the code:
@@ -14,7 +14,7 @@ Look at issue on GitHub and use this chat for discuss about the code:
 
 ## TO INSTALL:
 - Prerequisites
-git account and git environment set
+git account, git environment set, CERN account.
 
 - Git instructions
     0. In your working area, first set up the CMSSW release:
@@ -61,3 +61,12 @@ If you do not have ALPHA compiled do:
 cd Analysis/alp_analysis/src/
 root -l
 > .L ../src/alp_objects.h++
+
+## SCRIPT DESCRIPTION:
+
+- BaselineSelector:
+to apply object/event selection. it has option to get antitag CR and to run over mixed events.
+python scripts/BaselineSelector.py -s signals -o def_cmva -i v2_20170606 (-a -m)
+
+- ComposableSelector:
+bare example of how to use operators.

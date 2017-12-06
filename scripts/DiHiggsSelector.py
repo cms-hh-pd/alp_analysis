@@ -11,9 +11,8 @@ from glob import glob
 import ROOT
 from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
-from ROOT import alp, ComposableSelector, CounterOperator, TriggerOperator, JetFilterOperator, BTagFilterOperator, JetPairingOperator, DiJetPlotterOperator
-from ROOT import BaseOperator, EventWriterOperator, IsoMuFilterOperator, MetFilterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator
-from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator, DiHiggsFilterOperator
+from ROOT import alp, ComposableSelector, CounterOperator, JetPairingOperator, DiJetPlotterOperator
+from ROOT import BaseOperator, EventWriterOperator, JetPlotterOperator, FolderOperator, MiscellPlotterOperator, DiHiggsFilterOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples

@@ -14,10 +14,9 @@
     public:
 
       std::string disc_;
-      double d_value_;
-      double antd_min_value_;
+      double d_minvalue_;
+      double d_maxvalue_;
       std::size_t min_number_;
-      std::size_t antitag_pos_;
       bool isdata_;
       bool fill_btag_cat_;
       bool per_jet_sf_;
@@ -36,19 +35,17 @@
       std::map<std::string, BTagCalibrationReader> cr_map;
       std::string sf_mode = "iterativefit";
 
-      BTagFilterOperator( std::string disc, double d_value,
-                          std::size_t min_number , std::size_t antitag_pos, bool isdata,
+      BTagFilterOperator( std::string disc, double d_minvalue,
+                          double d_maxvalue, std::size_t min_number, bool isdata,
                           std::string data_path, bool fill_btag_cat = false, bool per_jet_sf = true ) :
        disc_(disc),
-       d_value_(d_value),
+       d_minvalue_(d_minvalue),
+       d_maxvalue_(d_maxvalue),
        min_number_(min_number),
-       antitag_pos_(antitag_pos),
        isdata_(isdata),
        fill_btag_cat_(fill_btag_cat),
        per_jet_sf_(per_jet_sf)
        {
-         antd_min_value_ = -99.,
-
          s_name_map = {{"pfCombinedInclusiveSecondaryVertexV2BJetTags", "CSVv2"},
                        {"pfCombinedMVAV2BJetTags", "cMVAv2"}};
        
@@ -108,11 +105,8 @@
 
         // btag check
         for (std::size_t i=0; i < min_number_; i++) {
-            if (i != antitag_pos_) {
-                if(ev.jets_.at(i).disc(disc_) < d_value_) return false; }
-            else {
-                if(ev.jets_.at(i).disc(disc_) <= antd_min_value_ || ev.jets_.at(i).disc(disc_) >= d_value_) return false;  }
-        }       
+            if(ev.jets_.at(i).disc(disc_) >= d_minvalue_ || ev.jets_.at(i).disc(disc_) < d_maxvalue_) return false;
+        }
 
         // weight_map to save event weights BTagSF on
         std::map<std::string, float> weight_map;
@@ -182,8 +176,7 @@
       }
 
       virtual std::string get_name() {
-        auto name = std::string{"sort_jets_in"+disc_};
-        name += "and_min_"+std::to_string(min_number_)+">" + std::to_string(d_value_);  
+        auto name = std::string{"sortandcut_jets_in"+disc_};
         return name;
       } 
 };

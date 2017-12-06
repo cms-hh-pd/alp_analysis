@@ -160,7 +160,7 @@ for sname in snames:
 #    selector.addOperator(MiscellPlotterOperator(alp.Event)(w_nobTag_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], args.nbtag, 99, config["isData"], data_path))
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 99., args.nbtag, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("isomu"))
