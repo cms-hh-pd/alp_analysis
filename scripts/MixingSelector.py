@@ -154,7 +154,7 @@ for sname in snames:
       selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[0], btag_wp[1], nn_vars_v, 11)) #WARNING!! 
     else:
       selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], 99., nn_vars_v, 11)) #WARNING!! 
-    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb, 1))
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb, 0))
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
