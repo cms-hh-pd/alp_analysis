@@ -175,7 +175,6 @@ for sname in snames:
 
 
     selector.addOperator(FolderOperator(alp.Event)("base"))
-    #selector.addOperator(WeightSumOperator(alp.Event)(w_nobTag_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
 
     #trigger
@@ -190,18 +189,12 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("acc"))
     selector.addOperator(JetFilterOperator(alp.Event)(2.4, 30., 4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],w_nobTag_v))
-    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v)) #with bTag since jets are sorted
+    if args.savePlots: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))
 
     selector.addOperator(FolderOperator(alp.Event)("btag"))
-    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 2, 99, config["isData"], data_path))
+    selector.addOperator(BTagFilterOperator(alp.Event)(btagAlgo, btag_wp[1], 99., 2, config["isData"], data_path))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"],weights_v))
     selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-
-    #selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
-    #if not args.doMixed:
-     #   selector.addOperator(ThrustFinderOperator(alp.Event)())
-      #  selector.addOperator(HemisphereProducerOperator(alp.Event)())
-       # selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     selector.addOperator(FolderOperator(alp.Event)(""))
     selector.addOperator(TreeConverterOperator(alp.Event)(json_str,weights_v))

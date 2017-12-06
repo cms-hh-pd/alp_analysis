@@ -53,13 +53,14 @@ for k,v in comb_dict.items():
 # parsing parameters
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list"     , default="")
+parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)")
 parser.add_argument("-o", "--oDir"   , help="output directory (added to iDir)", default="mixed_ntuples")
-parser.add_argument("-i", "--iDir"   , help="input directory (added to iDir)", default="def_cmva")
 parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("--comb", help="set of combinations to use", choices=comb_dict.keys() )
-parser.add_argument("--fix_hem_lib", help="not use the original lib for all replicas", default=True, action="store_false") 
+parser.add_argument("--no_fix_hem_lib", help="not use the original lib for all replicas", default=False, action="store_true") 
+parser.add_argument("-a", "--doAntitag", help="to select antitag CR", default=False, action='store_true')
+parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 args = parser.parse_args()
 
 # exe parameters
@@ -69,8 +70,11 @@ else: samList = [args.samList]
 intLumi_fb = 35.9
 mixing_comb = comb_dict_vec[args.comb]
 
-ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
-#ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva_mixed/TT_fix_hem_lib_appl.root"
+if args.doAntitag:
+    ori_file = "/lustre/cmswork/hh/alp_moriond_base/btagside/BTagCSVRun2016.root"
+else:
+    ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
+
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -86,18 +90,13 @@ elif args.btag == 'csv':
     btag_wp = wps['CSVv2_moriond']
 
 # variables to check nearest-neightbour
-nn_vars = ["thrustMayor","thrustMinor","invMass","sumPz"] #,"ht","pt1Btag","pt2Btag","pt3Btag","pt4Btag",
+nn_vars = ["thrustMayor","thrustMinor","invMass","sumPz"]
 nn_vars_v = vector("string")()
 for v in nn_vars: nn_vars_v.push_back(v)
 
 # to parse variables to the anlyzer
-config = {#"eventInfo_branch_name" : "EventInfo",
-          "jets_branch_name": "Jets",
+config = {"jets_branch_name": "Jets",
           "dijets_branch_name": "DiJets",
-          #"dihiggs_branch_name": "DiHiggs",
-          #"muons_branch_name" : "",
-          #"electrons_branch_name" : "",
-          #"met_branch_name" : "",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -116,11 +115,6 @@ for s in samList:
         snames.append(s)
     else: 
         snames.extend(samlists[s])
-
-#weights to be applied -- if null, evt_weight_name is used
-weights        = {}
-weights_v = vector("string")()
-for w in weights: weights_v.push_back(w)
 
 # process samples
 ns = 0
@@ -144,20 +138,23 @@ for sname in snames:
 
     #get hem_tree for mixing
     tch_hem = TChain("pair/hem_tree")
-    if args.fix_hem_lib:
-        tch_hem.Add(ori_file)      
-    else: 
+    if args.no_fix_hem_lib:
         print('not fixed hems library')
         for f in files: 
             tch_hem.Add(f)        
+    else: 
+        tch_hem.Add(ori_file)      
     print "events in lib {}".format(tch_hem.GetEntries())
 
     #define selectors list
     selector = ComposableSelector(alp.Event)(0, json_str)
     selector.addOperator(ThrustFinderOperator(alp.Event)())
     selector.addOperator(HemisphereProducerOperator(alp.Event)())
-    selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], nn_vars_v, 11)) #WARNING!! 11 
-    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb, weights_v))
+    if args.doAntitag:
+      selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[0], btag_wp[1], nn_vars_v, 11)) #WARNING!! 
+    else:
+      selector.addOperator(HemisphereMixerOperator(alp.Event)(tch_hem, btagAlgo, btag_wp[1], 99., nn_vars_v, 11)) #WARNING!! 
+    selector.addOperator(MixedEventWriterOperator(alp.Event)(mixing_comb, 0))
 
     #create tChain and process each files   
     tchain = TChain("pair/tree")    
@@ -165,7 +162,7 @@ for sname in snames:
         tchain.Add(File)      
     entr = tchain.GetEntries() 
     nev = numEvents if (numEvents > 0 and numEvents < entr) else entr
-    if args.fix_hem_lib: sname+="_fix_hem_lib"
+    if not args.no_fix_hem_lib: sname+="_fix_hem_lib"
     sname = sname+"_{}".format(args.comb)
     procOpt = "ofile=./"+sname+".root" if not oDir else "ofile="+oDir+"/"+sname+".root"
     print "max numEv {}".format(nev)

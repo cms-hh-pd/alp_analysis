@@ -104,8 +104,8 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
 
   public:
 
-    typedef std::function<int(const alp::Hemisphere &, std::string , double )> FuncI;
-    typedef std::vector<std::function<int(const alp::Hemisphere &, std::string , double)>> FuncIVec;
+    typedef std::function<int(const alp::Hemisphere &, std::string , double , double )> FuncI;
+    typedef std::vector<std::function<int(const alp::Hemisphere &, std::string , double , double )>> FuncIVec;
     typedef std::function<double(const alp::Hemisphere &)> FuncD;
     typedef std::vector<std::function<double(const alp::Hemisphere &)>> FuncDVec;
     typedef std::vector<alp::Hemisphere> HemVec;
@@ -117,7 +117,8 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
       HemisphereLibrary > my_kd_tree_t;
 
     std::string btagAlgo_;
-    double btagCut_;
+    double btagMinCut_;
+    double btagMaxCut_;
     // map of vectors of hemipsheres (key is integer category) 
     std::map<IntVec, HemVec> hem_m_; 
     std::map<IntVec, HemisphereLibrary> hem_lib_; 
@@ -134,24 +135,25 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
     std::size_t knn_;
 
     HemisphereMixerOperator( TChain * tc_hm,
-      std::string btagAlgo, double btagCut,
+      std::string btagAlgo, double btagMinCut, double btagMaxCut,
       std::vector<std::string> nn_vars = { "thrustMayor","thrustMinor",
                                            "sumPz","invMass"},  
       std::size_t knn = 10,
       Scaling scaling = Scaling::set) :
       btagAlgo_(btagAlgo),
-      btagCut_(btagCut),
+      btagMinCut_(btagMinCut),
+      btagMaxCut_(btagMaxCut),
       scaling_(scaling),
       var_stds_(nn_vars.size(), 0.0),
       knn_(knn)
       {
 
-        funcIVec_ = { FuncI( [] (const alp::Hemisphere & hem, std::string disc, double cut) {
+        funcIVec_ = { FuncI( [] (const alp::Hemisphere & hem, std::string disc, double mincut, double maxcut) {
                        int nJets = alp::Hemisphere::NJets(hem);
                        return ( nJets > 3 ? 4 : nJets);
                   }),
-                    FuncI( [] (const alp::Hemisphere & hem, std::string disc, double cut) {
-                       int nTags = alp::Hemisphere::NTags(hem, disc, cut);
+                      FuncI( [] (const alp::Hemisphere & hem, std::string disc, double mincut, double maxcut) {
+                       int nTags = alp::Hemisphere::NTags(hem, disc, mincut, maxcut);
                        return ( nTags > 3 ? 4 : nTags);
                   })};
         
@@ -161,19 +163,19 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
                              {"invMass", FuncD(&alp::Hemisphere::InvMass)},
                              {"ptMaxBtag", FuncD( [&btagAlgo] (const alp::Hemisphere & hem){
                                 return alp::Hemisphere::PtMaxBtag(hem, btagAlgo); })},
-                             {"minPtBtag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
-                                return alp::Hemisphere::MinPtBtag(hem, btagAlgo, btagCut); })},
-                             {"htBtag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
-                                return alp::Hemisphere::HtBtag(hem, btagAlgo, btagCut); })},
+                             {"minPtBtag", FuncD( [&btagAlgo, &btagMinCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::MinPtBtag(hem, btagAlgo, btagMinCut); })},
+                             {"htBtag", FuncD( [&btagAlgo, &btagMinCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::HtBtag(hem, btagAlgo, btagMinCut); })},
                              {"ht", FuncD(&alp::Hemisphere::Ht)},
-                             {"pt1Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
-                                return alp::Hemisphere::Pt1Btag(hem, btagAlgo, btagCut); })},
-                             {"pt2Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
-                                return alp::Hemisphere::Pt2Btag(hem, btagAlgo, btagCut); })},
-                             {"pt3Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
-                                return alp::Hemisphere::Pt3Btag(hem, btagAlgo, btagCut); })},
-                             {"pt4Btag", FuncD( [&btagAlgo, &btagCut] (const alp::Hemisphere & hem){
-                                return alp::Hemisphere::Pt4Btag(hem, btagAlgo, btagCut); })},
+                             {"pt1Btag", FuncD( [&btagAlgo, &btagMinCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt1Btag(hem, btagAlgo, btagMinCut); })},
+                             {"pt2Btag", FuncD( [&btagAlgo, &btagMinCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt2Btag(hem, btagAlgo, btagMinCut); })},
+                             {"pt3Btag", FuncD( [&btagAlgo, &btagMinCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt3Btag(hem, btagAlgo, btagMinCut); })},
+                             {"pt4Btag", FuncD( [&btagAlgo, &btagMinCut] (const alp::Hemisphere & hem){
+                                return alp::Hemisphere::Pt4Btag(hem, btagAlgo, btagMinCut); })},
                             };
 
         for (const auto & nn_var : nn_vars) {
@@ -198,7 +200,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
             hem_reader.SetEntry(chainEntry);
             for (const auto & hem : *hems) {
               IntVec cat;
-              for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem, btagAlgo_, btagCut_));
+              for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem, btagAlgo_, btagMinCut_, btagMaxCut_));
               if (hem_m_.count(cat) < 1) hem_m_[cat] = {};
               hem_m_.at(cat).emplace_back(hem);
             }
@@ -208,7 +210,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
           while (hem_reader.Next()) {
             for (const auto & hem : *hems) {
               IntVec cat;
-              for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem, btagAlgo_, btagCut_));
+              for (const auto & funcI : funcIVec_) cat.emplace_back(funcI(hem, btagAlgo_, btagMinCut_, btagMaxCut_));
               if (hem_m_.count(cat) < 1) hem_m_[cat] = {};
               hem_m_.at(cat).emplace_back(hem);
             }
@@ -274,7 +276,7 @@ template <class EventClass> class HemisphereMixerOperator : public BaseOperator<
 
         // get integer category
         std::vector<int> h_cat;  
-        for (const auto & funcI : funcIVec_) h_cat.emplace_back(funcI(h, btagAlgo_, btagCut_));
+        for (const auto & funcI : funcIVec_) h_cat.emplace_back(funcI(h, btagAlgo_, btagMinCut_, btagMaxCut_));
         if (index_m_.count(h_cat) < 1) { 
           std::cout << "No index for category: " << h_cat << std::endl;
           return false; // remove event

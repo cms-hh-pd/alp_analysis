@@ -36,7 +36,7 @@ intLumi_fb = 35.9
 
 ## WARNING -- input must be ntuples after four jets selection and pairing
 iDir       = "/lustre/cmswork/hh/alp_moriond_base/"
-ntuplesVer = "tkTDR-nocut"        
+ntuplesVer = "def_cmva"        
 oDir = args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
@@ -50,16 +50,11 @@ weights_v = vector("string")()
 # to parse variables to the anlyzer
 config = {"eventInfo_branch_name" : "EventInfo",
           "jets_branch_name": "Jets",
-         # "dijets_branch_name": "DiJets",
-          #"dihiggs_branch_name": "DiHiggs",
-          #"muons_branch_name" : "",
-          #"electrons_branch_name" : "",
-          #"met_branch_name" : "",
+          "dijets_branch_name": "DiJets",
+          "dihiggs_branch_name": "DiHiggs",
           "genbfromhs_branch_name" : "GenBFromHs",
           "genhs_branch_name" : "GenHs",
-         # "tl_genbfromhs_branch_name" : "TL_GenBFromHs",
           "tl_genhs_branch_name" : "TL_GenHs",
-         # "tl_genhh_branch_name" : "TL_GenHH",
           "n_gen_events":0,
           "xsec_br" : 0,
           "matcheff": 0,
@@ -93,11 +88,6 @@ for sname in snames:
 
     if "Run" in files[0]: config["isData"] = True 
 
-    #read weights from alpSamples 
-   # config["xsec_br"]  = samples[sname]["xsec_br"]
-   # config["matcheff"] = samples[sname]["matcheff"]
-   # config["kfactor"]  = samples[sname]["kfactor"]
-
     json_str = json.dumps(config)
 
     #define selectors list
@@ -107,7 +97,7 @@ for sname in snames:
     selector.addOperator(TreeConverterOperator(alp.Event)(json_str,weights_v))
 
     #create tChain and process each files
-    tchain = TChain("base/tree")    
+    tchain = TChain("pair/tree")    
     for File in files:                     
         tchain.Add(File)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
