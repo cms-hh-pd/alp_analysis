@@ -220,8 +220,8 @@ for sname in snames:
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(JetPairingOperator(alp.Event)(4))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
-    if args.doFast == 0: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-    if args.doFast == 0: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
+    if args.doFast == -1 or args.doFast == 0: selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
+    if args.doFast == -1 or args.doFast == 0: selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str, weights_v))
     if not args.doMixed:
       selector.addOperator(ThrustFinderOperator(alp.Event)())
