@@ -26,8 +26,8 @@ TH1F.AddDirectory(0)
 # parsing parameters
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--iDir", help="input directory") 
-parser.add_argument("-o", "--oDir", help="output directory")
+parser.add_argument("-i", "--iDir", help="input directory", required=True) 
+parser.add_argument("-o", "--oDir", help="output directory", required=True)
 parser.add_argument("-s", "--samList", help="sample list", default="")
 parser.add_argument("-t", "--doTrigger", help="apply trigger [1=as first, 2=as last]", type=int, default='1')
 parser.add_argument("--jetCorr", help="apply [0=jesUp, 1=jesDown, 2=jerUp, 3=jerDown]", type=int, default='-1')
