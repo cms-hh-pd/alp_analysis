@@ -25,6 +25,9 @@ samlists = {
    'sig_vbf' : ['VBF_HHTo4B_SM'],
 
    'Data'  : ['BTagCSVRun2016'],
+   'Data-train'  : ['BTagCSVRun2016_train'],
+   'Data-test'  : ['BTagCSVRun2016_test'],
+   'Data-appl'  : ['BTagCSVRun2016_appl'],
    'Data_split'  : ['BTagCSVRun2016_{}'.format(split) for split in ["train","test","appl"]],
    'dataBE'  : ['BTagCSVRun2016_BE'],
    'dataFH'  : ['BTagCSVRun2016_FH'],

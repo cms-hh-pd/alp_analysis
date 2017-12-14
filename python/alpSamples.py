@@ -380,7 +380,7 @@ samples = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-    'QCD_HT1000to1500_m' :{
+    'QCD_HT1000to1500_m' :{ #merged (regular + ext)
         'sam_name': '',
         'nevents' : 1,
         'xsec_br' : 1207.,
