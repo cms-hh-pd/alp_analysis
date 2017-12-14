@@ -11,7 +11,7 @@ from glob import glob
 import ROOT
 from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
-from ROOT import alp, ComposableSelector, CounterOperator, DiJetPlotterOperator
+from ROOT import alp, ComposableSelector, CounterOperator, JetPlotterOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, FolderOperator
 
 # imports from ../python 
@@ -66,7 +66,7 @@ config = {"jets_branch_name": "Jets",
           "isSignal" : False,
           "lumiFb" : intLumi_fb,
           "isMixed" : False,
-          "ofile_update" : True,
+          "ofile_update" : False,
           "evt_weight_name" : "evtWeight",
          }
 
