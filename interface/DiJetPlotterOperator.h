@@ -131,6 +131,12 @@ template <class EventClass> class DiJetPlotterOperator : public BaseOperator<Eve
       if(weights_.size()>0) w *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
       else w *= ev.evtWeight_;
 
+      // lazy implementation - to be improved for general purpouse
+      if(ev.dijets_.size() < 2) {
+        std::cout<< "## WARNING: events with less than two dijets, dijet and dihiggs histograms not filled" << std::endl;
+        return false;
+      }
+
      // debug - jets already sorted accordingly to pairing
       h_H0_mass.Fill(ev.dijets_.at(0).mass(), w);
       h_H0_pt.Fill(ev.dijets_.at(0).pt(), w);

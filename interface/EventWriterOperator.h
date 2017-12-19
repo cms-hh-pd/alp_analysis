@@ -145,7 +145,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
         ev.tl_genhh_.clear();
         if(ev.tl_genhs_.size()==2) ev.tl_genhh_.emplace_back(ev.tl_genhs_.at(0).p4_, ev.tl_genhs_.at(1).p4_);
         else {
-          std::cout<< "EventWriterOperator: ERROR, tl_genhs size not equal 2 for signal" << std::endl;
+          std::cout<< "EventWriterOperator: WARNING, tl_genhs size not equal 2 for signal" << std::endl;
           doGenHH_=false;
         }
       }

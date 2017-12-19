@@ -19,29 +19,18 @@ template <class EventClass> class GenJetPlotterOperator : public BaseOperator<Ev
 
     TH1D h_gjets_pt {"h_gjets_pt", "gen jets pt", 300, 0., 900.};
     TH1D h_gjets_eta {"h_gjets_eta", "gen jets eta", 100, -4.0, 4.0};
-    TH1D h_gjets_csv {"h_gjets_csv", "gen jets csv", 300,  -1., 1.};
-    TH1D h_gjets_cmva {"h_gjets_cmva", "gen jets cmva", 300,  -1., 1.};
-
-    TH1D h_gjet0_cmva {"h_gjet0_cmva", "gen jet0 cmva", 300,  -1., 1.};
-    TH1D h_gjet1_cmva {"h_gjet1_cmva", "gen jet1 cmva", 300,  -1., 1.};
-    TH1D h_gjet2_cmva {"h_gjet2_cmva", "gen jet2 cmva", 300,  -1., 1.};
-    TH1D h_gjet3_cmva {"h_gjet3_cmva", "gen jet3 cmva", 300,  -1., 1.};
 
     TH1D h_gjets_ht {"h_gjets_ht", "gen jets ht", 500, 0., 1500.};
     TH1D h_gjets_n {"h_gjets_n", "# gen jets", 30,  0., 30.};
 
     TH1D h_gjet0_pt {"h_gjet0_pt", "gen jet0 pt", 300, 0., 900.};
     TH1D h_gjet0_eta {"h_gjet0_eta", "gen jet0 eta", 100, -4.0, 4.0};
-    TH1D h_gjet0_csv {"h_gjet0_csv", "gen jet0 csv", 300,  -1., 1.};
     TH1D h_gjet1_pt {"h_gjet1_pt", "gen jet1 pt", 300, 0., 900.};
     TH1D h_gjet1_eta {"h_gjet1_eta", "gen jet1 eta", 100, -4.0, 4.0};
-    TH1D h_gjet1_csv {"h_gjet1_csv", "gen jet1 csv", 300, -1., 1.};
     TH1D h_gjet2_pt {"h_gjet2_pt", "gen jet2 pt", 300, 0., 900.};
     TH1D h_gjet2_eta {"h_gjet2_eta", "gen jet2 eta", 100, -4.0, 4.0};
-    TH1D h_gjet2_csv {"h_gjet2_csv", "gen jet2 csv", 300,  -1., 1.};
     TH1D h_gjet3_pt {"h_gjet3_pt", "gen jet3 pt", 300, 0., 900.};
     TH1D h_gjet3_eta {"h_gjet3_eta", "gen jet3 eta", 100, -4.0, 4.0};
-    TH1D h_gjet3_csv {"h_gjet3_csv", "gen jet3 csv", 300,  -1., 1.};
 
     //jets sorted in pt
     TH1D h_gjet0pt_pt {"h_gjet0pt_pt", "gen jet0pt pt", 300, 0., 900.};
@@ -63,28 +52,17 @@ template <class EventClass> class GenJetPlotterOperator : public BaseOperator<Ev
 
       h_gjets_pt.SetDirectory(tdir);
       h_gjets_eta.SetDirectory(tdir);
-      h_gjets_csv.SetDirectory(tdir);
-      h_gjets_cmva.SetDirectory(tdir);
-
-      h_gjet0_cmva.SetDirectory(tdir);
-      h_gjet1_cmva.SetDirectory(tdir);
-      h_gjet2_cmva.SetDirectory(tdir);
-      h_gjet3_cmva.SetDirectory(tdir);
 
       h_gjets_n.SetDirectory(tdir);
       h_gjets_ht.SetDirectory(tdir);
       h_gjet0_pt.SetDirectory(tdir);
       h_gjet0_eta.SetDirectory(tdir);
-      h_gjet0_csv.SetDirectory(tdir);
       h_gjet1_pt.SetDirectory(tdir);
       h_gjet1_eta.SetDirectory(tdir);
-      h_gjet1_csv.SetDirectory(tdir);
       h_gjet2_pt.SetDirectory(tdir);
       h_gjet2_eta.SetDirectory(tdir);
-      h_gjet2_csv.SetDirectory(tdir);
       h_gjet3_pt.SetDirectory(tdir);
       h_gjet3_eta.SetDirectory(tdir);
-      h_gjet3_csv.SetDirectory(tdir);
 
       h_gjet0pt_pt.SetDirectory(tdir);
       h_gjet1pt_pt.SetDirectory(tdir);
@@ -98,28 +76,17 @@ template <class EventClass> class GenJetPlotterOperator : public BaseOperator<Ev
 
       h_gjets_pt.Sumw2();
       h_gjets_eta.Sumw2();
-      h_gjets_csv.Sumw2();
-      h_gjets_cmva.Sumw2();
-
-      h_gjet0_cmva.Sumw2();
-      h_gjet1_cmva.Sumw2();
-      h_gjet2_cmva.Sumw2();
-      h_gjet3_cmva.Sumw2();
 
       h_gjets_n.Sumw2();
       h_gjets_ht.Sumw2();
       h_gjet0_pt.Sumw2();
       h_gjet0_eta.Sumw2();
-      h_gjet0_csv.Sumw2();
       h_gjet1_pt.Sumw2();
       h_gjet1_eta.Sumw2();
-      h_gjet1_csv.Sumw2();
       h_gjet2_pt.Sumw2();
       h_gjet2_eta.Sumw2();
-      h_gjet2_csv.Sumw2();
       h_gjet3_pt.Sumw2();
       h_gjet3_eta.Sumw2();
-      h_gjet3_csv.Sumw2();
 
       h_gjet0pt_pt.Sumw2();
       h_gjet1pt_pt.Sumw2();
@@ -138,32 +105,36 @@ template <class EventClass> class GenJetPlotterOperator : public BaseOperator<Ev
 
 
       float_t w = 1.;
+      int siz = ev.genbfromhs_.size();
 
-     // auto ht = get_jets_ht(ev.genbfromhs_);
       for (const auto & jet : ev.genbfromhs_) {
         h_gjets_pt.Fill(jet.pt(), w);
         h_gjets_eta.Fill(jet.eta(), w);
       }
 
-      h_gjets_n.Fill(ev.genbfromhs_.size(), w);
-     // h_gjets_ht.Fill(ht, w);
-      h_gjet0_pt.Fill(ev.genbfromhs_.at(0).pt(), w);
-      h_gjet0_eta.Fill(ev.genbfromhs_.at(0).eta(), w);
-      h_gjet1_pt.Fill(ev.genbfromhs_.at(1).pt(), w);
-      h_gjet1_eta.Fill(ev.genbfromhs_.at(1).eta(), w);
-      h_gjet2_pt.Fill(ev.genbfromhs_.at(2).pt(), w);
-      h_gjet2_eta.Fill(ev.genbfromhs_.at(2).eta(), w);
-      h_gjet3_pt.Fill(ev.genbfromhs_.at(3).pt(), w);
-      h_gjet3_eta.Fill(ev.genbfromhs_.at(3).eta(), w);
+      h_gjets_n.Fill(siz, w);
+      if(siz < 1) return false;
+      if(siz >= 1){
+        h_gjet0_pt.Fill(ev.genbfromhs_.at(0).pt(), w);
+        h_gjet0_eta.Fill(ev.genbfromhs_.at(0).eta(), w); }
+      if(siz >= 2){
+        h_gjet1_pt.Fill(ev.genbfromhs_.at(1).pt(), w);
+        h_gjet1_eta.Fill(ev.genbfromhs_.at(1).eta(), w); }
+      if(siz >= 3){
+        h_gjet2_pt.Fill(ev.genbfromhs_.at(2).pt(), w);
+        h_gjet2_eta.Fill(ev.genbfromhs_.at(2).eta(), w); }
+      if(siz >= 4){
+        h_gjet3_pt.Fill(ev.genbfromhs_.at(3).pt(), w);
+        h_gjet3_eta.Fill(ev.genbfromhs_.at(3).eta(), w); }
 
+      /*
       // get pt sorting
       std::string d_ = "pt";
-     /* get_sortIndex_jets(j_sortInd_, ev.genbfromhs_, d_);
+      get_sortIndex_jets(j_sortInd_, ev.genbfromhs_, d_);
       h_gjet0pt_pt.Fill(ev.genbfromhs_.at(j_sortInd_.at(0)).pt(), w);
       h_gjet1pt_pt.Fill(ev.genbfromhs_.at(j_sortInd_.at(1)).pt(), w);
       h_gjet2pt_pt.Fill(ev.genbfromhs_.at(j_sortInd_.at(2)).pt(), w);
-      h_gjet3pt_pt.Fill(ev.genbfromhs_.at(j_sortInd_.at(3)).pt(), w);*/
-
+      h_gjet3pt_pt.Fill(ev.genbfromhs_.at(j_sortInd_.at(3)).pt(), w);
       int i=0;
       h_gjetspt.Fill(ev.genbfromhs_.at(0).pt());
       h_gjetspt.Fill(ev.genbfromhs_.at(1).pt());
@@ -190,7 +161,7 @@ template <class EventClass> class GenJetPlotterOperator : public BaseOperator<Ev
            h_gjetspt_eta2.Fill(ev.genbfromhs_.at(1).pt());
            h_gjetspt_eta2.Fill(ev.genbfromhs_.at(2).pt());
            h_gjetspt_eta2.Fill(ev.genbfromhs_.at(3).pt());
-       }
+       }*/
 
       return true;
     }

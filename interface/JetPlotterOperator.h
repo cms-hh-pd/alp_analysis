@@ -127,6 +127,12 @@ template <class EventClass> class JetPlotterOperator : public BaseOperator<Event
       if(weights_.size()>0) w *= ev.eventInfo_.eventWeight(weights_); //multiplied all weights from cfg
       else w *= ev.evtWeight_;
 
+      // lazy implementation - to be improved for general purpouse
+      if(ev.jets_.size() < 4) {
+        std::cout << "## WARNING: events with less than four jets, jet histograms not filled" << std::endl;
+        return false;
+      }
+
       // get pt sorting
       std::string d_ = "pt";
       get_sortIndex_jets(j_sortInd_, ev.jets_, d_);

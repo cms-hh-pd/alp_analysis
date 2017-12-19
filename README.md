@@ -76,6 +76,13 @@ root -l
 
    python scripts/MixingSelector.py -s Data -i def_cmva --comb appl (-a)
 
+- #### ClfSelector:
+
+   to select event in a specif range of the classifier. !!additional sample needed with classifier, run columns2tree from hh2bbbb_limit before!!
+
+   python scripts/ClfSelector.py -s Data_  -i 20171205 -o test
+
+
 - #### TrgEffStudies:
 
    to get event selection for trigger efficiency studies.
@@ -131,3 +138,9 @@ root -l
 - #### ComposableSelector:
 
    bare example of how to use operators.
+
+v2_201704012
+v2_20170405 
+v2_20170404 QCD 
+v2_20170613 bosons
+v2_20170628 ZH
