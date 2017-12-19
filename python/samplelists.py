@@ -25,6 +25,8 @@ samlists = {
    'sig_vbf' : ['VBF_HHTo4B_SM'],
 
    'Data'  : ['BTagCSVRun2016'],
+   'Data_'  : ['BTagCSVRun2016_'],
+   'Data_clf'  : ['BTagCSVRun2016__clf'],
    'Data-train'  : ['BTagCSVRun2016_train'],
    'Data-test'  : ['BTagCSVRun2016_test'],
    'Data-appl'  : ['BTagCSVRun2016_appl'],
@@ -57,7 +59,7 @@ samlists = {
 
    'dibosons': ['ZH_HToBB_ZToQQ', 'WZ', 'ZZTo4Q'],
 
-   'bosons'  : [ 'VBFHToBB_fix_hem_lib_00', 'GluGluHToBB_fix_hem_lib_00'], #'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180','VBFHToBB_ext', , 'GluGluHToBB_ext'
+   'bosons'  : [ 'VBFHToBB', 'GluGluHToBB'], #'ZJetsToQQ_HT-600ToInf', 'DYJetsToQQ_HT180','VBFHToBB_ext', , 'GluGluHToBB_ext'
 
    'def'     : ['HHTo4B_SM', 'HHTo4B_BM3', 'HHTo4B_BM13', 
                 'BTagCSVRun2016B-v1','BTagCSVRun2016B-v2','BTagCSVRun2016C-v2','BTagCSVRun2016D-v2',
@@ -158,7 +160,7 @@ samlists = {
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['HHTo4B_SM_appl'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['BTagCSVRun2016__clf_fix_hem_lib_appl'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
 

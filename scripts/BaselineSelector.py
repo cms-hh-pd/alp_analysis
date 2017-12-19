@@ -48,8 +48,10 @@ trgList   = 'def_2016'
 intLumi_fb = 35.9
 
 if args.doMixed: iDir = "/lustre/cmswork/hh/alp_moriond_base/" + args.iDir
+#if args.doMixed: iDir = "/lustre/cmswork/hh/alp_mva/h5/20171205/" + args.iDir
 else: iDir = "/lustre/cmswork/hh/alpha_ntuples/" + args.iDir
 oDir = '/lustre/cmswork/hh/alp_moriond_base/' + args.oDir
+#oDir = '/lustre/cmswork/hh/alp_mva/h5/20171205/' + args.oDir
 if args.jetCorr   == 0: oDir += "_JESup"
 elif args.jetCorr == 1: oDir += "_JESdown"
 elif args.jetCorr == 2: oDir += "_JERup"
