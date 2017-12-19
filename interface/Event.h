@@ -33,6 +33,7 @@ namespace alp {
       std::vector<alp::Hemisphere>  fhems_;
       std::vector<alp::Hemisphere>  orhems_;
       float_t evtWeight_;
+      float_t classifier_;
       // TTreeReaderValue/Array pointers (so they are nullable) to get the data 
       TTreeReaderValue<alp::EventInfo> * eventInfo_reader_ = nullptr;
       TTreeReaderValue<std::vector<alp::Jet>> * jets_reader_ = nullptr;
@@ -49,6 +50,7 @@ namespace alp {
       TTreeReaderValue<std::vector<alp::Hemisphere>> * orhems_reader_ = nullptr;
       TTreeReaderValue<alp::Candidate> * met_reader_ = nullptr;
       TTreeReaderValue<float_t> * evtWeight_reader_ = nullptr;
+      TTreeReaderValue<float_t> * classifier_reader_ = nullptr;
 
       // additional stuff that might be created during the processing 
      // std::vector<alp::PtEtaPhiEVector> dijets_;
@@ -129,6 +131,10 @@ namespace alp {
             evtWeight_reader_ = new TTreeReaderValue<float_t>(reader,
                 config.at("evt_weight_name").get_ref<const std::string &>().c_str());
         }
+        if (config.find("classifier_branch_name") != config.end()) {
+            classifier_reader_ = new TTreeReaderValue<float_t>(reader,
+                config.at("classifier_branch_name").get_ref<const std::string &>().c_str());
+        }
         if (config.find("fhems_branch_name") != config.end()) {
             fhems_reader_ = new TTreeReaderValue<std::vector<alp::Hemisphere>>(reader,
                 config.at("fhems_branch_name").get_ref<const std::string &>().c_str());
@@ -153,6 +159,7 @@ namespace alp {
         delete tl_genhs_reader_;
         delete tl_genhh_reader_;
         delete evtWeight_reader_;
+        delete classifier_reader_;
         delete fhems_reader_;
         delete orhems_reader_;
       }
@@ -173,6 +180,7 @@ namespace alp {
         if (tl_genhs_reader_) tl_genhs_ = **tl_genhs_reader_;
         if (tl_genhh_reader_) tl_genhh_ = **tl_genhh_reader_;
         if (evtWeight_reader_) evtWeight_ = **evtWeight_reader_;
+        if (classifier_reader_) classifier_ = **classifier_reader_;
         if (fhems_reader_) fhems_ = **fhems_reader_;
         if (orhems_reader_) orhems_ = **orhems_reader_;
 

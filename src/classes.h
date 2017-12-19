@@ -29,6 +29,7 @@
 #include "Analysis/alp_analysis/interface/HemisphereWriterOperator.h"
 #include "Analysis/alp_analysis/interface/MixedEventWriterOperator.h"
 
+#include "Analysis/alp_analysis/interface/ClassifierOperator.h"
 #include "Analysis/alp_analysis/interface/ReWeightingOperator.h"
 #include "Analysis/alp_analysis/interface/WeightSumOperator.h"
 #include "Analysis/alp_analysis/interface/Utils.h"
@@ -68,6 +69,7 @@ namespace {
     MixedEventWriterOperator<EventBase> mixed_event_writer_operator;
     ReWeightingOperator<EventBase> reweighting_operator;
     WeightSumOperator<EventBase> weightsum_operator;
+    ClassifierOperator<EventBase> classifier_operator;
   };
 
   struct event_formats {

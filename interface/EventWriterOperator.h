@@ -36,6 +36,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
     std::vector<alp::DiObject> * dihiggs_ptr = nullptr;
     std::vector<alp::Hemisphere> * fhems_ptr = nullptr;
     std::vector<alp::Hemisphere> * orhems_ptr = nullptr;
+    float_t classifier = 99.;
 
     TTree tree_{"tree","Tree using simplified alp dataformats"};
 
@@ -123,6 +124,10 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
         tree_.Branch(config_.at("orhems_branch_name").template get<std::string>().c_str(),
                      "std::vector<alp::Hemisphere>",&orhems_ptr, 64000, 2);
       }
+      if (config_.find("classifier_branch_name") != config_.end()) {
+        tree_.Branch(config_.at("classifier_branch_name").template get<std::string>().c_str(),
+                     &classifier, "classifier/F");
+      }
 
       tree_.SetDirectory(tdir);
       tree_.AutoSave();
@@ -159,6 +164,7 @@ template <class EventClass> class EventWriterOperator : public BaseOperator<Even
       dihiggs_ptr = dynamic_cast<std::vector<alp::DiObject> *>(&ev.dihiggs_); 
       fhems_ptr = dynamic_cast<std::vector<alp::Hemisphere> *>(&ev.fhems_); 
       orhems_ptr = dynamic_cast<std::vector<alp::Hemisphere> *>(&ev.orhems_); 
+      classifier = ev.classifier_; 
 
       tree_.Fill();
     

@@ -29,4 +29,5 @@
   <class pattern="MixedEventWriterOperator<*>"/> 
   <class pattern="ReWeightingOperator<*>"/> 
   <class pattern="WeightSumOperator<*>"/> 
+  <class pattern="ClassifierOperator<*>"/> 
 </lcgdict>  
