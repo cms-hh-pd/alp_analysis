@@ -74,8 +74,10 @@ if args.doAntitag:
     ori_file = "/lustre/cmswork/hh/alp_moriond_base/btagside/BTagCSVRun2016.root"
 else:
     ori_file = "/lustre/cmswork/hh/alp_moriond_base/def_cmva/BTagCSVRun2016.root"
+   #ori_file = "/lustre/cmswork/hh/alp_mva/h5/20171205/test/BTagCSVRun2016_clf.root"
 
 iDir = '/lustre/cmswork/hh/alp_moriond_base/'+ args.iDir
+#iDir = '/lustre/cmswork/hh/alp_mva/h5/20171205/'+ args.iDir
 oDir = iDir + "/" + args.oDir # saved inside iDir to keep track of original ntuples
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
 # ---------------

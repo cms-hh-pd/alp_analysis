@@ -13,6 +13,7 @@ from ROOT import TChain, TH1F, TFile, vector, gROOT
 # custom ROOT classes 
 from ROOT import alp, ComposableSelector, CounterOperator, JetPlotterOperator, DiJetPlotterOperator
 from ROOT import BaseOperator, EventWriterOperator, FolderOperator, ClassifierOperator
+from ROOT import ThrustFinderOperator, HemisphereProducerOperator, HemisphereWriterOperator
 
 # imports from ../python 
 from Analysis.alp_analysis.alpSamples  import samples
@@ -27,7 +28,6 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--numEvts", help="number of events", type=int, default='-1')
 parser.add_argument("-s", "--samList", help="sample list", default="")
-parser.add_argument("--btag", help="which btag algo", default='cmva')
 parser.add_argument("-i", "--iDir", help="input directory", default="") 
 parser.add_argument("-o", "--oDir", help="output directory", default="")
 parser.set_defaults()
@@ -44,12 +44,6 @@ iDir = "/lustre/cmswork/hh/alp_mva/h5/" + args.iDir
 oDir = '/lustre/cmswork/hh/alp_mva/h5/' + args.iDir + "/" + args.oDir
 
 data_path = "{}/src/Analysis/alp_analysis/data/".format(os.environ["CMSSW_BASE"])
-if args.btag == 'cmva':  
-    btagAlgo = "pfCombinedMVAV2BJetTags"
-    btag_wp = wps['CMVAv2_moriond']
-elif args.btag == 'csv': 
-    btagAlgo  = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-    btag_wp = wps['CSVv2_moriond']
 
 if not os.path.exists(oDir): os.mkdir(oDir)
 print oDir
@@ -95,11 +89,6 @@ for sname in snames:
         if "Run" in files[0]: config["isData"] = True
         if "GluGluToHH" in files[0] or "HHTo4B" in files[0]: config["isSignal"] = True
 
-    #read weights from alpSamples 
-#    config["xsec_br"]  = samples[sname]["xsec_br"]
-#    config["matcheff"] = samples[sname]["matcheff"]
-#    config["kfactor"]  = samples[sname]["kfactor"]
-
     json_str = json.dumps(config)
 
     #define selectors list
@@ -110,17 +99,19 @@ for sname in snames:
 
     selector.addOperator(FolderOperator(alp.Event)("pair"))
     selector.addOperator(ClassifierOperator(alp.Event)(0.,0.3))
-   # selector.addOperator(JetPlotterOperator(alp.Event)(btagAlgo, weights_v))        
-   # selector.addOperator(DiJetPlotterOperator(alp.Event)(weights_v))
     selector.addOperator(CounterOperator(alp.Event)(config["n_gen_events"], weights_v))
     selector.addOperator(EventWriterOperator(alp.Event)(json_str,weights_v))
+    #create hemisphere library
+    selector.addOperator(ThrustFinderOperator(alp.Event)())
+    selector.addOperator(HemisphereProducerOperator(alp.Event)())
+    selector.addOperator(HemisphereWriterOperator(alp.Event)())
 
     #create tChain and process each files
     tchain = TChain("pair/tree")
     f_tchain = TChain("extra")    
     for File in files:                     
         tchain.Add(File)
-        f_tchain.Add(File.replace("_.root","_extra.root"))
+        f_tchain.Add(File.replace(".root","_extra.root"))
     tchain.AddFriend(f_tchain)       
     nev = numEvents if (numEvents > 0 and numEvents < tchain.GetEntries()) else tchain.GetEntries()
     procOpt = "ofile=./"+sname+"_clf.root" if not oDir else "ofile="+oDir+"/"+sname+"_clf.root"

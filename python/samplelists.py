@@ -26,6 +26,7 @@ samlists = {
 
    'Data'  : ['BTagCSVRun2016'],
    'Data_'  : ['BTagCSVRun2016_'],
+   'Data_clf'  : ['BTagCSVRun2016__clf'],
    'Data-train'  : ['BTagCSVRun2016_train'],
    'Data-test'  : ['BTagCSVRun2016_test'],
    'Data-appl'  : ['BTagCSVRun2016_appl'],
@@ -159,7 +160,7 @@ samlists = {
 
    ## for testing 
    'short'   : ['QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter'],
-   'test'   : ['HHTo4B_SM_appl'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
+   'test'   : ['BTagCSVRun2016__clf_fix_hem_lib_appl'], #'QCD_HT200to300''SingleMuonRun2016B-v2'SingleMuonRun2016B-v2
 
 }
 
