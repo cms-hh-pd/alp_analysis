@@ -139,8 +139,12 @@ root -l
 
    bare example of how to use operators.
 
-v2_201704012
-v2_20170405 
-v2_20170404 QCD 
-v2_20170613 bosons
-v2_20170628 ZH
+## INPUT FOLDERS FROM ALPHA_NTUPLES:
+
+- v2_20170222-trg -> TT
+
+- v2_20170405 -> ttHbb
+
+- v2_20170222 -> Data 
+
+- v2_20170606 -> signals
