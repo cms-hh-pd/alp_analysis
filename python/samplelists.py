@@ -134,7 +134,9 @@ samlists = {
               'QCD_HT200to300_BGenFilter', 'QCD_HT300to500_BGenFilter', 'QCD_HT500to700_BGenFilter', 'QCD_HT700to1000_BGenFilter' ],
 
    'TT' : ['TT'],
-   'TT-fix' : ['TT_fix_hem_lib_large'],
+   #'TT-fix' : ['TT_fix_hem_lib_large'],
+   'TT-fix' : ['TT-fix-large'],
+   'TT-fix-appl' : ['TT-fix-appl'],
    'TT-fix-fix' : ['TT_fix_hem_lib_large_fix_hem_lib_appl'],
    'ttH' : ['ttHTobb'],
    'ttH-fix' : ['ttHTobb_fix_hem_lib_large'],
