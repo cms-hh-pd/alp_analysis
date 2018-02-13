@@ -1221,9 +1221,9 @@ sam_opt = {
     'sig' :{  #debug
         'sam_name' :'sig',
         'order'    : 0,
-        'fillcolor' : 630,
+        'fillcolor' : 632-4,
         'fillstyle' : 1,
-        'linecolor' : 630, 
+        'linecolor' : 632-4, 
         'linewidth' : 2,
         'linestyle' : 1,
         'label'     : 'sig',
@@ -1277,5 +1277,25 @@ sam_opt = {
         'linewidth' : 2,
         'linestyle' : 1,
         'label'     : 'additional',
-    }
+    },
+    'ttHTobb' :{  #debug
+        'sam_name' :'ttHTobb',
+        'order'    : 0,
+        'fillcolor' : 630,
+        'fillstyle' : 1,
+        'linecolor' : 630, 
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'ttH',
+    },
+    'TTbar' :{
+        'sam_name': 'TT',
+        'order'     : 4,
+        'fillcolor' : 4, #kBlue-2
+        'fillstyle' : 1,
+        'linecolor' : 4,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label'     : 'tt',
+    },
 }
