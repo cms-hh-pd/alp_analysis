@@ -21,6 +21,7 @@
 #include <chrono>
 
 //using namespace std::chrono;
+using namespace std;
 
 template <class EventClass> class ComposableSelector : public TSelector {
 
@@ -43,7 +44,9 @@ template <class EventClass> class ComposableSelector : public TSelector {
   // associated with a TTree
   TTreeReader reader_;
   // to save output 
-  TFile * tfile_{ nullptr}; 
+  //std::cout << "NULLPTR" << std::endl;
+  TFile * tfile_; 
+  //std::cout << "NULLPTR passed" << std::endl;
 
   // to save selector/event configuration
   json config_;
