@@ -1,0 +1,12 @@
+HH              263400  NNPDF30_lo_as_0130_nf_4
+QCD             263000  NNPDF30_lo_as_0130
+ttbar           260000  NNPDF30_nlo_as_0118
+st t channel    292000  NNPDF30_nlo_nf_4_pdfas	   TuneCUETP8M1
+ttH             260000  NNPDF30_nlo_as_0118
+single H        260000  NNPDF30_nlo_as_0118
+ZH              260000  NNPDF30_nlo_as_0118
+st s channel    292000  NNPDF30_nlo_nf_4_pdfas	
+tttt            292200  NNPDF30_nlo_nf_5_pdfas
+ttbb            292000  NNPDF30_nlo_nf_4_pdfas	
+bbH             292000  NNPDF30_nlo_nf_4_pdfas	
+W+jets          263000  NNPDF30_lo_as_0130

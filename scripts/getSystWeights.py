@@ -5,8 +5,10 @@ import sys
 lheruninfo=Handle('LHERunInfoProduct')
 runs=Runs(sys.argv[1])
 for r in runs:
-    r.getByLabel('externalLHEProducer',lheruninfo)
-    #r.getByLabel('source',lheruninfo)
+    if "bbHToBB" in sys.argv[1]:
+        r.getByLabel('source',lheruninfo)
+    else:
+        r.getByLabel('externalLHEProducer',lheruninfo)
     it=lheruninfo.product().headers_begin()
     while it!=lheruninfo.product().headers_end():
         lines=it.lines()
@@ -26,3 +28,6 @@ for r in runs:
                 print wgtCtr,linestr
                 wgtCtr+=1
         it.next()
+
+
+
